@@ -27,6 +27,7 @@
             e.preventDefault();
 
             // Clear out any previous story
+            const story = document.getElementById('story');
             story.innerHTML = '';
 
             // Get the words from the textarea
@@ -40,7 +41,6 @@
             // Get the setting from the input
             var setting = document.getElementById('setting').value;
 
-            const story = document.getElementById('story');
 
             // Send the words, subject, and setting to the server using the fetch API
             const response = await fetch('/stream', {

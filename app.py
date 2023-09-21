@@ -75,11 +75,7 @@ The fish just swim.
 
 # Your Output
 
-You will generate a story similar to the examples above, and it will follow the following format for output:
-
-<story>
-    [Insert your final story here]
-</story>
+You will generate only a story similar to the examples above, with no additional commentary or text.
 """
 
 USER_PROMPT = """Write me a two paragraph story using the following inputs:
@@ -117,6 +113,7 @@ def stream():
                     "content": user_prompt
                 },
             ],
+            temperature=0.8,
             stream=True)
         for line in response:
             chunk = line['choices'][0].get('delta', {}).get('content', '')
