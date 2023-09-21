@@ -1,0 +1,111 @@
+<html>
+<head>
+<title>Reading Practice Story Generator</title>
+</head>
+<body>
+
+    <h1>Reading Practice Story Generator</h1>
+
+    <form>
+        <p>Enter a list of words, separated by commas:</p>
+        <textarea id="words" name="words"></textarea>
+
+        <p>Enter a main character for the story:</p>
+        <input id="subject" type="text" name="subject">
+
+        <p>Enter a setting for the story:</p>
+        <input id="setting" type="text" name="setting">
+
+        <p><input id="submit" type="submit" value="Generate Story"></p>
+
+        <p id="story"></p>
+    </form>
+
+    <script>
+        // When a person clicks the submit button, send the form to the server's /generate route
+        document.getElementById('submit').addEventListener('click', async function(e) {
+            e.preventDefault();
+
+            // Clear out any previous story
+            story.innerHTML = '';
+
+            // Get the words from the textarea
+            var words = document.getElementById('words').value;
+            // The words will be a collection of words delimited by carriage returns. Need to convert this to a list of words separated by commans
+            words = words.replace(/\n/g, ', ');
+
+            // Get the subject from the input
+            var subject = document.getElementById('subject').value;
+
+            // Get the setting from the input
+            var setting = document.getElementById('setting').value;
+
+            const story = document.getElementById('story');
+
+            // Send the words, subject, and setting to the server using the fetch API
+            const response = await fetch('/stream', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    words: words,
+                    subject: subject,
+                    setting: setting
+                })
+            });
+
+            if (!response.body) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+
+            const reader = response.body.pipeThrough(new TextDecoderStream()).getReader();
+            while (true) {
+                const { value, done } = await reader.read();
+                if (done) {
+                    break;
+                }
+                story.innerHTML += value;
+            }
+
+            /*
+            var source = new EventSource('/stream');
+            source.onmessage = function(event) {
+                if(event.data == 'done') {
+                    source.close();
+                } else {
+                    document.body.innerHTML += '<p>' + event.data + '</p>';
+                }
+            };
+            */
+
+            /*
+            // Send the words, subject, and setting to the server using the fetch API
+            fetch('/generate', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    words: words,
+                    subject: subject,
+                    setting: setting
+                })
+            })
+            .then(function(response) {
+                return response.json();
+            })
+            .then(function(data) {
+                // The server will respond with a JSON object containing the story
+                // We need to take any carriage returns \n and convert them to HTML line breaks <br>
+                let finalStory = data.story.replace(/\n/g, '<br>');
+                // Display the story on the page
+                document.body.innerHTML += '<p>' + finalStory + '</p>';
+            });
+            */
+        });
+
+    </script>
+</body>
+</html>
+
