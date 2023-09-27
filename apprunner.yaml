@@ -7,4 +7,5 @@ build:
 run:
   command: python app.py
   runtime-version: 3.10.9
-  network: 8080
+  network:
+    port: 8080
