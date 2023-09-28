@@ -6,6 +6,6 @@ build:
       - pip install -r requirements.txt
 run:
   command: python app.py
-  runtime-version: 3.10.9
+  runtime-version: 3.8.16
   network:
     port: 8080
