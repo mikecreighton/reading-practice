@@ -1,0 +1,26 @@
+.modal {
+
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: #FFF;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    .modal-content {
+
+        // Make this a fixed width
+        width: 500px;
+
+        p {
+            font-size: 30px;
+            line-height: 1.5;
+            margin-bottom: 60px;
+            font-family: 'Comic Sans MS', cursive, sans-serif;
+        }
+    }
+
+}

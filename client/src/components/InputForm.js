@@ -1,14 +1,17 @@
-import React, { useState } from "react";
+import React, {
+  useState,
+  useRef,
+  useImperativeHandle,
+  forwardRef,
+} from "react";
 import "./InputForm.scss";
 
-function InputForm(props) {
+const InputForm = forwardRef((props, ref) => {
   const [words, setWords] = useState("");
   const [characterName, setCharacterName] = useState("");
   const [setting, setSetting] = useState("");
 
-  const handleSubmit = async (event) => {
-    event.preventDefault();
-
+  const submitForm = async () => {
     try {
       const response = await fetch(
         process.env.REACT_APP_API_URL + "/generate",
@@ -32,10 +35,25 @@ function InputForm(props) {
         const story = data.story;
         props.onStoryGenerated(story);
       }
-
     } catch (error) {
       console.error("Error:", error);
     }
+  };
+
+  useImperativeHandle(ref, () => ({
+    submitForm: submitForm,
+  }));
+
+  const handleSubmit = (event) => {
+    event.preventDefault();
+    submitForm(event);
+  };
+
+  const handleReset = (event) => {
+    event.preventDefault();
+    setWords("");
+    setCharacterName("");
+    setSetting("");
   };
 
   return (
@@ -65,8 +83,11 @@ function InputForm(props) {
         />
       </label>
       <button type="submit">Generate Story</button>
+      <button type="reset" onClick={handleReset}>
+        Reset
+      </button>
     </form>
   );
-}
+});
 
 export default InputForm;
