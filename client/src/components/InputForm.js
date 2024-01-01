@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import "./InputForm.scss";
 
-function InputForm() {
+function InputForm(props) {
   const [words, setWords] = useState("");
   const [characterName, setCharacterName] = useState("");
   const [setting, setSetting] = useState("");
@@ -30,7 +30,7 @@ function InputForm() {
       } else {
         const data = await response.json();
         const story = data.story;
-
+        props.onStoryGenerated(story);
       }
 
     } catch (error) {
