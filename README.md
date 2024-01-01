@@ -25,4 +25,4 @@ cp .env.template .env
 python app.py
 ```
 
-7. Visit the local website: [http://127.0.0.1:5000](http://127.0.0.1:5000)
+7. Visit the local website: [http://127.0.0.1:5555](http://127.0.0.1:5555)
