@@ -99,6 +99,16 @@ def home():
     return render_template('index.html')
 
 
+@app.route('/cors-test', methods=['POST'])
+def cors_test():
+    """
+        Simple route to test CORS
+    """
+    print("--------- New /cors-test request ---------")
+    print(request.json)
+    return jsonify(request.json)
+
+
 @app.route('/stream', methods=['POST'])
 def stream():
 
