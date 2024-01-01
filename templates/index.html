@@ -41,7 +41,7 @@
             // Get the setting from the input
             var setting = document.getElementById('setting').value;
 
-
+            /*
             // Send the words, subject, and setting to the server using the fetch API
             const response = await fetch('/stream', {
                 method: 'POST',
@@ -67,6 +67,7 @@
                 }
                 story.innerHTML += value;
             }
+            // */
 
             /*
             var source = new EventSource('/stream');
@@ -79,7 +80,7 @@
             };
             */
 
-            /*
+            /* */
             // Send the words, subject, and setting to the server using the fetch API
             fetch('/generate', {
                 method: 'POST',
@@ -102,7 +103,7 @@
                 // Display the story on the page
                 document.body.innerHTML += '<p>' + finalStory + '</p>';
             });
-            */
+            // */
         });
 
     </script>

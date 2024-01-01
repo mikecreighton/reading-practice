@@ -2,6 +2,7 @@ import os
 from openai import OpenAI
 from dotenv import load_dotenv
 from flask import Flask, request, jsonify, render_template, Response
+import time
 
 load_dotenv()
 
@@ -97,6 +98,9 @@ def home():
 
 @app.route('/stream', methods=['POST'])
 def stream():
+
+    print("--------- New /stream request ---------")
+
     def process_stream(words, subject, setting):
         user_prompt = USER_PROMPT.replace('{{words}}', words).replace('{{subject}}', subject).replace('{{setting}}', setting)
 
@@ -135,6 +139,12 @@ def stream():
 
 @app.route('/generate', methods=['POST'])
 def generate():
+
+    print("--------- New /generate request ---------")
+
+    # start a timer to evaluate how long this request takes
+    start = time.time()
+
     # get the variables from POST request coming from a json fetch request
     words = request.json['words']
     subject = request.json['subject']
@@ -154,16 +164,17 @@ def generate():
             "content": user_prompt
         },
     ])
-    
-    llm_response_content = response.choices[0]['message']['content']
 
-    print(llm_response_content)
+    llm_response_content = response.choices[0].message.content
+
+    # stop the timer
+    end = time.time()
+    print("/generate - Time elapsed: ", end - start)
 
     # response will have a <story></story> tag, so we need to split on <story> and </story> and get what's in between.
     # sometimes the response will have two <story> tags, and we need the content that's in the last pair.
-    story = llm_response_content.split('<story>')[1].split('</story>')[0]
     story_object = {
-        "story": story
+        "story": llm_response_content
     }
     return jsonify(story_object)
 
