@@ -1,5 +1,5 @@
 import logo from './logo.svg';
-import './App.css';
+import './App.scss';
 import React, { useEffect, useState } from 'react';
 import StoryModal from './components/StoryModal';
 import InputForm from './components/InputForm';
