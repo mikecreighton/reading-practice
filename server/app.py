@@ -2,6 +2,7 @@ import os
 from openai import OpenAI
 from dotenv import load_dotenv
 from flask import Flask, request, jsonify, render_template, Response
+from flask_cors import CORS
 import time
 
 load_dotenv()
@@ -11,6 +12,8 @@ api_key = os.getenv("OPENAI_API_KEY")
 client = OpenAI(api_key=api_key)
 
 app = Flask(__name__, static_url_path='', static_folder='./static')
+# Add CORS support for the frontend
+CORS(app)
 
 SYSTEM_PROMPT = """Act as a professional elementary school teacher who excels in teaching basic Math and English to students. You're excellent at coming up with creative and engaging homework assignments that require minimal supervision and less than 15 minutes to complete. Your job is to take a list of spelling words that a student needs to practice, take a subject and setting provided by the student, and create a short two-paragraph story that incorporates each of the spelling words and the student's suggested subject and setting for the story. The reading level for the story should be appropriate for a 2nd grade student just entering 2nd grade.
     
