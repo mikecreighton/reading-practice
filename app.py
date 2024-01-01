@@ -1,12 +1,13 @@
 import os
-import openai
+from openai import OpenAI
 from dotenv import load_dotenv
 from flask import Flask, request, jsonify, render_template, Response
 
 load_dotenv()
 
-# initialize openai with my key
-openai.api_key = os.getenv("OPENAI_API_KEY")
+# Get the key from the .env file using dotenv package
+api_key = os.getenv("OPENAI_API_KEY")
+client = OpenAI(api_key=api_key)
 
 app = Flask(__name__, static_url_path='', static_folder='./static')
 
@@ -94,14 +95,12 @@ def home():
     return render_template('index.html')
 
 
-
 @app.route('/stream', methods=['POST'])
 def stream():
     def process_stream(words, subject, setting):
         user_prompt = USER_PROMPT.replace('{{words}}', words).replace('{{subject}}', subject).replace('{{setting}}', setting)
 
-        response = openai.ChatCompletion.create(
-            model='gpt-4',
+        stream = client.chat.completions.create(model='gpt-4',
             max_tokens=1024,
             messages=[
                 {
@@ -114,16 +113,18 @@ def stream():
                 },
             ],
             temperature=0.8,
-            stream=True)
-        for line in response:
-            chunk = line['choices'][0].get('delta', {}).get('content', '')
-            if chunk:
-                yield chunk
+            stream=True
+        )
+        for chunk in stream:
+            if chunk.choices[0].delta.content is not None:
+                content = chunk.choices[0].delta.content
+                yield content
     
     # get the variables from POST request coming from a json fetch request
     words = request.json['words']
     subject = request.json['subject']
     setting = request.json['setting']
+    
     
     print("--------- New request ---------")
     print(words, subject, setting)
@@ -141,19 +142,18 @@ def generate():
 
     user_prompt = USER_PROMPT.replace('{{words}}', words).replace('{{subject}}', subject).replace('{{setting}}', setting)
 
-    response = openai.ChatCompletion.create(
-        model='gpt-4',
-        max_tokens=1024,
-        messages=[
-            {
-                "role": "system",
-                "content": SYSTEM_PROMPT
-            },
-            {
-                "role":"user",
-                "content": user_prompt
-            },
-        ])
+    response = client.chat.completions.create(model='gpt-4',
+    max_tokens=1024,
+    messages=[
+        {
+            "role": "system",
+            "content": SYSTEM_PROMPT
+        },
+        {
+            "role":"user",
+            "content": user_prompt
+        },
+    ])
     
     llm_response_content = response.choices[0]['message']['content']
 
@@ -168,4 +168,4 @@ def generate():
     return jsonify(story_object)
 
 if __name__ == '__main__':
-    app.run(debug=True, host='0.0.0.0', port=5000)
+    app.run(debug=True, host='0.0.0.0', port=5555)
