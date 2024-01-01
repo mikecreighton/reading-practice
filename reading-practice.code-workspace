@@ -5,6 +5,9 @@
 		},
 		{
 			"path": "server"
+		},
+		{
+			"path": "client"
 		}
 	],
 	"settings": {}
