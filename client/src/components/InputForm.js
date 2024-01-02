@@ -51,6 +51,7 @@ const InputForm = forwardRef((props, ref) => {
     }
   };
 
+  // Expose submitForm and cancelRequest functions to parent component
   useImperativeHandle(ref, () => ({
     submitForm: submitForm,
     cancelRequest: () => abortController.current && abortController.current.abort(),
