@@ -10,6 +10,7 @@ const InputForm = forwardRef((props, ref) => {
   const [words, setWords] = useState("");
   const [characterName, setCharacterName] = useState("");
   const [setting, setSetting] = useState("");
+  const [humor, setHumorLevel] = useState(3);
 
   const submitForm = async () => {
     try {
@@ -22,6 +23,7 @@ const InputForm = forwardRef((props, ref) => {
           words: words,
           subject: characterName,
           setting: setting,
+          humor: humor + "",
         }),
       });
 
@@ -56,12 +58,16 @@ const InputForm = forwardRef((props, ref) => {
     setWords("");
     setCharacterName("");
     setSetting("");
+    setHumorLevel(3);
   };
 
   return (
     <form onSubmit={handleSubmit}>
       <label>
-        <span class="prevent-wrap">Words to Include in the Story <span className="helper">(comma-separated)</span></span>
+        <span class="prevent-wrap">
+          Words to Include in the Story{" "}
+          <span className="helper">(comma-separated)</span>
+        </span>
         <input
           type="text"
           value={words}
@@ -69,7 +75,7 @@ const InputForm = forwardRef((props, ref) => {
         />
       </label>
       <label>
-        The Main Character
+        The Story&rsquo;s Main Character
         <input
           type="text"
           value={characterName}
@@ -77,21 +83,33 @@ const InputForm = forwardRef((props, ref) => {
         />
       </label>
       <label>
-        Setting for the Story
+        Where the Story Takes Place
         <input
           type="text"
           value={setting}
           onChange={(e) => setSetting(e.target.value)}
         />
       </label>
+      <label>
+        Humor Level
+        <input
+          type="range"
+          min="1"
+          max="10"
+          defaultValue={humor}
+          value={humor}
+          onChange={(e) => setHumorLevel(e.target.value)}
+          className="slider"
+        />
+      </label>
       <div className="buttons-container">
         <button class="button-labeled" type="submit">
-            Generate Story
+          Generate Story
         </button>
         <button class="button-labeled" type="reset" onClick={handleReset}>
-            Reset
+          Reset
         </button>
-        </div>
+      </div>
     </form>
   );
 });
