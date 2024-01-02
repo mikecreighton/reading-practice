@@ -76,22 +76,6 @@
         bottom: 40px;
         left: 50%;
         transform: translateX(-50%);
-        font-size: 24px;
-        width: auto;
-        padding: 24px 36px;
-        cursor: pointer;
-        user-select: none;
-        border: none;
-        color: #FFF;
-        font-weight: bold;
-        text-align: center;
-        background-color: #101010;
-        border-radius: 12px;
-        transition: background-color 0.1s ease-in-out;
-
-        &:hover {
-            background-color: #303030;
-        }
     }
 
 }

@@ -13,28 +13,25 @@ const InputForm = forwardRef((props, ref) => {
 
   const submitForm = async () => {
     try {
-      const response = await fetch(
-        process.env.REACT_APP_API_URL + "/stream",
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            words: words,
-            subject: characterName,
-            setting: setting,
-          }),
-        }
-      );
+      const response = await fetch(process.env.REACT_APP_API_URL + "/stream", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          words: words,
+          subject: characterName,
+          setting: setting,
+        }),
+      });
 
       if (!response.ok) {
         throw new Error(`HTTP error status: ${response.statusText}`);
       } else {
         const reader = response.body.getReader();
-        let story = '';
+        let story = "";
         let chunk;
-    
+
         while ((chunk = await reader.read()) && !chunk.done) {
           story += new TextDecoder("utf-8").decode(chunk.value);
           props.onStoryPartReceived(story);
@@ -64,7 +61,7 @@ const InputForm = forwardRef((props, ref) => {
   return (
     <form onSubmit={handleSubmit}>
       <label>
-        Words to include in the story:
+        <span class="prevent-wrap">Words to Include in the Story <span className="helper">(comma-separated)</span></span>
         <input
           type="text"
           value={words}
@@ -72,7 +69,7 @@ const InputForm = forwardRef((props, ref) => {
         />
       </label>
       <label>
-        The main character:
+        The Main Character
         <input
           type="text"
           value={characterName}
@@ -80,17 +77,21 @@ const InputForm = forwardRef((props, ref) => {
         />
       </label>
       <label>
-        Setting for the story:
+        Setting for the Story
         <input
           type="text"
           value={setting}
           onChange={(e) => setSetting(e.target.value)}
         />
       </label>
-      <button type="submit">Generate Story</button>
-      <button type="reset" onClick={handleReset}>
-        Reset
-      </button>
+      <div className="buttons-container">
+        <button class="button-labeled" type="submit">
+            Generate Story
+        </button>
+        <button class="button-labeled" type="reset" onClick={handleReset}>
+            Reset
+        </button>
+        </div>
     </form>
   );
 });

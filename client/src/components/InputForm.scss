@@ -5,11 +5,10 @@ form {
     justify-content: center;
     margin: 0 auto;
     width: 100%;
-    max-width: 500px;
-    padding: 40px 20px;
+    max-width: 700px;
+    padding: 40px 40px;
     border: 1px solid #ccc;
-    border-radius: 5px;
-    box-shadow: 0 0 5px rgba(0,0,0,0.3);
+    border-radius: 12px;
     background-color: #fff;
 
     label {
@@ -18,15 +17,43 @@ form {
         width: 100%;
         margin-bottom: 40px;
         font-size: 1.2rem;
-        font-weight: 600;
+        font-weight: 400;
+        font-family: 'Comic Sans MS', cursive, sans-serif;
         color: #333;
+
+        .helper {
+            color: #AAA;
+            display: inline;
+            font-size: 80%;
+        }
     }
 
     input {
         margin-top: 12px;
-        height: 40px;
+        height: 60px;
         line-height: 40px;
-        padding: 0 10px;
-        font-size: 16px;
+        padding: 0 20px;
+        font-size: 20px;
+        border-radius: 4px;
+        border: 1px solid #AAA;
+        font-family: 'Comic Sans MS', cursive, sans-serif;
+    }
+
+    // make the buttons sit side-by-side
+    .buttons-container {
+        display: flex;
+        justify-content: flex-end;
+        gap: 20px;
+        width: 100%;
+
+        @media (max-width: 768px) {
+            gap: 16px;
+        }
+        @media (max-width: 480px) {
+            gap: 12px;
+        }
+        @media (max-width: 360px) {
+            gap: 8px;
+        }
     }
 }

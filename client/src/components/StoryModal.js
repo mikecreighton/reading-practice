@@ -19,7 +19,7 @@ function StoryModal({ story, onRegenerate, onCloseComplete }) {
         <button className="modal-close-button" onClick={handleCloseRequest}>
           &#x2715;
         </button>
-        <button className="modal-regenerate-button" onClick={onRegenerate}>Regenerate</button>
+        <button className="button-labeled modal-regenerate-button" onClick={onRegenerate}>Regenerate</button>
       </div>
     </div>
   );
