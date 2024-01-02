@@ -1,9 +1,4 @@
-import React, {
-  useState,
-  useRef,
-  useImperativeHandle,
-  forwardRef,
-} from "react";
+import React, { useState, useImperativeHandle, forwardRef } from "react";
 import "./InputForm.scss";
 
 const InputForm = forwardRef((props, ref) => {
@@ -11,8 +6,10 @@ const InputForm = forwardRef((props, ref) => {
   const [characterName, setCharacterName] = useState("");
   const [setting, setSetting] = useState("");
   const [humor, setHumorLevel] = useState(3);
+  const [isLoading, setIsLoading] = useState(false); // New state variable
 
   const submitForm = async () => {
+    setIsLoading(true); // Set loading to true when request starts
     try {
       const response = await fetch(process.env.REACT_APP_API_URL + "/stream", {
         method: "POST",
@@ -41,6 +38,8 @@ const InputForm = forwardRef((props, ref) => {
       }
     } catch (error) {
       console.error("Error:", error);
+    } finally {
+      setIsLoading(false); // Set loading to false when request ends
     }
   };
 
@@ -103,7 +102,7 @@ const InputForm = forwardRef((props, ref) => {
         />
       </label>
       <div className="buttons-container">
-        <button class="button-labeled" type="submit">
+        <button class="button-labeled" type="submit" disabled={isLoading}>
           Generate Story
         </button>
         <button class="button-labeled" type="reset" onClick={handleReset}>
