@@ -70,8 +70,9 @@ form {
         }
         @media (max-width: 480px) {
             gap: 12px;
+            justify-content: space-between;
         }
-        @media (max-width: 360px) {
+        @media (max-width: 375px) {
             gap: 8px;
         }
     }
