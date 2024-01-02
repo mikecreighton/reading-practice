@@ -6,18 +6,39 @@ from flask_cors import CORS
 import time
 from prompts import USER_PROMPT, SYSTEM_PROMPT
 
+# -----------------------------------------
+#
+# Initialization
+#
+# -----------------------------------------
+
 load_dotenv()
 
-# Get the key from the .env file using dotenv package
 api_key = os.getenv("OPENAI_API_KEY")
 client = OpenAI(api_key=api_key)
 
-TEMPERATURE = 0.4
+TEMPERATURE = 0.5
 MAX_TOKENS = 256
+LLM = "gpt-4"
 
 app = Flask(__name__, static_url_path='', static_folder='./static')
-# Add CORS support for the frontend
 CORS(app)
+
+# -----------------------------------------
+#
+# Helper functions
+#
+# -----------------------------------------
+
+def construct_user_prompt(words, subject, setting, humor):
+    user_prompt = USER_PROMPT.replace('{{words}}', words).replace('{{subject}}', subject).replace('{{setting}}', setting).replace('{{humor}}', humor)
+    return user_prompt
+
+# -----------------------------------------
+#
+# Routes
+#
+# -----------------------------------------
 
 @app.route('/')
 def home():
@@ -34,7 +55,7 @@ def stream():
     print("--------- New /stream request ---------")
 
     def process_stream(user_prompt):
-        stream = client.chat.completions.create(model='gpt-4',
+        stream = client.chat.completions.create(model=LLM,
             messages=[
                 {
                     "role": "system",
@@ -54,7 +75,6 @@ def stream():
                 content = chunk.choices[0].delta.content
                 yield content
     
-    # get the variables from POST request coming from a json fetch request
     words = request.json['words']
     subject = request.json['subject']
     setting = request.json['setting']
@@ -62,10 +82,6 @@ def stream():
     user_prompt = construct_user_prompt(words, subject, setting, humor)
     
     return Response(process_stream(user_prompt), mimetype='text/event-stream')
-
-def construct_user_prompt(words, subject, setting, humor):
-    user_prompt = USER_PROMPT.replace('{{words}}', words).replace('{{subject}}', subject).replace('{{setting}}', setting).replace('{{humor}}', humor)
-    return user_prompt
 
 @app.route('/generate', methods=['POST'])
 def generate():
@@ -80,7 +96,6 @@ def generate():
     # start a timer to evaluate how long this request takes
     start = time.time()
 
-    # get the variables from POST request coming from a json fetch request
     words = request.json['words']
     subject = request.json['subject']
     setting = request.json['setting']
@@ -88,7 +103,7 @@ def generate():
 
     user_prompt = construct_user_prompt(words, subject, setting, humor)
 
-    response = client.chat.completions.create(model='gpt-4',
+    response = client.chat.completions.create(model=LLM,
         messages=[
             {
                 "role": "system",
@@ -105,12 +120,9 @@ def generate():
 
     llm_response_content = response.choices[0].message.content
 
-    # stop the timer
     end = time.time()
     print("/generate - Time elapsed: ", end - start)
 
-    # response will have a <story></story> tag, so we need to split on <story> and </story> and get what's in between.
-    # sometimes the response will have two <story> tags, and we need the content that's in the last pair.
     story_object = {
         "story": llm_response_content
     }
