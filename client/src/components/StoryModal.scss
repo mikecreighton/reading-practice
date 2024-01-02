@@ -9,17 +9,40 @@
     display: flex;
     align-items: center;
     justify-content: center;
+    transform: translateY(100%);
 
     .modal-content {
 
         // Make this a fixed width
-        width: 500px;
+        width: 700px;
 
         p {
             font-size: 30px;
             line-height: 1.5;
             margin-bottom: 60px;
             font-family: 'Comic Sans MS', cursive, sans-serif;
+        }
+    }
+
+    .modal-close-button {
+        position: absolute;
+        top: 20px;
+        right: 20px;
+        font-size: 30px;
+        width: 60px;
+        height: 60px;
+        cursor: pointer;
+        user-select: none;
+        border: none;
+        color: #FFF;
+        font-weight: bold;
+        text-align: center;
+        background-color: #101010;
+        border-radius: 12px;
+        transition: background-color 0.1s ease-in-out;
+
+        &:hover {
+            background-color: #303030;
         }
     }
 

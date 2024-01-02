@@ -12,8 +12,15 @@ function App() {
     setStory(story);
   }
 
+  const handleStoryPartReceived = (storyPart) => {
+    setStory(storyPart);
+  }
+
+  const handleStoryModalClose = () => {
+    setStory(null);
+  }
+
   const handleRegenerate = () => {
-    console.log("Regenerate");
     inputFormRef.current.submitForm();
   }
 
@@ -23,8 +30,8 @@ function App() {
         <h1>Story Generator</h1>
       </header>
       <div>
-        <InputForm ref={inputFormRef} onStoryGenerated={handleStoryGenerated} />
-        {story && <StoryModal story={story} onRegenerate={handleRegenerate} onClose={() => setStory(null)} />}
+        <InputForm ref={inputFormRef} onStoryPartReceived={handleStoryPartReceived} onStoryGenerated={handleStoryGenerated} />
+        {story && <StoryModal story={story} onRegenerate={handleRegenerate} onClose={handleStoryModalClose} />}
       </div>
     </div>
   );

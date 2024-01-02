@@ -14,7 +14,7 @@ const InputForm = forwardRef((props, ref) => {
   const submitForm = async () => {
     try {
       const response = await fetch(
-        process.env.REACT_APP_API_URL + "/generate",
+        process.env.REACT_APP_API_URL + "/stream",
         {
           method: "POST",
           headers: {
@@ -31,9 +31,14 @@ const InputForm = forwardRef((props, ref) => {
       if (!response.ok) {
         throw new Error(`HTTP error status: ${response.statusText}`);
       } else {
-        const data = await response.json();
-        const story = data.story;
-        props.onStoryGenerated(story);
+        const reader = response.body.getReader();
+        let story = '';
+        let chunk;
+    
+        while ((chunk = await reader.read()) && !chunk.done) {
+          story += new TextDecoder("utf-8").decode(chunk.value);
+          props.onStoryPartReceived(story);
+        }
       }
     } catch (error) {
       console.error("Error:", error);
