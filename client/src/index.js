@@ -5,6 +5,9 @@ import App from './App';
 import reportWebVitals from './reportWebVitals';
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
+
+document.title = "Story Generator";
+
 root.render(
   <React.StrictMode>
     <App />
