@@ -19,7 +19,8 @@ You will be provided with the inputs in the following format:
 
 # Your Output
 
-- You will ONLY generate the story with no additional commentary or text."""
+- You will ONLY generate the story with no additional commentary or text.
+- Keep the sentence structure and vocabulary simple. This is for 2nd graders."""
 
 USER_PROMPT = """Write me a one paragraph story using the following inputs:
 
