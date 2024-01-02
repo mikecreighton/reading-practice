@@ -13,6 +13,7 @@ api_key = os.getenv("OPENAI_API_KEY")
 client = OpenAI(api_key=api_key)
 
 TEMPERATURE = 0.4
+MAX_TOKENS = 256
 
 app = Flask(__name__, static_url_path='', static_folder='./static')
 # Add CORS support for the frontend
@@ -45,7 +46,7 @@ def stream():
                 },
             ],
             temperature=TEMPERATURE,
-            max_tokens=256,
+            max_tokens=MAX_TOKENS,
             stream=True
         )
         for chunk in stream:
@@ -99,7 +100,7 @@ def generate():
             },
         ],
         temperature=TEMPERATURE,
-        max_tokens=256,
+        max_tokens=MAX_TOKENS,
     )
 
     llm_response_content = response.choices[0].message.content
