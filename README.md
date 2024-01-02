@@ -4,6 +4,16 @@ Simple web app that leverages generative AI for writing simple stories for readi
 
 This is hard-coded for a 2nd grade reading level, but if you review the prompts in `/server/prompts.py`, you'll see that it's pretty easy to change as needed. The prompts haven't been rigorously tested as of this writing, but they're pretty good for the most part.
 
+Fun facts about the creation of this app:
+
+- I didn't know React when I started building this. But I had some experience building a back-end with Python and Flask.
+- I used a combination of [Phind](https://www.phind.com/), [Cursor](https://cursor.sh/), and [GitHub Copilot](https://github.com/features/copilot) to create this from scratch.
+- I used Phind for the ground-up approach. It walked me step-by-step through the architecture and ins-and-outs of React.
+- I used Cursor to help me with specific implementation questions that benefitted from my actual code as part of the context.
+- I used GitHub Copilot for its super-charged auto-complete capabilities. I don't think I can code without GitHub Copilot anymore. It's such an accelerant.
+- I didn't touch ChatGPT because I wanted to use this project as a means of testing out Phind, Cursor, and GitHub Copilot as a new development environment / workflow.
+- This app has been dogfooded with a 7 year-old and a 10 year-old, and they seem to get a kick out of it. So much so that it's hard to get them to stop using it. They were the reason a "humor" slider was added to the interface.
+
 ## Getting started
 
 ### The Back-end Server
