@@ -1,4 +1,9 @@
-import React, { useState, useImperativeHandle, forwardRef, useRef } from "react";
+import React, {
+  useState,
+  useImperativeHandle,
+  forwardRef,
+  useRef,
+} from "react";
 import "./InputForm.scss";
 
 const InputForm = forwardRef((props, ref) => {
@@ -41,11 +46,11 @@ const InputForm = forwardRef((props, ref) => {
         }
       }
     } catch (error) {
-        if (error.name === "AbortError") {
-          console.log("Fetch request cancelled");
-        } else {
-          console.error("Error:", error);
-        }
+      if (error.name === "AbortError") {
+        console.log("Fetch request cancelled");
+      } else {
+        console.error("Error:", error);
+      }
     } finally {
       setIsLoading(false); // Set loading to false when request ends
     }
@@ -54,7 +59,8 @@ const InputForm = forwardRef((props, ref) => {
   // Expose submitForm and cancelRequest functions to parent component
   useImperativeHandle(ref, () => ({
     submitForm: submitForm,
-    cancelRequest: () => abortController.current && abortController.current.abort(),
+    cancelRequest: () =>
+      abortController.current && abortController.current.abort(),
   }));
 
   const handleSubmit = (event) => {
