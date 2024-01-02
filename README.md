@@ -1,10 +1,12 @@
 # Reading Practice
 
-Simple web app that leverages generative AI for writing simple stories for reading practice. The front-end is built with React, and the back-end is built with python and Flask. It makes use of the OpenAI API, specifically the GPT-4 model.
+Simple web app that leverages generative AI for writing simple stories for reading practice.
+
+**Architecture:** The front-end is built with React, and the back-end is built with python and Flask. It makes use of the OpenAI API, specifically the GPT-4 model.
 
 This is hard-coded for a 2nd grade reading level, but if you review the prompts in `/server/prompts.py`, you'll see that it's pretty easy to change as needed. The prompts haven't been rigorously tested as of this writing, but they're pretty good for the most part.
 
-Fun facts about the creation of this app:
+**Fun facts about the creation of this app:**
 
 - I didn't know React when I started building this. But I had some experience building a back-end with Python and Flask.
 - I used a combination of [Phind](https://www.phind.com/), [Cursor](https://cursor.sh/), and [GitHub Copilot](https://github.com/features/copilot) to create this from scratch.
