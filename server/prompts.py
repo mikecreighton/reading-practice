@@ -34,5 +34,4 @@ Humor Level: {{humor}}
 
 Please note, the story must be written for a student in the 2nd grade, who is about 7 years old. The reading level should be appropriate for this age group. But err towards the side of being too simple rather than too complex.
 
-Finally, and this is SO IMPORTANT, if the humor level is a high number, the story should be funny. But funny does not mean that people have to laugh or that you should make reference to things being funny. It just means that the story should have ridiculous and humorous things happen in it.
-"""
+Finally, and this is SO IMPORTANT, if the humor level is a high number, the story should be funny. But funny does not mean that people have to laugh or that you should make reference to things being funny. It just means that the story should have ridiculous and humorous things happen in it."""
