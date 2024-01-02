@@ -31,7 +31,7 @@ function App() {
       </header>
       <div>
         <InputForm ref={inputFormRef} onStoryPartReceived={handleStoryPartReceived} onStoryGenerated={handleStoryGenerated} />
-        {story && <StoryModal story={story} onRegenerate={handleRegenerate} onClose={handleStoryModalClose} />}
+        {story && <StoryModal story={story} onRegenerate={handleRegenerate} onCloseComplete={handleStoryModalClose} />}
       </div>
     </div>
   );

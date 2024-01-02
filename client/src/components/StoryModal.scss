@@ -12,15 +12,40 @@
     transform: translateY(100%);
 
     .modal-content {
-
-        // Make this a fixed width
-        width: 700px;
+        width: 80%;
 
         p {
             font-size: 30px;
             line-height: 1.5;
             margin-bottom: 60px;
             font-family: 'Comic Sans MS', cursive, sans-serif;
+        }
+    }
+
+    // mobile
+    @media (max-width: 768px) {
+
+        align-items: flex-start;
+        padding-top: 100px;
+
+        .modal-content {
+
+            width: 90%;
+
+            p {
+                font-size: 24px;
+            }
+
+        }
+    }
+    @media (max-width: 480px) {
+
+        .modal-content {
+
+            p {
+                font-size: 20px;
+            }
+
         }
     }
 
@@ -31,6 +56,29 @@
         font-size: 30px;
         width: 60px;
         height: 60px;
+        cursor: pointer;
+        user-select: none;
+        border: none;
+        color: #FFF;
+        font-weight: bold;
+        text-align: center;
+        background-color: #101010;
+        border-radius: 12px;
+        transition: background-color 0.1s ease-in-out;
+
+        &:hover {
+            background-color: #303030;
+        }
+    }
+
+    .modal-regenerate-button {
+        position: absolute;
+        bottom: 40px;
+        left: 50%;
+        transform: translateX(-50%);
+        font-size: 24px;
+        width: auto;
+        padding: 24px 36px;
         cursor: pointer;
         user-select: none;
         border: none;
