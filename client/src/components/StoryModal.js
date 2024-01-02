@@ -2,13 +2,14 @@ import { React, useEffect } from "react";
 import { gsap, Power4 } from "gsap";
 import "./StoryModal.scss";
 
-function StoryModal({ story, onRegenerate, onCloseComplete }) {
+function StoryModal({ story, onRegenerate, onCloseComplete, onCancelRequest }) {
   useEffect(() => {
     gsap.to(".modal", { duration: 0.5, y: "0%", ease: Power4.easeOut });
   }, []);
 
   const handleCloseRequest = (event) => {
     event.preventDefault();
+    onCancelRequest();
     gsap.to(".modal", { duration: 0.5, y: "100%", ease: Power4.easeInOut, onComplete: onCloseComplete });
   };
 

@@ -16,11 +16,12 @@ function App() {
     setStory(storyPart);
   };
 
-  const handleStoryModalClose = () => {
+  const handleStoryModalClosed = () => {
     setStory(null);
   };
 
   const handleRegenerate = () => {
+    inputFormRef.current.cancelRequest();
     inputFormRef.current.submitForm();
   };
 
@@ -36,7 +37,8 @@ function App() {
           <StoryModal
             story={story}
             onRegenerate={handleRegenerate}
-            onCloseComplete={handleStoryModalClose}
+            onCloseComplete={handleStoryModalClosed}
+            onCancelRequest={inputFormRef.current.cancelRequest}
           />
         )}
       </div>

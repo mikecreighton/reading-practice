@@ -1,4 +1,4 @@
-import React, { useState, useImperativeHandle, forwardRef } from "react";
+import React, { useState, useImperativeHandle, forwardRef, useRef } from "react";
 import "./InputForm.scss";
 
 const InputForm = forwardRef((props, ref) => {
@@ -6,10 +6,13 @@ const InputForm = forwardRef((props, ref) => {
   const [characterName, setCharacterName] = useState("");
   const [setting, setSetting] = useState("");
   const [humor, setHumorLevel] = useState(3);
-  const [isLoading, setIsLoading] = useState(false); // New state variable
+  const [isLoading, setIsLoading] = useState(false);
+  const abortController = useRef(null); // For making any active requests abortable
 
   const submitForm = async () => {
-    setIsLoading(true); // Set loading to true when request starts
+    setIsLoading(true);
+    abortController.current = new AbortController();
+
     try {
       const response = await fetch(process.env.REACT_APP_API_URL + "/stream", {
         method: "POST",
@@ -22,6 +25,7 @@ const InputForm = forwardRef((props, ref) => {
           setting: setting,
           humor: humor + "",
         }),
+        signal: abortController.current.signal,
       });
 
       if (!response.ok) {
@@ -37,7 +41,11 @@ const InputForm = forwardRef((props, ref) => {
         }
       }
     } catch (error) {
-      console.error("Error:", error);
+        if (error.name === "AbortError") {
+          console.log("Fetch request cancelled");
+        } else {
+          console.error("Error:", error);
+        }
     } finally {
       setIsLoading(false); // Set loading to false when request ends
     }
@@ -45,6 +53,7 @@ const InputForm = forwardRef((props, ref) => {
 
   useImperativeHandle(ref, () => ({
     submitForm: submitForm,
+    cancelRequest: () => abortController.current && abortController.current.abort(),
   }));
 
   const handleSubmit = (event) => {
