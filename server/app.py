@@ -19,7 +19,7 @@ client = OpenAI(api_key=api_key, base_url="https://openrouter.ai/api/v1")
 
 TEMPERATURE = 0.6
 MAX_TOKENS = 512
-LLM = "anthropic/claude-3-opus"
+LLM = "anthropic/claude-3.5-sonnet"
 
 app = Flask(__name__, static_url_path='', static_folder='./static')
 CORS(app)
