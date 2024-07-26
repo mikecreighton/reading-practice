@@ -14,12 +14,12 @@ from prompts import USER_PROMPT, SYSTEM_PROMPT
 
 load_dotenv()
 
-api_key = os.getenv("OPENAI_API_KEY")
-client = OpenAI(api_key=api_key)
+api_key = os.getenv("OPENROUTER_API_KEY")
+client = OpenAI(api_key=api_key, base_url="https://openrouter.ai/api/v1")
 
-TEMPERATURE = 0.5
-MAX_TOKENS = 256
-LLM = "gpt-4"
+TEMPERATURE = 0.6
+MAX_TOKENS = 512
+LLM = "anthropic/claude-3-opus"
 
 app = Flask(__name__, static_url_path='', static_folder='./static')
 CORS(app)
