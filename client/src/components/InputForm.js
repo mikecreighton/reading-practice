@@ -6,14 +6,21 @@ import React, {
 } from "react";
 import "./InputForm.scss";
 
+// InputForm component handles the form for inputting story elements and submitting them
 const InputForm = forwardRef((props, ref) => {
+  // State for the words to include in the story
   const [words, setWords] = useState("");
+  // State for the main character of the story
   const [characterName, setCharacterName] = useState("");
+  // State for the setting of the story
   const [setting, setSetting] = useState("");
+  // State for the humor level of the story
   const [humor, setHumorLevel] = useState(3);
+  // State for the loading status of the form submission
   const [isLoading, setIsLoading] = useState(false);
   const abortController = useRef(null); // For making any active requests abortable
 
+  // Function to submit the form and generate the story
   const submitForm = async () => {
     setIsLoading(true);
     abortController.current = new AbortController();
@@ -57,17 +64,20 @@ const InputForm = forwardRef((props, ref) => {
   };
 
   // Expose submitForm and cancelRequest functions to parent component
+  // Expose submitForm and cancelRequest functions to parent component
   useImperativeHandle(ref, () => ({
     submitForm: submitForm,
     cancelRequest: () =>
       abortController.current && abortController.current.abort(),
   }));
 
+  // Handle form submission event
   const handleSubmit = (event) => {
     event.preventDefault();
     submitForm(event);
   };
 
+  // Handle form reset event
   const handleReset = (event) => {
     event.preventDefault();
     setWords("");
