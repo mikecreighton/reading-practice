@@ -18,7 +18,8 @@ const InputForm = forwardRef((props, ref) => {
   const [humor, setHumorLevel] = useState(3);
   // State for the loading status of the form submission
   const [isLoading, setIsLoading] = useState(false);
-  const abortController = useRef(null); // For making any active requests abortable
+  // Reference for the abort controller to cancel ongoing requests
+  const abortController = useRef(null);
 
   // Function to submit the form and generate the story
   const submitForm = async () => {
