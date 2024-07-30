@@ -1,0 +1,87 @@
+<style lang="scss" scoped>
+form {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto;
+    width: 100%;
+    max-width: 700px;
+    padding: 40px 40px;
+    border: 1px solid #ccc;
+    border-radius: 12px;
+    background-color: #fff;
+
+    label {
+        display: flex;
+        flex-direction: column;
+        width: 100%;
+        margin-bottom: 30px;
+        font-size: 1.2rem;
+        color: #333;
+
+        .helper {
+            color: #AAA;
+            display: inline;
+            font-size: 80%;
+        }
+    }
+
+    input {
+        margin-top: 12px;
+        height: 60px;
+        line-height: 40px;
+        padding: 0 20px;
+        font-size: 20px;
+        border-radius: 4px;
+        border: 1px solid #AAA;
+    }
+
+    input.slider {
+        -webkit-appearance: none;
+        width: 100%;
+        height: 40px;
+        border-radius: 6px;
+        border: 0 none;
+        background: #101010;
+        outline: none;
+        -webkit-transition: .2s;
+        transition: opacity .2s;
+        // make the thumb as big as the slider height
+        &::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            background: #FFF;
+            cursor: pointer;
+        }
+    }
+
+    // make the buttons sit side-by-side
+    .buttons-container {
+        display: flex;
+        justify-content: flex-end;
+        gap: 20px;
+        width: 100%;
+
+        @media (max-width: 768px) {
+            gap: 16px;
+        }
+        @media (max-width: 480px) {
+            gap: 12px;
+            justify-content: space-between;
+        }
+        @media (max-width: 375px) {
+            gap: 8px;
+        }
+    }
+}
+</style>
+<template>
+    
+</template>
+<script setup>
+
+</script>
