@@ -53,5 +53,6 @@ const incrementCounter = () => {
 const submitForm = () => {
   showAlert.value = true
   // Here you would typically handle the form submission
+  console.log('Form submitted! Input:', inputText.value, 'Checked:', isChecked.value)
 }
 </script>
