@@ -45,7 +45,12 @@ def construct_user_prompt(words, subject, setting, humor):
 
 @app.route('/')
 def home():
-    return render_template('index.html')
+    return app.send_static_file('index.html')
+
+# Serve static files
+@app.route('/<path:path>')
+def serve_static(path):
+    return app.send_static_file(path)
 
 @app.route('/stream', methods=['POST'])
 def stream():
