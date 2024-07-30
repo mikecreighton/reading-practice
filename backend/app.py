@@ -128,5 +128,11 @@ def generate():
     }
     return jsonify(story_object)
 
+# Determine if we should use debug based on environment
+if os.getenv("FLASK_ENV") == "development":
+    debug = True
+else:
+    debug = False
+
 if __name__ == '__main__':
-    app.run(debug=True, host='0.0.0.0', port=5555)
+    app.run(debug=debug, host='0.0.0.0', port=8080)

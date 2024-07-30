@@ -13,6 +13,6 @@ instance/
 htmlcov/
 
 dist/
+static/
 build/
 *.egg-info/
-.aider*

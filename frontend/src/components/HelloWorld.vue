@@ -1,3 +1,6 @@
+<style lang="scss" scoped>
+
+</style>
 <template>
   <div class="container mt-5">
     <h1 class="mb-4">Welcome to My Vue + Bootstrap App</h1>
