@@ -23,6 +23,9 @@ LLM = "anthropic/claude-3.5-sonnet"
 
 app = Flask(__name__, static_url_path='', static_folder='./static')
 CORS(app)
+# Allow CORS for all origins
+CORS(app, resources={r"/*": {"origins": "*"}})
+
 
 # -----------------------------------------
 #

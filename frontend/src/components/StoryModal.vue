@@ -13,11 +13,12 @@
 
     .modal-content {
         width: 80%;
+        padding: 100px 40px 160px 40px;
 
         p {
             font-size: 36px;
             line-height: 1.6;
-            margin-bottom: 60px;
+            margin-bottom: 0px;
         }
     }
 
@@ -65,6 +66,7 @@
         background-color: #101010;
         border-radius: 12px;
         transition: background-color 0.1s ease-in-out;
+        padding: 0;
 
         &:hover {
             background-color: #303030;
@@ -75,14 +77,54 @@
         position: absolute;
         bottom: 40px;
         left: 50%;
+        padding: 20px;
         transform: translateX(-50%);
     }
 
 }
 </style>
 <template>
-    
+  <div class="modal">
+    <div class="modal-content">
+      <p>{{ story }}</p>
+      <button class="modal-close-button" @click="handleCloseRequest">
+        &#x2715;
+      </button>
+      <button
+        class="button-labeled modal-regenerate-button"
+        @click="$emit('regenerate')"
+      >
+        Regenerate
+      </button>
+    </div>
+  </div>
 </template>
-<script setup>
 
+<script setup>
+import { onMounted } from 'vue';
+import { gsap, Power4 } from 'gsap';
+
+const props = defineProps({
+  story: {
+    type: String,
+    required: true,
+  },
+});
+
+const emit = defineEmits(['closeComplete', 'cancelRequest']);
+
+onMounted(() => {
+  gsap.to(".modal", { duration: 0.5, y: "0%", ease: Power4.easeOut });
+});
+
+const handleCloseRequest = (event) => {
+  event.preventDefault();
+  emit('cancelRequest');
+  gsap.to(".modal", {
+    duration: 0.5,
+    y: "100%",
+    ease: Power4.easeInOut,
+    onComplete: () => emit('closeComplete'),
+  });
+};
 </script>
