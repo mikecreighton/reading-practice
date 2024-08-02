@@ -13,6 +13,8 @@ instance/
 htmlcov/
 
 dist/
-static/
 build/
 *.egg-info/
+
+.aidigestignore
+reading-practice.md

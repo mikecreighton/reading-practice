@@ -1,68 +1,99 @@
-# Reading Practice
+# Reading Practice Story Generator
 
-Simple web app that leverages generative AI for writing simple stories for reading practice.
+This project is a web application that generates custom stories for elementary school students to practice their reading and spelling skills. It consists of a Flask backend that generates stories using AI, and a Vue.js frontend that provides a user-friendly interface for inputting story parameters and displaying the generated stories.
 
-### Architecture
+## Project Structure
 
-- Front-end: React
-- Back-end: Python and Flask
-- LLM: OpenAI API, specifically GPT-4
+The project is divided into two main components:
 
-### Prompts
+1. Backend (Python/Flask)
+2. Frontend (Vue.js)
 
-This is hard-coded for a 2nd grade reading level, but if you review the prompts in `/server/prompts.py`, you'll see that it's pretty easy to change as needed. The prompts haven't been rigorously tested as of this writing, but they're pretty good for the most part.
+### Backend
 
-### Fun facts about the creation of this app
+The backend is a Flask application that uses OpenAI's API to generate stories based on user input. It's located in the `backend` directory and consists of the following key files:
 
-- I didn't know React when I started building this. But I had some experience building a back-end with Python and Flask.
-- I used a combination of [Phind](https://www.phind.com/), [Cursor](https://cursor.sh/), and [GitHub Copilot](https://github.com/features/copilot) to create this from scratch.
-- I used Phind for the ground-up approach. It walked me step-by-step through the architecture and ins-and-outs of React. I only used the Phind model, not GPT-4. It's pretty dang good, but it missed a couple minor implementation details here and there in the code it generated.
-- I used Cursor to help me with specific implementation questions that benefitted from my actual code as part of the context. This helped me close the gaps in Phind.
-- I used GitHub Copilot for its super-charged auto-complete capabilities. I don't think I can code without GitHub Copilot anymore. It's such an accelerant.
-- I didn't touch ChatGPT because I wanted to use this project as a means of testing out Phind, Cursor, and GitHub Copilot as a new development environment / workflow.
-- This app has been dogfooded with a 7 year-old and a 10 year-old, and they seem to get a kick out of it. So much so that it's hard to get them to stop using it. They were the reason a "humor" slider was added to the interface.
+- `app.py`: The main Flask application
+- `prompts.py`: Contains the system and user prompts for the AI
+- `requirements.txt`: Lists the Python dependencies
 
-## Getting started
+### Frontend
 
-### The Back-end Server
+The frontend is a Vue.js application that provides the user interface for the story generator. It's located in the `frontend` directory and uses Vite as the build tool. Key files include:
 
-1. In your favorite terminal, navigate to the `server` folder.
-2. Create a virtual Python environment ([link](https://docs.python.org/3/library/venv.html)).
-3. Activate your virtual Python environment.
-4. Install Python dependencies:
+- `src/App.vue`: The main Vue component
+- `src/components/InputForm.vue`: Component for user input
+- `src/components/StoryModal.vue`: Component for displaying the generated story
 
-```
-pip install -r requirements.txt
-```
+## Setup and Installation
 
-5. Duplicate the `.env.template` and rename to `.env`.
+To set up this project locally, follow these steps:
 
-```
-cp .env.template .env
-```
+1. Clone the repository:
+   ```
+   git clone <repository-url>
+   cd reading-practice-story-generator
+   ```
 
-6. Add your OpenAI API key to the `.env` file.
-7. Start the server:
+2. Set up the backend:
+   ```
+   cd backend
+   python -m venv venv
+   source venv/bin/activate  # On Windows, use `venv\Scripts\activate`
+   pip install -r requirements.txt
+   ```
 
-```
-python app.py
-```
+3. Set up environment variables:
+   Create a `.env` file in the `backend` directory with the following content:
+   ```
+   OPENROUTER_API_KEY=your_api_key_here
+   FLASK_ENV=development
+   ```
 
-8. Visit the local website: [http://localhost:5555](http://localhost:5555)
+4. Set up the frontend:
+   ```
+   cd ../frontend
+   npm install
+   ```
 
-### The Front-end App
+5. Create a `.env` file in the `frontend` directory with the following content:
+   ```
+   VITE_API_URL=http://localhost:8080
+   ```
 
-The app is a very simple React app, written by someone who knows nothing about React. Here's how you get started with running it locally:
+## Running the Application
 
-1. In your favorite terminal, navigate to the `client` folder.
-2. Type `npm install` or `yarn install` to install all dependencies.
-3. Copy the `.env.template` file to a new file called `.env`.
+1. Start the backend server:
+   ```
+   cd backend
+   flask run
+   ```
 
-```
-cp .env.template .env
-```
+2. In a new terminal, start the frontend development server:
+   ```
+   cd frontend
+   npm run dev
+   ```
 
-4. In that `.env` file, replace the URL value of `REACT_APP_API_URL` for the back-end API as needed. By default, when you run the back-end server locally, it will be served at `http://localhost:5555`.
-5. Type `npm run start` or `yarn start` to run the React app locally. Be sure that the back-end API server is running as well.
+3. Open your browser and navigate to `http://localhost:5173` (or the URL provided by Vite).
 
-Please note that `node-sass` is one of the dependencies for the app. I had issues getting this to install successfully when using `npm`, so you may want to use yarn. This is why you don't see a `package-lock.json` file in this repo.
+## Usage
+
+1. Enter the spelling words you want to practice, separated by commas.
+2. Specify a main character for the story.
+3. Enter a setting for the story.
+4. Adjust the humor level using the slider.
+5. Click "Generate Story" to create a custom story.
+
+## Contributing
+
+Contributions to this project are welcome! Please fork the repository and submit a pull request with your changes.
+
+## License
+
+[Specify your chosen license here]
+
+## Acknowledgments
+
+- This project uses OpenAI's API for story generation.
+- The frontend is built with Vue.js and uses GSAP for animations.

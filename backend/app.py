@@ -14,18 +14,26 @@ from prompts import USER_PROMPT, SYSTEM_PROMPT
 
 load_dotenv()
 
-api_key = os.getenv("OPENROUTER_API_KEY")
-client = OpenAI(api_key=api_key, base_url="https://openrouter.ai/api/v1")
+api_key = os.getenv("AI_API_KEY")
+ai_provider = os.getenv("AI_PROVIDER", "openai")
 
+if ai_provider == "openai":
+    client = OpenAI(api_key=api_key)
+elif ai_provider == "openrouter":
+    client = OpenAI(api_key=api_key, base_url="https://openrouter.ai/api/v1")
+
+ai_model = os.getenv("AI_MODEL", "gpt-4o")
 TEMPERATURE = 0.6
 MAX_TOKENS = 512
-LLM = "anthropic/claude-3.5-sonnet"
 
 app = Flask(__name__, static_url_path='', static_folder='./static')
 CORS(app)
-# Allow CORS for all origins
-CORS(app, resources={r"/*": {"origins": "*"}})
 
+# Allow CORS for all origins if FLASK_ENV is "development"
+if os.getenv("FLASK_ENV") == "development":
+    CORS(app, resources={r"/*": {"origins": "*"}})
+else:
+    CORS(app, resources={r"/*": {"origins": os.getenv("FRONTEND_ORIGIN")}})
 
 # -----------------------------------------
 #
@@ -63,7 +71,7 @@ def stream():
     print("--------- New /stream request ---------")
 
     def process_stream(user_prompt):
-        stream = client.chat.completions.create(model=LLM,
+        stream = client.chat.completions.create(model=ai_model,
             messages=[
                 {
                     "role": "system",
@@ -111,7 +119,7 @@ def generate():
 
     user_prompt = construct_user_prompt(words, subject, setting, humor)
 
-    response = client.chat.completions.create(model=LLM,
+    response = client.chat.completions.create(model=ai_model,
         messages=[
             {
                 "role": "system",
