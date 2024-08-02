@@ -32,37 +32,6 @@
         }
     }
 
-    // mobile
-    // @media (max-width: 768px) {
-
-    //     align-items: flex-start;
-    //     padding-top: 100px;
-
-    //     .story-modal-content {
-
-    //         width: 90%;
-
-    //         p {
-    //             font-size: 24px;
-    //             line-height: 1.6;
-    //         }
-
-    //     }
-    // }
-    // @media (max-width: 480px) {
-    //     padding-top: 0;
-
-    //     .story-modal-content {
-    //         width: 100%;
-
-    //         p {
-    //             font-size: 18px;
-    //             line-height: 1.6;
-    //         }
-
-    //     }
-    // }
-
     .story-modal-close-button {
         position: absolute;
         top: 20px;
@@ -80,7 +49,7 @@
         transition: background-color 0.1s ease-in-out;
         padding: 0;
 
-        &:hover {
+        &:hover, &:focus, &:active {
             background-color: #303030;
         }
     }

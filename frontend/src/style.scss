@@ -42,7 +42,7 @@ Custom CSS specific to the project
   border-radius: 12px;
   transition: background-color 0.1s ease-in-out;
 
-  &:hover {
+  &:hover, &:focus, &:active {
       background-color: #303030;
   }
 
