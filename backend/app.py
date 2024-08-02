@@ -54,6 +54,10 @@ def construct_user_prompt(words, subject, setting, humor):
 # Routes
 #
 # -----------------------------------------
+@app.before_request
+def log_request_info():
+    print('Headers: %s', request.headers)
+    print('Origin: %s', request.headers.get('Origin'))
 
 @app.route('/')
 def home():
