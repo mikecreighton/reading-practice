@@ -12,16 +12,18 @@
     transform: translateY(100%);
 
     .story-modal-content {
-        padding: 60px 40px 100px 40px;
+        padding: 60px 20px 100px 20px;
 
         p {
-            font-size: 16px;
-            line-height: 1.6;
+            font-size: 20px;
+            line-height: 1.8;
         }
 
         @media (min-width: 768px) {
+            padding: 60px 40px 100px 40px;
             p {
                 font-size: 30px;
+                line-height: 1.6;
             }
         }
 
