@@ -34,7 +34,10 @@ app = Flask(__name__, static_url_path='', static_folder='./static')
 if os.getenv("FLASK_ENV") == "development":
     CORS(app, resources={r"/*": {"origins": "*"}})
 else:
-    CORS(app, resources={r"/*": {"origins": os.getenv("FRONTEND_ORIGIN")}})
+    CORS(app, resources={r"/*": {
+        "origins": [os.getenv("FRONTEND_ORIGIN")],
+        "methods": ["POST", "OPTIONS"],
+    }})
 
 # -----------------------------------------
 #
