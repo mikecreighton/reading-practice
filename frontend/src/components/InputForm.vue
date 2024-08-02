@@ -55,7 +55,7 @@ form {
             background: #FFF;
             cursor: pointer;
         }
-        
+
         &:focus {
             touch-action: manipulation;
         }
@@ -82,7 +82,7 @@ form {
 }
 </style>
 <template>
-  <form @submit.prevent="handleSubmit">
+  <form>
     <label>
       <span class="prevent-wrap">
         Words to Include in the Story
@@ -118,33 +118,35 @@ form {
       />
     </label>
     <div class="buttons-container">
-      <button class="button-labeled" type="submit" :disabled="isLoading">
-        Generate Story
-      </button>
-      <button class="button-labeled" type="reset" @click="handleReset">
-        Reset
-      </button>
+      <FastButton :disabled="isLoading" buttonText="Generate Story" @click="handleSubmit"></FastButton>
+      <FastButton buttonText="Reset" @click="handleReset"></FastButton>
     </div>
   </form>
 </template>
 
 <script setup>
-import { ref } from 'vue';
+import { ref } from 'vue'
+import FastButton from './FastButton.vue'
 
-const words = ref('');
-const characterName = ref('');
-const setting = ref('');
-const humor = ref(3);
-const isLoading = ref(false);
-const abortController = ref(null);
+const DEFAULT_HUMOR_VALUE = 3
 
-const emit = defineEmits(['storyPartReceived']);
+const words = ref('')
+const characterName = ref('')
+const setting = ref('')
+const humor = ref(DEFAULT_HUMOR_VALUE)
+const isLoading = ref(false)
+const abortController = ref(null)
+
+const emit = defineEmits(['storyPartReceived'])
 
 const submitForm = async () => {
-  isLoading.value = true;
-  abortController.value = new AbortController();
+  isLoading.value = true
+  abortController.value = new AbortController()
 
-  let baseURL = import.meta.env.VITE_API_URL ? import.meta.env.VITE_API_URL : "";
+  let baseURL = import.meta.env.VITE_API_URL ? import.meta.env.VITE_API_URL : ""
+
+  // Immediately emit the story part received event so that the modal appears.
+  emit('storyPartReceived', ' ')
 
   try {
     const response = await fetch(baseURL + "/stream", {
@@ -159,47 +161,47 @@ const submitForm = async () => {
         humor: humor.value + "",
       }),
       signal: abortController.value.signal,
-    });
+    })
 
     if (!response.ok) {
-      throw new Error(`HTTP error status: ${response.statusText}`);
+      throw new Error(`HTTP error status: ${response.statusText}`)
     } else {
-      const reader = response.body.getReader();
-      let story = "";
-      let chunk;
+      const reader = response.body.getReader()
+      let story = ""
+      let chunk
 
       while ((chunk = await reader.read()) && !chunk.done) {
-        story += new TextDecoder("utf-8").decode(chunk.value);
-        emit('storyPartReceived', story);
+        story += new TextDecoder("utf-8").decode(chunk.value)
+        emit('storyPartReceived', story)
       }
     }
   } catch (error) {
     if (error.name === "AbortError") {
-      console.log("Fetch request cancelled");
+      console.log("Fetch request cancelled")
     } else {
-      console.error("Error:", error);
+      console.error("Error:", error)
     }
   } finally {
-    isLoading.value = false;
+    isLoading.value = false
   }
-};
+}
 
 const cancelRequest = () => {
   if (abortController.value) {
-    abortController.value.abort();
+    abortController.value.abort()
   }
-};
+}
 
 const handleSubmit = () => {
-  submitForm();
-};
+  submitForm()
+}
 
 const handleReset = () => {
-  words.value = '';
-  characterName.value = '';
-  setting.value = '';
-  humor.value = 3;
-};
+  words.value = ''
+  characterName.value = ''
+  setting.value = ''
+  humor.value = 3
+}
 
 defineExpose({
   submitForm,

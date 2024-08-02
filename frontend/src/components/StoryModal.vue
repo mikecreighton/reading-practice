@@ -73,7 +73,7 @@
       <button class="story-modal-close-button" @click="handleCloseRequest">
         &#x2715;
       </button>
-      <button class="button-labeled regenerate-button" @click="$emit('regenerate')">Regenerate</button>
+      <FastButton customClass="regenerate-button" buttonText="Regenerate" @click="$emit('regenerate')"></FastButton>
     </div>
   </div>
 </template>
@@ -81,6 +81,7 @@
 <script setup>
 import { onMounted } from 'vue';
 import { gsap, Power4 } from 'gsap';
+import FastButton from './FastButton.vue';
 
 const props = defineProps({
   story: {
@@ -89,7 +90,7 @@ const props = defineProps({
   },
 });
 
-const emit = defineEmits(['closeComplete', 'cancelRequest']);
+const emit = defineEmits(['closeComplete', 'cancelRequest', 'regenerate']);
 
 onMounted(() => {
   gsap.to(".story-modal", { duration: 0.5, y: "0%", ease: Power4.easeOut });
