@@ -23,7 +23,7 @@ elif ai_provider == "openrouter":
     client = OpenAI(api_key=api_key, base_url="https://openrouter.ai/api/v1")
 
 ai_model = os.getenv("AI_MODEL", "gpt-4o")
-TEMPERATURE = 0.6
+TEMPERATURE = 0.8
 MAX_TOKENS = 512
 
 app = Flask(__name__, static_url_path='', static_folder='./static')
@@ -118,6 +118,8 @@ def generate():
     humor = request.json['humor']
 
     user_prompt = construct_user_prompt(words, subject, setting, humor)
+    # Append a timestamp to the end of the message
+    user_prompt += f"\n\n[IGNORE THIS: Timestamp: {time.time()}]"
 
     response = client.chat.completions.create(model=ai_model,
         messages=[

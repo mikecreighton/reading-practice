@@ -40,8 +40,10 @@
         }
     }
     @media (max-width: 480px) {
+        padding-top: 0;
 
         .modal-content {
+            width: 100%;
 
             p {
                 font-size: 18px;
