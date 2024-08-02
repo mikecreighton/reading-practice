@@ -1,7 +1,7 @@
 import os
 from openai import OpenAI
 from dotenv import load_dotenv
-from flask import Flask, request, jsonify, render_template, Response
+from flask import Flask, request, jsonify, Response
 from flask_cors import CORS
 import time
 from prompts import USER_PROMPT, SYSTEM_PROMPT
@@ -12,22 +12,23 @@ from prompts import USER_PROMPT, SYSTEM_PROMPT
 #
 # -----------------------------------------
 
-load_dotenv()
+load_dotenv(override=True)
 
 api_key = os.getenv("AI_API_KEY")
 ai_provider = os.getenv("AI_PROVIDER", "openai")
+default_model = "gpt-4o"
 
 if ai_provider == "openai":
     client = OpenAI(api_key=api_key)
 elif ai_provider == "openrouter":
+    default_model = "anthropic/claude-3.5-sonnet"
     client = OpenAI(api_key=api_key, base_url="https://openrouter.ai/api/v1")
 
-ai_model = os.getenv("AI_MODEL", "gpt-4o")
+ai_model = os.getenv("AI_MODEL", default_model)
 TEMPERATURE = 0.8
-MAX_TOKENS = 512
+MAX_TOKENS = 100
 
 app = Flask(__name__, static_url_path='', static_folder='./static')
-CORS(app)
 
 # Allow CORS for all origins if FLASK_ENV is "development"
 if os.getenv("FLASK_ENV") == "development":
@@ -71,25 +72,29 @@ def stream():
     print("--------- New /stream request ---------")
 
     def process_stream(user_prompt):
-        stream = client.chat.completions.create(model=ai_model,
-            messages=[
-                {
-                    "role": "system",
-                    "content": SYSTEM_PROMPT
-                },
-                {
-                    "role":"user",
-                    "content": user_prompt
-                },
-            ],
-            temperature=TEMPERATURE,
-            max_tokens=MAX_TOKENS,
-            stream=True
-        )
-        for chunk in stream:
-            if chunk.choices[0].delta.content is not None:
-                content = chunk.choices[0].delta.content
-                yield content
+        try:
+            stream = client.chat.completions.create(model=ai_model,
+                messages=[
+                    {
+                        "role": "system",
+                        "content": SYSTEM_PROMPT
+                    },
+                    {
+                        "role":"user",
+                        "content": user_prompt
+                    },
+                ],
+                temperature=TEMPERATURE,
+                max_tokens=MAX_TOKENS,
+                stream=True
+            )
+            for chunk in stream:
+                if chunk.choices[0].delta.content is not None:
+                    content = chunk.choices[0].delta.content
+                    yield content
+        except Exception as e:
+            print(f"Error during streaming: {e}")
+            yield f"Error: {e}"
     
     words = request.json['words']
     subject = request.json['subject']
@@ -119,7 +124,7 @@ def generate():
 
     user_prompt = construct_user_prompt(words, subject, setting, humor)
     # Append a timestamp to the end of the message
-    user_prompt += f"\n\n[IGNORE THIS: Timestamp: {time.time()}]"
+    # user_prompt += f"\n\n[IGNORE THIS: Timestamp: {time.time()}]"
 
     response = client.chat.completions.create(model=ai_model,
         messages=[
