@@ -15,19 +15,19 @@
         padding: 60px 40px 100px 40px;
 
         p {
-            font-size: 24px;
+            font-size: 16px;
             line-height: 1.6;
         }
 
         @media (min-width: 768px) {
             p {
-                font-size: 36px;
+                font-size: 30px;
             }
         }
 
         @media (min-width: 1200px) {
             p {
-                font-size: 48px;
+                font-size: 36px;
             }
         }
     }

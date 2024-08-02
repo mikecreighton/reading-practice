@@ -26,7 +26,7 @@ elif ai_provider == "openrouter":
 
 ai_model = os.getenv("AI_MODEL", default_model)
 TEMPERATURE = 0.8
-MAX_TOKENS = 100
+MAX_TOKENS = 256
 
 app = Flask(__name__, static_url_path='', static_folder='./static')
 
