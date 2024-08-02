@@ -8,8 +8,6 @@ form {
     width: 100%;
     max-width: 700px;
     padding: 40px 40px;
-    border: 1px solid #ccc;
-    border-radius: 12px;
     background-color: #fff;
 
     label {
@@ -40,24 +38,26 @@ form {
     }
 
     input.slider {
-        -webkit-appearance: none;
+        appearance: none;
         width: 100%;
         height: 40px;
         border-radius: 6px;
         border: 0 none;
         background: #101010;
         outline: none;
-        -webkit-transition: .2s;
         transition: opacity .2s;
-        // make the thumb as big as the slider height
+
         &::-webkit-slider-thumb {
-            -webkit-appearance: none;
             appearance: none;
             width: 30px;
             height: 30px;
             border-radius: 50%;
             background: #FFF;
             cursor: pointer;
+        }
+        
+        &:focus {
+            touch-action: manipulation;
         }
     }
 
