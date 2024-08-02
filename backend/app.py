@@ -47,6 +47,9 @@ else:
 
 def construct_user_prompt(words, subject, setting, humor):
     user_prompt = USER_PROMPT.replace('{{words}}', words).replace('{{subject}}', subject).replace('{{setting}}', setting).replace('{{humor}}', humor)
+    # Add a timestamp to prevent caching when using OpenRouter
+    if ai_provider == "openrouter":
+        user_prompt += f"\n\n[IGNORE THIS: Timestamp: {time.time()}]"
     return user_prompt
 
 # -----------------------------------------
@@ -54,10 +57,13 @@ def construct_user_prompt(words, subject, setting, humor):
 # Routes
 #
 # -----------------------------------------
+
+# A little helper in case you're having trouble with CORS origins
 @app.before_request
 def log_request_info():
-    print('Headers: %s', request.headers)
-    print('Origin: %s', request.headers.get('Origin'))
+    if os.getenv("FLASK_ENV") != "development":
+        print('Headers: %s', request.headers)
+        print('Origin: %s', request.headers.get('Origin'))
 
 @app.route('/')
 def home():
@@ -75,9 +81,6 @@ def stream():
     Used for a streaming request to generate a story.
 
     """
-
-    print("--------- New /stream request ---------")
-
     def process_stream(user_prompt):
         try:
             stream = client.chat.completions.create(model=ai_model,
@@ -118,9 +121,6 @@ def generate():
     Used for a non-streaming request to generate a story.
 
     """
-
-    print("--------- New /generate request ---------")
-
     # start a timer to evaluate how long this request takes
     start = time.time()
 
@@ -130,8 +130,6 @@ def generate():
     humor = request.json['humor']
 
     user_prompt = construct_user_prompt(words, subject, setting, humor)
-    # Append a timestamp to the end of the message
-    # user_prompt += f"\n\n[IGNORE THIS: Timestamp: {time.time()}]"
 
     response = client.chat.completions.create(model=ai_model,
         messages=[
