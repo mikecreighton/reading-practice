@@ -52,18 +52,18 @@ def construct_user_prompt(words, subject, setting, humor):
         user_prompt += f"\n\n[IGNORE THIS: Timestamp: {time.time()}]"
     return user_prompt
 
+# A little helper in case you're having trouble with CORS origins
+# @app.before_request
+# def log_request_info():
+#     if os.getenv("FLASK_ENV") != "development":
+#         print('Headers: %s', request.headers)
+#         print('Origin: %s', request.headers.get('Origin'))
+
 # -----------------------------------------
 #
 # Routes
 #
 # -----------------------------------------
-
-# A little helper in case you're having trouble with CORS origins
-@app.before_request
-def log_request_info():
-    if os.getenv("FLASK_ENV") != "development":
-        print('Headers: %s', request.headers)
-        print('Origin: %s', request.headers.get('Origin'))
 
 @app.route('/')
 def home():
