@@ -144,6 +144,8 @@ const submitForm = async () => {
   abortController.value = new AbortController()
 
   let baseURL = import.meta.env.VITE_API_URL ? import.meta.env.VITE_API_URL : ""
+  // Strip out any trailing slashes from the base URL.
+  baseURL = baseURL.replace(/\/$/, '')
 
   // Immediately emit the story part received event so that the modal appears.
   emit('storyPartReceived', ' ')

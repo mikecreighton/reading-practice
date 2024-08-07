@@ -14,20 +14,26 @@ from prompts import USER_PROMPT, SYSTEM_PROMPT
 
 load_dotenv(override=True)
 
-api_key = os.getenv("AI_API_KEY")
-ai_provider = os.getenv("AI_PROVIDER", "openai")
-default_model = "gpt-4o"
+# First, we'll figure out which API service to use for text generation
+AI_TEXT_PROVIDER = os.getenv("AI_TEXT_PROVIDER", "openai")
 
-if ai_provider == "openai":
-    client = OpenAI(api_key=api_key)
-elif ai_provider == "openrouter":
-    default_model = "anthropic/claude-3.5-sonnet"
-    client = OpenAI(api_key=api_key, base_url="https://openrouter.ai/api/v1")
+if AI_TEXT_PROVIDER == "openai":
+    AI_TEXT_API_KEY = os.getenv("OPENAI_API_KEY")
+    AI_TEXT_BASE_URL = "https://api.openai.com/v1"
+    DEFAULT_TEXT_MODEL = "gpt-4o"
 
-ai_model = os.getenv("AI_MODEL", default_model)
+elif AI_TEXT_PROVIDER == "openrouter":
+    AI_TEXT_API_KEY = os.getenv("OPENROUTER_API_KEY")
+    AI_TEXT_BASE_URL = "https://openrouter.ai/api/v1"
+    DEFAULT_TEXT_MODEL = "anthropic/claude-3.5-sonnet"
+
+client = OpenAI(api_key=AI_TEXT_API_KEY, base_url=AI_TEXT_BASE_URL)
+
+AI_TEXT_MODEL = os.getenv("AI_TEXT_MODEL", DEFAULT_TEXT_MODEL)
 TEMPERATURE = 0.8
 MAX_TOKENS = 256
 
+# Instantiate the Flask app
 app = Flask(__name__, static_url_path='', static_folder='./static')
 
 # Allow CORS for all origins if FLASK_ENV is "development"
@@ -48,16 +54,23 @@ else:
 def construct_user_prompt(words, subject, setting, humor):
     user_prompt = USER_PROMPT.replace('{{words}}', words).replace('{{subject}}', subject).replace('{{setting}}', setting).replace('{{humor}}', humor)
     # Add a timestamp to prevent caching when using OpenRouter
-    if ai_provider == "openrouter":
+    if AI_TEXT_PROVIDER == "openrouter":
         user_prompt += f"\n\n[IGNORE THIS: Timestamp: {time.time()}]"
     return user_prompt
 
-# A little helper in case you're having trouble with CORS origins
+# -----------------------------------------
+#
+# HELPERS
+#
+# -----------------------------------------
+
+# A little helper logger in case you're having trouble with CORS origins.
 # @app.before_request
 # def log_request_info():
 #     if os.getenv("FLASK_ENV") != "development":
 #         print('Headers: %s', request.headers)
 #         print('Origin: %s', request.headers.get('Origin'))
+
 
 # -----------------------------------------
 #
@@ -67,23 +80,32 @@ def construct_user_prompt(words, subject, setting, humor):
 
 @app.route('/')
 def home():
+    """
+
+    Serve the homepage
+
+    """
     return app.send_static_file('index.html')
 
-# Serve static files
 @app.route('/<path:path>')
 def serve_static(path):
+    """
+
+    Serve static files
+
+    """
     return app.send_static_file(path)
 
 @app.route('/stream', methods=['POST'])
 def stream():
     """
 
-    Used for a streaming request to generate a story.
+    Used for a _streaming_ request to generate a story.
 
     """
     def process_stream(user_prompt):
         try:
-            stream = client.chat.completions.create(model=ai_model,
+            stream = client.chat.completions.create(model=AI_TEXT_MODEL,
                 messages=[
                     {
                         "role": "system",
@@ -131,7 +153,7 @@ def generate():
 
     user_prompt = construct_user_prompt(words, subject, setting, humor)
 
-    response = client.chat.completions.create(model=ai_model,
+    response = client.chat.completions.create(model=AI_TEXT_MODEL,
         messages=[
             {
                 "role": "system",
@@ -156,11 +178,12 @@ def generate():
     }
     return jsonify(story_object)
 
-# Determine if we should use debug based on environment
-if os.getenv("FLASK_ENV") == "development":
-    debug = True
-else:
+# Determine if we should use debug based on environment.
+# We'll default to debug for anything that isn't "production".
+if os.getenv("FLASK_ENV") == "production":
     debug = False
+else:
+    debug = True
 
 if __name__ == '__main__':
     app.run(debug=debug, host='0.0.0.0', port=8080)
