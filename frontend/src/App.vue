@@ -3,14 +3,14 @@
     <div class="app-content">
       <InputForm
         ref="inputFormRef"
-        @storyPartReceived="handleStoryPartReceived"
-        @storyGenerated="handleStoryGenerated"
+        @storyGenerationStart="handleStoryGenerationStart"
+        @storyGenerationComplete="handleStoryGenerationComplete"
       />
       <StoryModal
         v-if="story"
         :story="story"
         @regenerate="handleRegenerate"
-        @closeComplete="handleStoryModalClosed"
+        @closeComplete="handleStoryModalClose"
         @cancelRequest="inputFormRef.cancelRequest"
       />
     </div>
@@ -25,15 +25,15 @@ import InputForm from './components/InputForm.vue';
 const story = ref(null);
 const inputFormRef = ref(null);
 
-const handleStoryGenerated = (generatedStory) => {
+const handleStoryGenerationStart = () => {
+  story.value = " ";
+};
+
+const handleStoryGenerationComplete = (generatedStory) => {
   story.value = generatedStory;
 };
 
-const handleStoryPartReceived = (storyPart) => {
-  story.value = storyPart;
-};
-
-const handleStoryModalClosed = () => {
+const handleStoryModalClose = () => {
   story.value = null;
 };
 

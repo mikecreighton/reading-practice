@@ -136,8 +136,8 @@ def stream():
     
     return Response(process_stream(user_prompt), mimetype='text/event-stream')
 
-@app.route('/generate', methods=['POST'])
-def generate():
+@app.route('/generate_story', methods=['POST'])
+def generate_story():
     """
 
     Used for a non-streaming request to generate a story.

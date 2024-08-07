@@ -137,52 +137,43 @@ const humor = ref(DEFAULT_HUMOR_VALUE)
 const isLoading = ref(false)
 const abortController = ref(null)
 
-const emit = defineEmits(['storyPartReceived'])
+const emit = defineEmits(['storyGenerationStart', 'storyGenerationComplete'])
 
 const submitForm = async () => {
   isLoading.value = true
-  abortController.value = new AbortController()
 
   let baseURL = import.meta.env.VITE_API_URL ? import.meta.env.VITE_API_URL : ""
   // Strip out any trailing slashes from the base URL.
   baseURL = baseURL.replace(/\/$/, '')
 
+  let payload = JSON.stringify({
+    words: words.value,
+    subject: characterName.value,
+    setting: setting.value,
+    humor: humor.value + "",
+  })
+
   // Immediately emit the story part received event so that the modal appears.
-  emit('storyPartReceived', ' ')
+  emit('storyGenerationStart')
 
   try {
-    const response = await fetch(baseURL + "/stream", {
+    const response = await fetch(baseURL + "/generate_story", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
+        "Accept": "application/json",
       },
-      body: JSON.stringify({
-        words: words.value,
-        subject: characterName.value,
-        setting: setting.value,
-        humor: humor.value + "",
-      }),
-      signal: abortController.value.signal,
+      body: payload,
     })
 
     if (!response.ok) {
       throw new Error(`HTTP error status: ${response.statusText}`)
     } else {
-      const reader = response.body.getReader()
-      let story = ""
-      let chunk
-
-      while ((chunk = await reader.read()) && !chunk.done) {
-        story += new TextDecoder("utf-8").decode(chunk.value)
-        emit('storyPartReceived', story)
-      }
+      const data = await response.json()
+      emit('storyGenerationComplete', data.story)
     }
   } catch (error) {
-    if (error.name === "AbortError") {
-      console.log("Fetch request cancelled")
-    } else {
-      console.error("Error:", error)
-    }
+    console.error("Error:", error)
   } finally {
     isLoading.value = false
   }
