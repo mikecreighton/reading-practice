@@ -10,6 +10,7 @@
       <StoryModal
         v-if="story"
         :story="story"
+        :illustration="illustration"
         @regenerate="handleRegenerate"
         @closeStart="handleStoryModalCloseStart"
         @closeComplete="handleStoryModalCloseComplete"
@@ -24,14 +25,16 @@ import StoryModal from '@/views/StoryModal.vue'
 import InputForm from '@/views/InputForm.vue'
 
 const story = ref(null)
+const illustration = ref(null)
 const inputFormRef = ref(null)
 
 const handleStoryGenerationStart = () => {
   story.value = " "
 }
 
-const handleStoryGenerationComplete = (generatedStory) => {
+const handleStoryGenerationComplete = (generatedStory, generatedIllustration) => {
   story.value = generatedStory
+  illustration.value = generatedIllustration
 }
 
 const handleStoryModalCloseStart = () => {
@@ -43,6 +46,8 @@ const handleStoryModalCloseComplete = () => {
 }
 
 const handleRegenerate = () => {
+  inputFormRef.value.cancelRequest();
+  illustration.value = null
   inputFormRef.value.submitForm();
 }
 

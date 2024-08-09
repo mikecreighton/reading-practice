@@ -4,7 +4,7 @@ from dotenv import load_dotenv
 from flask import Flask, request, jsonify, Response
 from flask_cors import CORS
 import time
-from prompts import USER_PROMPT, SYSTEM_PROMPT
+from prompts import USER_PROMPT, SYSTEM_PROMPT, ILLUSTRATION_SYSTEM_PROMPT, ILLUSTRATION_USER_PROMPT
 
 # -----------------------------------------
 #
@@ -27,7 +27,7 @@ elif AI_TEXT_PROVIDER == "openrouter":
     AI_TEXT_BASE_URL = "https://openrouter.ai/api/v1"
     DEFAULT_TEXT_MODEL = "anthropic/claude-3.5-sonnet"
 
-client = OpenAI(api_key=AI_TEXT_API_KEY, base_url=AI_TEXT_BASE_URL)
+text_client = OpenAI(api_key=AI_TEXT_API_KEY, base_url=AI_TEXT_BASE_URL)
 
 AI_TEXT_MODEL = os.getenv("AI_TEXT_MODEL", DEFAULT_TEXT_MODEL)
 TEMPERATURE = 0.8
@@ -58,6 +58,9 @@ def construct_user_prompt(words, subject, setting, humor):
         user_prompt += f"\n\n[IGNORE THIS: Timestamp: {time.time()}]"
     return user_prompt
 
+def construct_illustration_user_prompt(story):
+    user_prompt = ILLUSTRATION_USER_PROMPT.replace('{{story}}', story)
+    return user_prompt
 # -----------------------------------------
 #
 # HELPERS
@@ -153,7 +156,7 @@ def generate_story():
 
     user_prompt = construct_user_prompt(words, subject, setting, humor)
 
-    response = client.chat.completions.create(model=AI_TEXT_MODEL,
+    response = text_client.chat.completions.create(model=AI_TEXT_MODEL,
         messages=[
             {
                 "role": "system",
@@ -171,12 +174,69 @@ def generate_story():
     llm_response_content = response.choices[0].message.content
 
     end = time.time()
-    print("/generate - Time elapsed: ", end - start)
+    print("/generate_story - Time elapsed: ", end - start)
 
     story_object = {
         "story": llm_response_content
     }
     return jsonify(story_object)
+
+
+@app.route('/generate_illustration', methods=['POST'])
+def generate_illustration():
+    """
+
+    Used for a non-streaming request to generate an illustration.
+
+    """
+    # Only do this if the OPENAI_API_KEY environment variable is set
+    if os.getenv("OPENAI_API_KEY"):
+
+        # start a timer to evaluate how long this request takes
+        start = time.time()
+
+        story = request.json['story']
+        user_prompt = construct_illustration_user_prompt(story)
+
+        response = text_client.chat.completions.create(model='meta-llama/llama-3.1-8b-instruct',
+            messages=[
+                {
+                    "role": "system",
+                    "content": ILLUSTRATION_SYSTEM_PROMPT
+                },
+                {
+                    "role":"user",
+                    "content": user_prompt
+                },
+            ],
+            temperature=TEMPERATURE,
+            max_tokens=MAX_TOKENS,
+        )
+
+        print(response.choices[0].message.content)
+
+        image_gen_client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
+
+        image_gen_response = image_gen_client.images.generate(
+            model="dall-e-3",
+            prompt=response.choices[0].message.content,
+            size="1024x1024",
+            quality="standard",
+            n=1,
+            response_format="b64_json",
+        )
+
+        image_gen_response_b64 = image_gen_response.data[0].b64_json
+
+        end = time.time()
+        print("/generate_illustration - Time elapsed: ", end - start)
+
+        iamge_object = {
+            "image": image_gen_response_b64
+        }
+        return jsonify(iamge_object)
+    else:
+        return jsonify({"error": "No OPENAI_API_KEY environment variable set."})
 
 # Determine if we should use debug based on environment.
 # We'll default to debug for anything that isn't "production".

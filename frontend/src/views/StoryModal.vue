@@ -69,6 +69,7 @@
 <template>
   <div class="story-modal">
     <div class="story-modal-content">
+      <img width="500" v-if="illustration" :src="illustration" alt="Illustration" />
       <p>{{ story }}</p>
       <button class="story-modal-close-button" @click="handleCloseRequest">
         &#x2715;
@@ -87,6 +88,10 @@ const props = defineProps({
   story: {
     type: String,
     required: true,
+  },
+  illustration: {
+    type: String,
+    required: false,
   },
 });
 

@@ -127,7 +127,7 @@ form {
 <script setup>
 import { ref } from 'vue'
 import FastButton from '@/components/FastButton.vue'
-import { generateStory } from '@/services/ai'
+import { generateStory, generateIllustration } from '@/services/ai'
 
 const DEFAULT_HUMOR_VALUE = 3
 
@@ -148,7 +148,13 @@ const submitForm = async () => {
   abortController.value = new AbortController()
 
   generateStory(words.value, characterName.value, setting.value, humor.value, abortController.value.signal).then((story) => {
-    emit('storyGenerationComplete', story)
+    generateIllustration(story, abortController.value.signal).then((illustration) => {
+      emit('storyGenerationComplete', story, illustration)
+    }).catch((error) => {
+      if (error.name !== 'AbortError') {
+        throw error
+      }
+    })
   }).catch((error) => {
     if (error.name !== 'AbortError') {
       console.error("Error:", error)

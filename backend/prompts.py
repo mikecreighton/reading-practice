@@ -44,3 +44,18 @@ Setting: {{setting}}
 Humor Level: {{humor}}
 
 Very important: the story MUST be written for a student in the 2nd grade, who is about 8 years old. The reading level needs to be appropriate for this age group. This is _very_ important! Do your best."""
+
+ILLUSTRATION_SYSTEM_PROMPT = """You are an expert at creating illustrations for children's books and stories. You will be provided with a short story and use a generative AI image model to create an illustration for it. You are also highly skilled at prompt engineering for generative AI image models, so your response will be a prompt for the image model.
+
+# Your Inputs
+
+- Story: [1 paragraph story]
+
+# Your Output
+
+- You will ONLY generate the prompt for the image model with no additional commentary or text.
+"""
+
+ILLUSTRATION_USER_PROMPT = """Create an illustration for the following story:
+
+Story: {{story}}"""
