@@ -126,7 +126,7 @@ form {
 
 <script setup>
 import { ref } from 'vue'
-import FastButton from './FastButton.vue'
+import FastButton from '@/components/FastButton.vue'
 
 const DEFAULT_HUMOR_VALUE = 3
 

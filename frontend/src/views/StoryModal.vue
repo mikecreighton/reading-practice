@@ -81,7 +81,7 @@
 <script setup>
 import { onMounted } from 'vue';
 import { gsap, Power4 } from 'gsap';
-import FastButton from './FastButton.vue';
+import FastButton from '@/components/FastButton.vue';
 
 const props = defineProps({
   story: {

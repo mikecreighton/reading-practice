@@ -19,8 +19,8 @@
 
 <script setup>
 import { ref } from 'vue';
-import StoryModal from './components/StoryModal.vue';
-import InputForm from './components/InputForm.vue';
+import StoryModal from '@/views/StoryModal.vue';
+import InputForm from '@/views/InputForm.vue';
 
 const story = ref(null);
 const inputFormRef = ref(null);
