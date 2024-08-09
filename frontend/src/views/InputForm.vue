@@ -127,6 +127,7 @@ form {
 <script setup>
 import { ref } from 'vue'
 import FastButton from '@/components/FastButton.vue'
+import { generateStory } from '@/services/ai'
 
 const DEFAULT_HUMOR_VALUE = 3
 
@@ -135,54 +136,22 @@ const characterName = ref('')
 const setting = ref('')
 const humor = ref(DEFAULT_HUMOR_VALUE)
 const isLoading = ref(false)
-const abortController = ref(null)
 
-const emit = defineEmits(['storyGenerationStart', 'storyGenerationComplete'])
+const emit = defineEmits(['storyGenerationStart', 'storyGenerationComplete', 'storyGenerationError'])
 
 const submitForm = async () => {
   isLoading.value = true
 
-  let baseURL = import.meta.env.VITE_API_URL ? import.meta.env.VITE_API_URL : ""
-  // Strip out any trailing slashes from the base URL.
-  baseURL = baseURL.replace(/\/$/, '')
-
-  let payload = JSON.stringify({
-    words: words.value,
-    subject: characterName.value,
-    setting: setting.value,
-    humor: humor.value + "",
-  })
-
-  // Immediately emit the story part received event so that the modal appears.
   emit('storyGenerationStart')
 
-  try {
-    const response = await fetch(baseURL + "/generate_story", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        "Accept": "application/json",
-      },
-      body: payload,
-    })
-
-    if (!response.ok) {
-      throw new Error(`HTTP error status: ${response.statusText}`)
-    } else {
-      const data = await response.json()
-      emit('storyGenerationComplete', data.story)
-    }
-  } catch (error) {
+  generateStory(words.value, characterName.value, setting.value, humor.value).then((story) => {
+    emit('storyGenerationComplete', story)
+  }).catch((error) => {
     console.error("Error:", error)
-  } finally {
+    emit('storyGenerationError', error)
+  }).finally(() => {
     isLoading.value = false
-  }
-}
-
-const cancelRequest = () => {
-  if (abortController.value) {
-    abortController.value.abort()
-  }
+  })
 }
 
 const handleSubmit = () => {
@@ -193,11 +162,10 @@ const handleReset = () => {
   words.value = ''
   characterName.value = ''
   setting.value = ''
-  humor.value = 3
+  humor.value = DEFAULT_HUMOR_VALUE
 }
 
 defineExpose({
   submitForm,
-  cancelRequest,
-});
+})
 </script>

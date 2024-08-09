@@ -5,40 +5,43 @@
         ref="inputFormRef"
         @storyGenerationStart="handleStoryGenerationStart"
         @storyGenerationComplete="handleStoryGenerationComplete"
+        @storyGenerationError="handleStoryGenerationError"
       />
       <StoryModal
         v-if="story"
         :story="story"
         @regenerate="handleRegenerate"
         @closeComplete="handleStoryModalClose"
-        @cancelRequest="inputFormRef.cancelRequest"
       />
     </div>
   </div>
 </template>
 
 <script setup>
-import { ref } from 'vue';
-import StoryModal from '@/views/StoryModal.vue';
-import InputForm from '@/views/InputForm.vue';
+import { ref } from 'vue'
+import StoryModal from '@/views/StoryModal.vue'
+import InputForm from '@/views/InputForm.vue'
 
-const story = ref(null);
-const inputFormRef = ref(null);
+const story = ref(null)
+const inputFormRef = ref(null)
 
 const handleStoryGenerationStart = () => {
-  story.value = " ";
-};
+  story.value = " "
+}
 
 const handleStoryGenerationComplete = (generatedStory) => {
-  story.value = generatedStory;
-};
+  story.value = generatedStory
+}
 
 const handleStoryModalClose = () => {
-  story.value = null;
-};
+  story.value = null
+}
 
 const handleRegenerate = () => {
-  inputFormRef.value.cancelRequest();
   inputFormRef.value.submitForm();
-};
+}
+
+const handleStoryGenerationError = (error) => {
+  story.value = error
+}
 </script>
