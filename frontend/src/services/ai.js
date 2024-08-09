@@ -1,4 +1,4 @@
-export const generateStory = async (words, characterName, setting, humor) => {
+export const generateStory = async (words, characterName, setting, humor, abortSignal) => {
   let baseURL = import.meta.env.VITE_API_URL ? import.meta.env.VITE_API_URL : ""
 
   // Strip out any trailing slashes from the base URL.
@@ -20,6 +20,7 @@ export const generateStory = async (words, characterName, setting, humor) => {
       "Accept": "application/json",
     },
     body: payload,
+    signal: abortSignal,
   })
     .then(response => {
       if (!response.ok) {
@@ -29,7 +30,6 @@ export const generateStory = async (words, characterName, setting, humor) => {
     })
     .then(data => data.story)
     .catch(error => {
-      console.error("Error:", error);
       throw error;
     })
 }

@@ -90,7 +90,7 @@ const props = defineProps({
   },
 });
 
-const emit = defineEmits(['closeComplete', 'regenerate']);
+const emit = defineEmits(['regenerate', 'closeStart', 'closeComplete']);
 
 onMounted(() => {
   gsap.to(".story-modal", { duration: 0.5, y: "0%", ease: Power4.easeOut });
@@ -98,6 +98,7 @@ onMounted(() => {
 
 const handleCloseRequest = (event) => {
   event.preventDefault();
+  emit('closeStart');
   gsap.to(".story-modal", {
     duration: 0.5,
     y: "100%",

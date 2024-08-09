@@ -136,6 +136,7 @@ const characterName = ref('')
 const setting = ref('')
 const humor = ref(DEFAULT_HUMOR_VALUE)
 const isLoading = ref(false)
+const abortController = ref(null)
 
 const emit = defineEmits(['storyGenerationStart', 'storyGenerationComplete', 'storyGenerationError'])
 
@@ -144,13 +145,18 @@ const submitForm = async () => {
 
   emit('storyGenerationStart')
 
-  generateStory(words.value, characterName.value, setting.value, humor.value).then((story) => {
+  abortController.value = new AbortController()
+
+  generateStory(words.value, characterName.value, setting.value, humor.value, abortController.value.signal).then((story) => {
     emit('storyGenerationComplete', story)
   }).catch((error) => {
-    console.error("Error:", error)
-    emit('storyGenerationError', error)
+    if (error.name !== 'AbortError') {
+      console.error("Error:", error)
+      emit('storyGenerationError', error)
+    }
   }).finally(() => {
     isLoading.value = false
+    abortController.value = null
   })
 }
 
@@ -165,7 +171,15 @@ const handleReset = () => {
   humor.value = DEFAULT_HUMOR_VALUE
 }
 
+const cancelRequest = () => {
+  if (abortController.value) {
+    isLoading.value = false
+    abortController.value.abort()
+  }
+}
+
 defineExpose({
   submitForm,
+  cancelRequest,
 })
 </script>

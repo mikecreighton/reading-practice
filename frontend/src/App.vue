@@ -11,7 +11,8 @@
         v-if="story"
         :story="story"
         @regenerate="handleRegenerate"
-        @closeComplete="handleStoryModalClose"
+        @closeStart="handleStoryModalCloseStart"
+        @closeComplete="handleStoryModalCloseComplete"
       />
     </div>
   </div>
@@ -33,7 +34,11 @@ const handleStoryGenerationComplete = (generatedStory) => {
   story.value = generatedStory
 }
 
-const handleStoryModalClose = () => {
+const handleStoryModalCloseStart = () => {
+  inputFormRef.value.cancelRequest()
+}
+
+const handleStoryModalCloseComplete = () => {
   story.value = null
 }
 
