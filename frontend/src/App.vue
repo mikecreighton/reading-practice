@@ -42,6 +42,7 @@ const handleStoryModalCloseStart = () => {
 }
 
 const handleStoryModalCloseComplete = () => {
+  illustration.value = null
   story.value = null
 }
 

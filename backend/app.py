@@ -198,7 +198,7 @@ def generate_illustration():
         story = request.json['story']
         user_prompt = construct_illustration_user_prompt(story)
 
-        response = text_client.chat.completions.create(model='meta-llama/llama-3.1-8b-instruct',
+        response = text_client.chat.completions.create(model='meta-llama/llama-3.1-70b-instruct',
             messages=[
                 {
                     "role": "system",

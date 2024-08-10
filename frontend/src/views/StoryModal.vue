@@ -6,13 +6,12 @@
     right: 0;
     bottom: 0;
     background-color: #FFF;
-    display: flex;
-    align-items: center;
-    justify-content: center;
     transform: translateY(100%);
+    overflow-y: scroll;
 
     .story-modal-content {
-        padding: 60px 20px 100px 20px;
+        padding: 100px 20px 80px 20px;
+        width: 100%;
 
         p {
             font-size: 20px;
@@ -56,20 +55,12 @@
         }
     }
 
-    .regenerate-button {
-        position: absolute;
-        bottom: 40px;
-        left: 50%;
-        padding: 20px;
-        transform: translateX(-50%);
-    }
-
 }
 </style>
 <template>
   <div class="story-modal">
-    <div class="story-modal-content">
-      <img width="500" v-if="illustration" :src="illustration" alt="Illustration" />
+    <div class="story-modal-content d-flex flex-column justify-content-center align-items-center">
+      <img width="100%" class="mb-4" v-if="illustration" :src="illustration" alt="Illustration" />
       <p>{{ story }}</p>
       <button class="story-modal-close-button" @click="handleCloseRequest">
         &#x2715;
