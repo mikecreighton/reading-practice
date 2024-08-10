@@ -156,6 +156,15 @@ def generate_story():
 
     user_prompt = construct_user_prompt(words, subject, setting, humor)
 
+    print("-----------------------------------------")
+    print("Story model: ", AI_TEXT_MODEL)
+    print("Story system prompt:")
+    print(SYSTEM_PROMPT)
+    print(" ")
+    print("Story user prompt:")
+    print(user_prompt)
+    print("-----------------------------------------")
+
     response = text_client.chat.completions.create(model=AI_TEXT_MODEL,
         messages=[
             {
@@ -181,6 +190,13 @@ def generate_story():
     }
     return jsonify(story_object)
 
+@app.route('/openai_available', methods=['GET'])
+def openai_available():
+    if os.getenv("OPENAI_API_KEY"):
+        return jsonify({"message": True})
+    else:
+        return jsonify({"message": False})
+
 
 @app.route('/generate_illustration', methods=['POST'])
 def generate_illustration():
@@ -197,8 +213,19 @@ def generate_illustration():
 
         story = request.json['story']
         user_prompt = construct_illustration_user_prompt(story)
+        # AI_ILLUSTRATION_TEXT_MODEL = os.getenv("AI_ILLUSTRATION_TEXT_MODEL", "meta-llama/llama-3.1-70b-instruct")
+        AI_ILLUSTRATION_TEXT_MODEL = os.getenv("AI_ILLUSTRATION_TEXT_MODEL", "anthropic/claude-3.5-sonnet")
 
-        response = text_client.chat.completions.create(model='meta-llama/llama-3.1-70b-instruct',
+        print("-----------------------------------------")
+        print("Illustration model: ", AI_ILLUSTRATION_TEXT_MODEL)
+        print("Illustration system prompt:")
+        print(ILLUSTRATION_SYSTEM_PROMPT)
+        print(" ")
+        print("Illustration user prompt:")
+        print(user_prompt)
+        print("-----------------------------------------")
+
+        response = text_client.chat.completions.create(model=AI_ILLUSTRATION_TEXT_MODEL,
             messages=[
                 {
                     "role": "system",
@@ -213,13 +240,18 @@ def generate_illustration():
             max_tokens=MAX_TOKENS,
         )
 
-        print(response.choices[0].message.content)
+        image_gen_prompt = response.choices[0].message.content
+
+        print("-----------------------------------------")
+        print("Generated illustration response prompt for DALL-E 3:")
+        print(image_gen_prompt)
+        print("-----------------------------------------")
 
         image_gen_client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
 
         image_gen_response = image_gen_client.images.generate(
             model="dall-e-3",
-            prompt=response.choices[0].message.content,
+            prompt=image_gen_prompt,
             size="1024x1024",
             quality="standard",
             n=1,

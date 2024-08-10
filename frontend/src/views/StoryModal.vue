@@ -60,7 +60,7 @@
 <template>
   <div class="story-modal">
     <div class="story-modal-content d-flex flex-column justify-content-center align-items-center">
-      <img width="100%" class="mb-4" v-if="illustration" :src="illustration" alt="Illustration" />
+      <img width="100%" class="mb-4" v-if="isOpenAIAvailable && illustration" :src="illustration" alt="Illustration" />
       <p>{{ story }}</p>
       <button class="story-modal-close-button" @click="handleCloseRequest">
         &#x2715;
@@ -71,9 +71,11 @@
 </template>
 
 <script setup>
-import { onMounted } from 'vue';
+import { onMounted, inject } from 'vue';
 import { gsap, Power4 } from 'gsap';
 import FastButton from '@/components/FastButton.vue';
+
+const isOpenAIAvailable = inject('isOpenAIAvailable');
 
 const props = defineProps({
   story: {

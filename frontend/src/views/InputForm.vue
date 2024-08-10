@@ -125,10 +125,11 @@ form {
 </template>
 
 <script setup>
-import { ref } from 'vue'
+import { ref, inject } from 'vue'
 import FastButton from '@/components/FastButton.vue'
 import { generateStory, generateIllustration } from '@/services/ai'
 
+const DEBUG_STORY_GENERATION = ref(true)
 const DEFAULT_HUMOR_VALUE = 3
 
 const words = ref('')
@@ -137,8 +138,16 @@ const setting = ref('')
 const humor = ref(DEFAULT_HUMOR_VALUE)
 const isLoading = ref(false)
 const abortController = ref(null)
+const isOpenAIAvailable = inject('isOpenAIAvailable')
 
 const emit = defineEmits(['storyGenerationStart', 'storyGenerationComplete', 'storyGenerationError'])
+
+if (DEBUG_STORY_GENERATION.value) {
+  words.value = 'friend, because, weather, bicycle, favorite'
+  characterName.value = 'The Big Bad Wolf'
+  setting.value = 'A school bus'
+  humor.value = 10
+}
 
 const submitForm = async () => {
   isLoading.value = true
@@ -148,13 +157,13 @@ const submitForm = async () => {
   abortController.value = new AbortController()
 
   generateStory(words.value, characterName.value, setting.value, humor.value, abortController.value.signal).then((story) => {
-    generateIllustration(story, abortController.value.signal).then((illustration) => {
-      emit('storyGenerationComplete', story, illustration)
-    }).catch((error) => {
-      if (error.name !== 'AbortError') {
-        throw error
-      }
-    })
+    if (isOpenAIAvailable.value) {
+      generateIllustration(story, abortController.value.signal).then((illustration) => {
+        emit('storyGenerationComplete', story, illustration)
+      })
+    } else {
+      emit('storyGenerationComplete', story, null)
+    }
   }).catch((error) => {
     if (error.name !== 'AbortError') {
       console.error("Error:", error)

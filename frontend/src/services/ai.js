@@ -7,6 +7,15 @@ const getBaseURL = () => {
   return baseURL
 }
 
+export const detectOpenAI = async () => {
+  let baseURL = getBaseURL()
+  return fetch(baseURL + "/openai_available", {
+    method: "GET",
+  })
+    .then(response => response.json())
+    .then(data => data.message)
+}
+
 export const generateStory = async (words, characterName, setting, humor, abortSignal) => {
   let baseURL = getBaseURL()
 

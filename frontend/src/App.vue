@@ -20,13 +20,26 @@
 </template>
 
 <script setup>
-import { ref } from 'vue'
+import { ref, provide, onMounted } from 'vue'
 import StoryModal from '@/views/StoryModal.vue'
 import InputForm from '@/views/InputForm.vue'
+import { detectOpenAI } from '@/services/ai';
 
 const story = ref(null)
 const illustration = ref(null)
 const inputFormRef = ref(null)
+const isOpenAIAvailable = ref(false)
+
+// Create a global variable to store the isOpenAIAvailable value
+provide('isOpenAIAvailable', isOpenAIAvailable)
+
+onMounted(() => {
+  detectOpenAI().then((available) => {
+    isOpenAIAvailable.value = available
+  }).catch((error) => {
+    // console.error("Error detecting OpenAI availability:", error)
+  })
+})
 
 const handleStoryGenerationStart = () => {
   story.value = " "
