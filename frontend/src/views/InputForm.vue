@@ -125,9 +125,11 @@ form {
 </template>
 
 <script setup>
-import { ref } from 'vue'
-import FastButton from './FastButton.vue'
+import { ref, inject } from 'vue'
+import FastButton from '@/components/FastButton.vue'
+import { generateStory, generateIllustration } from '@/services/ai'
 
+const DEBUG_STORY_GENERATION = ref(true)
 const DEFAULT_HUMOR_VALUE = 3
 
 const words = ref('')
@@ -136,62 +138,41 @@ const setting = ref('')
 const humor = ref(DEFAULT_HUMOR_VALUE)
 const isLoading = ref(false)
 const abortController = ref(null)
+const isOpenAIAvailable = inject('isOpenAIAvailable')
 
-const emit = defineEmits(['storyPartReceived'])
+const emit = defineEmits(['storyGenerationStart', 'storyGenerationComplete', 'storyGenerationError'])
+
+if (DEBUG_STORY_GENERATION.value) {
+  words.value = 'friend, because, weather, bicycle, favorite'
+  characterName.value = 'The Big Bad Wolf'
+  setting.value = 'A school bus'
+  humor.value = 10
+}
 
 const submitForm = async () => {
   isLoading.value = true
+
+  emit('storyGenerationStart')
+
   abortController.value = new AbortController()
 
-  let baseURL = import.meta.env.VITE_API_URL ? import.meta.env.VITE_API_URL : ""
-  // Strip out any trailing slashes from the base URL.
-  baseURL = baseURL.replace(/\/$/, '')
-
-  // Immediately emit the story part received event so that the modal appears.
-  emit('storyPartReceived', ' ')
-
-  try {
-    const response = await fetch(baseURL + "/stream", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        words: words.value,
-        subject: characterName.value,
-        setting: setting.value,
-        humor: humor.value + "",
-      }),
-      signal: abortController.value.signal,
-    })
-
-    if (!response.ok) {
-      throw new Error(`HTTP error status: ${response.statusText}`)
+  generateStory(words.value, characterName.value, setting.value, humor.value, abortController.value.signal).then((story) => {
+    if (isOpenAIAvailable.value) {
+      generateIllustration(story, abortController.value.signal).then((illustration) => {
+        emit('storyGenerationComplete', story, illustration)
+      })
     } else {
-      const reader = response.body.getReader()
-      let story = ""
-      let chunk
-
-      while ((chunk = await reader.read()) && !chunk.done) {
-        story += new TextDecoder("utf-8").decode(chunk.value)
-        emit('storyPartReceived', story)
-      }
+      emit('storyGenerationComplete', story, null)
     }
-  } catch (error) {
-    if (error.name === "AbortError") {
-      console.log("Fetch request cancelled")
-    } else {
+  }).catch((error) => {
+    if (error.name !== 'AbortError') {
       console.error("Error:", error)
+      emit('storyGenerationError', error)
     }
-  } finally {
+  }).finally(() => {
     isLoading.value = false
-  }
-}
-
-const cancelRequest = () => {
-  if (abortController.value) {
-    abortController.value.abort()
-  }
+    abortController.value = null
+  })
 }
 
 const handleSubmit = () => {
@@ -202,11 +183,18 @@ const handleReset = () => {
   words.value = ''
   characterName.value = ''
   setting.value = ''
-  humor.value = 3
+  humor.value = DEFAULT_HUMOR_VALUE
+}
+
+const cancelRequest = () => {
+  if (abortController.value) {
+    isLoading.value = false
+    abortController.value.abort()
+  }
 }
 
 defineExpose({
   submitForm,
   cancelRequest,
-});
+})
 </script>

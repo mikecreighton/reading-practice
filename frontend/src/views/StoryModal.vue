@@ -6,13 +6,12 @@
     right: 0;
     bottom: 0;
     background-color: #FFF;
-    display: flex;
-    align-items: center;
-    justify-content: center;
     transform: translateY(100%);
+    overflow-y: scroll;
 
     .story-modal-content {
-        padding: 60px 20px 100px 20px;
+        padding: 100px 20px 80px 20px;
+        width: 100%;
 
         p {
             font-size: 20px;
@@ -56,19 +55,12 @@
         }
     }
 
-    .regenerate-button {
-        position: absolute;
-        bottom: 40px;
-        left: 50%;
-        padding: 20px;
-        transform: translateX(-50%);
-    }
-
 }
 </style>
 <template>
   <div class="story-modal">
-    <div class="story-modal-content">
+    <div class="story-modal-content d-flex flex-column justify-content-center align-items-center">
+      <img width="100%" class="mb-4" v-if="isOpenAIAvailable && illustration" :src="illustration" alt="Illustration" />
       <p>{{ story }}</p>
       <button class="story-modal-close-button" @click="handleCloseRequest">
         &#x2715;
@@ -79,18 +71,24 @@
 </template>
 
 <script setup>
-import { onMounted } from 'vue';
+import { onMounted, inject } from 'vue';
 import { gsap, Power4 } from 'gsap';
-import FastButton from './FastButton.vue';
+import FastButton from '@/components/FastButton.vue';
+
+const isOpenAIAvailable = inject('isOpenAIAvailable');
 
 const props = defineProps({
   story: {
     type: String,
     required: true,
   },
+  illustration: {
+    type: String,
+    required: false,
+  },
 });
 
-const emit = defineEmits(['closeComplete', 'cancelRequest', 'regenerate']);
+const emit = defineEmits(['regenerate', 'closeStart', 'closeComplete']);
 
 onMounted(() => {
   gsap.to(".story-modal", { duration: 0.5, y: "0%", ease: Power4.easeOut });
@@ -98,7 +96,7 @@ onMounted(() => {
 
 const handleCloseRequest = (event) => {
   event.preventDefault();
-  emit('cancelRequest');
+  emit('closeStart');
   gsap.to(".story-modal", {
     duration: 0.5,
     y: "100%",

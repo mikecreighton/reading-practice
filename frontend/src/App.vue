@@ -3,42 +3,69 @@
     <div class="app-content">
       <InputForm
         ref="inputFormRef"
-        @storyPartReceived="handleStoryPartReceived"
-        @storyGenerated="handleStoryGenerated"
+        @storyGenerationStart="handleStoryGenerationStart"
+        @storyGenerationComplete="handleStoryGenerationComplete"
+        @storyGenerationError="handleStoryGenerationError"
       />
       <StoryModal
         v-if="story"
         :story="story"
+        :illustration="illustration"
         @regenerate="handleRegenerate"
-        @closeComplete="handleStoryModalClosed"
-        @cancelRequest="inputFormRef.cancelRequest"
+        @closeStart="handleStoryModalCloseStart"
+        @closeComplete="handleStoryModalCloseComplete"
       />
     </div>
   </div>
 </template>
 
 <script setup>
-import { ref } from 'vue';
-import StoryModal from './components/StoryModal.vue';
-import InputForm from './components/InputForm.vue';
+import { ref, provide, onMounted } from 'vue'
+import StoryModal from '@/views/StoryModal.vue'
+import InputForm from '@/views/InputForm.vue'
+import { detectOpenAI } from '@/services/ai';
 
-const story = ref(null);
-const inputFormRef = ref(null);
+const story = ref(null)
+const illustration = ref(null)
+const inputFormRef = ref(null)
+const isOpenAIAvailable = ref(false)
 
-const handleStoryGenerated = (generatedStory) => {
-  story.value = generatedStory;
-};
+// Create a global variable to store the isOpenAIAvailable value
+provide('isOpenAIAvailable', isOpenAIAvailable)
 
-const handleStoryPartReceived = (storyPart) => {
-  story.value = storyPart;
-};
+onMounted(() => {
+  detectOpenAI().then((available) => {
+    isOpenAIAvailable.value = available
+  }).catch((error) => {
+    // console.error("Error detecting OpenAI availability:", error)
+  })
+})
 
-const handleStoryModalClosed = () => {
-  story.value = null;
-};
+const handleStoryGenerationStart = () => {
+  story.value = " "
+}
+
+const handleStoryGenerationComplete = (generatedStory, generatedIllustration) => {
+  story.value = generatedStory
+  illustration.value = generatedIllustration
+}
+
+const handleStoryModalCloseStart = () => {
+  inputFormRef.value.cancelRequest()
+}
+
+const handleStoryModalCloseComplete = () => {
+  illustration.value = null
+  story.value = null
+}
 
 const handleRegenerate = () => {
   inputFormRef.value.cancelRequest();
+  illustration.value = null
   inputFormRef.value.submitForm();
-};
+}
+
+const handleStoryGenerationError = (error) => {
+  story.value = error
+}
 </script>
