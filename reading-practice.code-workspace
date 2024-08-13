@@ -15,6 +15,12 @@
 		"files.exclude": {
 			"backend": true,
 			"frontend": true
-		}
+		},
+		"prettier.configPath": "",
+		"prettier.prettierPath": "",
+		"prettier.requireConfig": true,
+		"prettier.vueIndentScriptAndStyle": false,
+		"editor.formatOnSave": true,
+		"prettier.singleAttributePerLine": false
 	}
 }

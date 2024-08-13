@@ -6,7 +6,8 @@
   "scripts": {
     "dev": "vite",
     "build": "vite build",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "format": "prettier --write \"src/**/*.{js,vue,json,css,scss}\""
   },
   "dependencies": {
     "bootstrap": "^5.3.3",
@@ -14,7 +15,9 @@
     "vue": "^3.4.31"
   },
   "devDependencies": {
+    "@flydotio/dockerfile": "^0.5.8",
     "@vitejs/plugin-vue": "^5.0.5",
+    "prettier": "^3.3.3",
     "sass": "^1.77.8",
     "vite": "^5.3.4"
   }
