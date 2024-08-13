@@ -1,5 +1,81 @@
 <style lang="scss" scoped>
+.story-world {
+  position: relative;
+  width: 100%;
+  height: 100vh;
+  overflow: hidden;
+}
+
+.animated-background {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: v-bind("`hsl(${backgroundHue}, 70%, 80%)`");
+  transition: background-color 0.5s ease;
+}
+
+.bubble {
+  position: absolute;
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.3);
+  animation: float 10s infinite ease-in-out;
+}
+
+@keyframes float {
+  0%,
+  100% {
+    transform: translateY(0) scale(1);
+  }
+  50% {
+    transform: translateY(-20px) scale(1.1);
+  }
+}
+
+.interactive-elements {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+}
+
+.floating-word {
+  position: absolute;
+  font-size: 24px;
+  color: #fff;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+  animation: float 10s infinite ease-in-out;
+}
+
+@keyframes float {
+  0%,
+  100% {
+    transform: translateY(0) rotate(0deg);
+  }
+  50% {
+    transform: translateY(-20px) rotate(5deg);
+  }
+}
+
+.fade-enter-active,
+.fade-leave-active {
+  transition: opacity 0.5s ease;
+}
+.fade-enter-from,
+.fade-leave-to {
+  opacity: 0;
+}
+
 form {
+  position: relative;
+  z-index: 10;
+  background-color: rgba(255, 255, 255, 0.5);
+  border-radius: 20px;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -8,7 +84,7 @@ form {
   width: 100%;
   max-width: 700px;
   padding: 40px 40px;
-  background-color: #fff;
+  height: 100%;
 
   label {
     display: flex;
@@ -72,21 +148,6 @@ form {
     margin-right: 10px;
     min-width: 0;
   }
-
-  button {
-    height: 60px;
-    padding: 0 20px;
-    font-size: 18px;
-    background-color: #f0f0f0;
-    border: 1px solid #aaa;
-    border-radius: 4px;
-    cursor: pointer;
-    flex-shrink: 0;
-
-    &:hover {
-      background-color: #e0e0e0;
-    }
-  }
 }
 
 .word-chips {
@@ -145,54 +206,81 @@ form {
 }
 </style>
 <template>
-  <form @submit.prevent>
-    <label>
-      <span class="prevent-wrap">Words to Include in the Story</span>
-      <div class="word-input">
-        <input
-          type="text"
-          v-model="newWord"
-          @keyup.enter.prevent="addWord"
-          placeholder="Enter a word"
-        />
-        <button type="button" @click="addWord">Add</button>
-      </div>
-      <div class="word-chips">
-        <span v-for="(word, index) in wordList" :key="index" class="chip">
-          {{ word }}
-          <button @click="removeWord(index)" class="remove-word">&times;</button>
-        </span>
-      </div>
-    </label>
-    <label>
-      The Story's Main Character
-      <input type="text" v-model="characterName" />
-    </label>
-    <label>
-      Where the Story Takes Place
-      <input type="text" v-model="setting" />
-    </label>
-    <label>
-      Humor Level
-      <div class="humor-buttons">
-        <button type="button" @click="setHumor(1)" :class="{ active: humor === 1 }">😐</button>
-        <button type="button" @click="setHumor(5)" :class="{ active: humor === 5 }">😊</button>
-        <button type="button" @click="setHumor(10)" :class="{ active: humor === 10 }">😂</button>
-      </div>
-    </label>
-    <div class="buttons-container">
-      <FastButton
-        :disabled="isLoading"
-        buttonText="Generate Story"
-        @click="handleSubmit"
-      ></FastButton>
-      <FastButton buttonText="Reset" @click="handleReset"></FastButton>
+  <div class="story-world">
+    <div class="animated-background">
+      <div
+        v-for="(bubble, index) in bubbles"
+        :key="index"
+        class="bubble"
+        :style="{
+          left: `${bubble.x}%`,
+          top: `${bubble.y}%`,
+          animationDuration: `${bubble.duration}s`,
+        }"
+      ></div>
     </div>
-  </form>
+    <div class="interactive-elements">
+      <transition-group name="fade">
+        <div
+          v-for="(word, index) in wordList"
+          :key="word"
+          class="floating-word"
+          :style="{ left: `${randomPosition()}%`, top: `${randomPosition()}%` }"
+        >
+          {{ word }}
+        </div>
+      </transition-group>
+    </div>
+    <form @submit.prevent>
+      <label>
+        <span class="prevent-wrap">Words to Include in the Story</span>
+        <div class="word-input">
+          <input
+            type="text"
+            v-model="newWord"
+            @keyup.enter.prevent="addWord"
+            @keydown.enter.prevent
+            placeholder="Enter a word"
+          />
+          <FastButton buttonText="Add" customClass="flex-shrink-0" @click="addWord"></FastButton>
+        </div>
+        <div class="word-chips">
+          <span v-for="(word, index) in wordList" :key="index" class="chip">
+            {{ word }}
+            <button @click="removeWord(index)" class="remove-word">&times;</button>
+          </span>
+        </div>
+      </label>
+      <label>
+        The Story's Main Character
+        <input type="text" v-model="characterName" />
+      </label>
+      <label>
+        Where the Story Takes Place
+        <input type="text" v-model="setting" />
+      </label>
+      <label>
+        Humor Level
+        <div class="humor-buttons">
+          <button type="button" @click="setHumor(1)" :class="{ active: humor === 1 }">😐</button>
+          <button type="button" @click="setHumor(5)" :class="{ active: humor === 5 }">😊</button>
+          <button type="button" @click="setHumor(10)" :class="{ active: humor === 10 }">😂</button>
+        </div>
+      </label>
+      <div class="buttons-container">
+        <FastButton
+          :disabled="isLoading"
+          buttonText="Generate Story"
+          @click="handleSubmit"
+        ></FastButton>
+        <FastButton buttonText="Reset" @click="handleReset"></FastButton>
+      </div>
+    </form>
+  </div>
 </template>
 
 <script setup>
-import { ref, inject, computed } from "vue"
+import { ref, inject, computed, watch, onMounted, onUnmounted } from "vue"
 import FastButton from "@/components/FastButton.vue"
 import { generateStory, generateIllustration } from "@/services/ai"
 
@@ -292,6 +380,29 @@ const cancelRequest = () => {
     abortController.value.abort()
   }
 }
+
+const bubbles = ref([])
+const backgroundHue = ref(0)
+
+const createBubbles = () => {
+  bubbles.value = Array.from({ length: 20 }, () => ({
+    x: Math.random() * 100,
+    y: Math.random() * 100,
+    duration: 5 + Math.random() * 10,
+  }))
+}
+
+const animateBackground = () => {
+  backgroundHue.value = (backgroundHue.value + 1) % 360
+  requestAnimationFrame(animateBackground)
+}
+
+const randomPosition = () => Math.random() * 80 + 10 // Keep words away from edges
+
+onMounted(() => {
+  createBubbles()
+  animateBackground()
+})
 
 defineExpose({
   submitForm,
