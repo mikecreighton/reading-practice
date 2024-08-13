@@ -64,11 +64,13 @@ form {
 .word-input {
   display: flex;
   margin-top: 12px;
+  width: 100%;
 
   input {
-    flex-grow: 1;
+    flex: 1;
     margin-top: 0;
     margin-right: 10px;
+    min-width: 0;
   }
 
   button {
@@ -79,6 +81,7 @@ form {
     border: 1px solid #aaa;
     border-radius: 4px;
     cursor: pointer;
+    flex-shrink: 0;
 
     &:hover {
       background-color: #e0e0e0;
