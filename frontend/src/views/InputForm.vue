@@ -8,25 +8,22 @@
   opacity: 0;
 }
 
+$form-padding: 40px;
+$action-buttons-height: 96px;
+$form-max-width: 700px;
+
 form {
-  position: relative;
-  background-color: rgba(255, 255, 255, 0.5);
-  border-radius: 20px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  margin: 0 auto;
-  width: 100%;
-  max-width: 700px;
-  padding: 40px 40px;
-  height: 100%;
+  background-color: #fff;
+  max-width: $form-max-width;
+  padding: $form-padding;
+  min-height: calc(100vh - ($action-buttons-height) + $form-padding);
+  padding-bottom: $form-padding * 2;
 
   label {
     display: flex;
     flex-direction: column;
     width: 100%;
-    margin-bottom: 30px;
+    margin-bottom: 24px;
     font-size: 1.2rem;
     color: #333;
 
@@ -37,60 +34,34 @@ form {
     }
   }
 
-  input {
-    margin-top: 12px;
-    height: 60px;
-    line-height: 40px;
-    padding: 0 20px;
-    font-size: 20px;
-    border-radius: 4px;
-    border: 1px solid #aaa;
-    background-color: #f0f0f0;
-    color: #333;
-  }
-
-  input.slider {
-    display: none;
-  }
-
   // make the buttons sit side-by-side
-  .buttons-container {
-    display: flex;
-    justify-content: flex-end;
-    gap: 20px;
-    width: 100%;
+  .action-buttons-container {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    gap: 8px;
+    height: $action-buttons-height;
+    padding: 20px $form-padding;
+    background-color: #fff;
+    box-shadow: 0 -2px 12px -1px rgba(0, 0, 0, 0.1);
 
-    @media (max-width: 768px) {
-      gap: 16px;
-    }
-    @media (max-width: 480px) {
-      gap: 12px;
-      justify-content: space-between;
-    }
-    @media (max-width: 375px) {
-      gap: 8px;
+    div {
+      max-width: $form-max-width;
     }
   }
 }
 
 .word-input {
   display: flex;
-  margin-top: 12px;
   width: 100%;
 
   input {
     flex: 1;
     margin-top: 0;
-    margin-right: 10px;
+    margin-right: 16px;
     min-width: 0;
   }
-}
-
-.word-chips {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 10px;
-  margin-top: 10px;
 }
 
 .chip {
@@ -98,9 +69,9 @@ form {
   align-items: center;
   background-color: #e0e0e0;
   border-radius: 17px;
-  padding: 5px 10px 5px 15px;
+  padding: 5px 8px 5px 15px;
   font-size: 14px;
-  line-height: 24px; // Add this line to ensure text is vertically centered
+  line-height: 24px;
 
   .remove-word {
     background: none;
@@ -110,8 +81,8 @@ form {
     font-size: 18px;
     margin-left: 5px;
     padding: 0 5px;
-    display: flex; // Add this line
-    align-items: center; // Add this line
+    display: flex;
+    align-items: center;
 
     &:hover {
       color: #333;
@@ -122,43 +93,29 @@ form {
 .humor-buttons {
   display: flex;
   justify-content: space-between;
-  margin-top: 12px;
-
-  button {
-    font-size: 24px;
-    padding: 10px 20px;
-    border: 2px solid #aaa;
-    background-color: #f0f0f0;
-    border-radius: 8px;
-    cursor: pointer;
-    transition: all 0.3s ease;
-
-    &:hover {
-      background-color: #e0e0e0;
-    }
-
-    &.active {
-      border-color: #333;
-      background-color: #d0d0d0;
-    }
-  }
 }
 </style>
 <template>
-  <form @submit.prevent>
+  <form
+    @submit.prevent
+    class="position-relative d-flex flex-column justify-content-start w-100 my-0 mx-auto"
+  >
     <label>
-      <span class="prevent-wrap">Words to Include in the Story</span>
-      <div class="word-input">
+      <span class="prevent-wrap">What words should be included in the story?</span>
+      <div class="word-input mt-3">
         <input
           type="text"
           v-model="newWord"
           @keyup.enter.prevent="addWord"
           @keydown.enter.prevent
           placeholder="Enter a word"
+          class="form-control py-3"
         />
-        <FastButton customClass="flex-shrink-0" @click="addWord">Add</FastButton>
+        <FastButton customClass="flex-shrink-0 btn-outline-primary" @click="addWord">
+          Add
+        </FastButton>
       </div>
-      <div class="word-chips">
+      <div class="word-chips d-flex flex-wrap gap-2 mt-3">
         <span v-for="(word, index) in wordList" :key="index" class="chip">
           {{ word }}
           <button @click="removeWord(index)" class="remove-word">
@@ -167,28 +124,59 @@ form {
         </span>
       </div>
     </label>
-    <label>
-      The Story's Main Character
-      <input type="text" v-model="characterName" />
-    </label>
-    <label>
-      Where the Story Takes Place
-      <input type="text" v-model="setting" />
-    </label>
-    <label>
-      Humor Level
+    <div class="w-100 form-character-location-wrap">
+      <label>
+        Who's the main character?
+        <input type="text" v-model="characterName" class="form-control mt-3 py-3" />
+      </label>
+      <label>
+        Where does the story take place?
+        <input type="text" v-model="setting" class="form-control mt-3 py-3" />
+      </label>
+    </div>
+    <div class="w-100 mb-5 form-humor-wrap">
+      <label class="mb-3">How funny should the story be?</label>
       <div class="humor-buttons">
-        <button type="button" @click="setHumor(1)" :class="{ active: humor === 1 }">😐</button>
-        <button type="button" @click="setHumor(5)" :class="{ active: humor === 5 }">😊</button>
-        <button type="button" @click="setHumor(10)" :class="{ active: humor === 10 }">😂</button>
+        <button
+          type="button"
+          @click="setHumor(1)"
+          :class="{ active: humor === 1, 'btn-outline-primary': true, btn: true, 'btn-lg': true }"
+        >
+          😐
+        </button>
+        <button
+          type="button"
+          @click="setHumor(5)"
+          :class="{ active: humor === 5, 'btn-outline-primary': true, btn: true, 'btn-lg': true }"
+        >
+          😊
+        </button>
+        <button
+          type="button"
+          @click="setHumor(10)"
+          :class="{ active: humor === 10, 'btn-outline-primary': true, btn: true, 'btn-lg': true }"
+        >
+          😂
+        </button>
       </div>
-    </label>
-    <div class="buttons-container">
-      <FastButton
-        :disabled="isLoading"
-        @click="handleSubmit"
-      >Generate Story</FastButton>
-      <FastButton @click="handleReset">Reset</FastButton>
+    </div>
+    <div class="action-buttons-container w-100">
+      <div class="d-flex justify-content-between align-items-center mx-auto my-0">
+        <FastButton
+          :disabled="isLoading || (!wordList.length && !characterName && !setting)"
+          customClass="btn-secondary btn-lg"
+          @click="handleReset"
+        >
+          Reset
+        </FastButton>
+        <FastButton
+          :disabled="isLoading || !wordList.length || !characterName || !setting"
+          customClass="btn-primary btn-lg"
+          @click="handleSubmit"
+        >
+          Generate Story
+        </FastButton>
+      </div>
     </div>
   </form>
 </template>
@@ -198,8 +186,8 @@ import { ref, inject } from "vue"
 import FastButton from "@/components/FastButton.vue"
 import { generateStory, generateIllustration } from "@/services/ai"
 
-const DEBUG_STORY_GENERATION = ref(true)
-const DEFAULT_HUMOR_VALUE = 3
+const DEBUG_STORY_GENERATION = ref(false)
+const DEFAULT_HUMOR_VALUE = 5
 
 const newWord = ref("")
 const wordList = ref([])

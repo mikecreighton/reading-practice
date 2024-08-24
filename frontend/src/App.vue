@@ -8,6 +8,10 @@
 .fade-leave-to {
   opacity: 0;
 }
+
+.app-content {
+  background-color: #fff;
+}
 </style>
 
 <template>
