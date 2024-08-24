@@ -42,20 +42,20 @@
 
 </style>
 <template>
-    <button 
-      :class="[
-        'button-labeled',
-        { active: isActive },
-        customClass
-      ]" 
-      @touchstart.passive="activate" 
-      @touchend.passive="deactivate"
-      @touchcancel.passive="deactivate"
-      @click.prevent="$emit('click')"
-    >
-      {{ buttonText }}
-    </button>
-  </template>
+  <button 
+    :class="[
+      'button-labeled',
+      { active: isActive },
+      customClass
+    ]" 
+    @touchstart.passive="activate" 
+    @touchend.passive="deactivate"
+    @touchcancel.passive="deactivate"
+    @click.prevent="$emit('click')"
+  >
+    <slot></slot>
+  </button>
+</template>
   
 <script setup>
 import { ref } from 'vue'
@@ -65,10 +65,6 @@ const isActive = ref(false)
 defineEmits(['click'])
 
 defineProps({
-  buttonText: {
-    type: String,
-    required: true
-  },
   customClass: {
     type: [String, Array],
     required: false,

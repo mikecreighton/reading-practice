@@ -69,12 +69,11 @@
         alt="Illustration"
       />
       <p>{{ story }}</p>
-      <button class="story-modal-close-button" @click="emit('closeRequest')">&#x2715;</button>
+      <FastButton customClass="story-modal-close-button" @click="emit('closeRequest')">&#x2715;</FastButton>
       <FastButton
         customClass="regenerate-button"
-        buttonText="Regenerate"
         @click="$emit('regenerate')"
-      ></FastButton>
+      >Regenerate</FastButton>
     </div>
   </div>
 </template>

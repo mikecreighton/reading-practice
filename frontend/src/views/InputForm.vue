@@ -242,7 +242,7 @@ form {
             @keydown.enter.prevent
             placeholder="Enter a word"
           />
-          <FastButton buttonText="Add" customClass="flex-shrink-0" @click="addWord"></FastButton>
+          <FastButton customClass="flex-shrink-0" @click="addWord">Add</FastButton>
         </div>
         <div class="word-chips">
           <span v-for="(word, index) in wordList" :key="index" class="chip">
@@ -270,10 +270,9 @@ form {
       <div class="buttons-container">
         <FastButton
           :disabled="isLoading"
-          buttonText="Generate Story"
           @click="handleSubmit"
-        ></FastButton>
-        <FastButton buttonText="Reset" @click="handleReset"></FastButton>
+        >Generate Story</FastButton>
+        <FastButton @click="handleReset">Reset</FastButton>
       </div>
     </form>
   </div>
