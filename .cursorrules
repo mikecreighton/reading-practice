@@ -1,0 +1,11 @@
+When working with Vue.js frontend code, use the following rules:
+
+1. Always use Vue Single-File Components (SFCs) for all Vue components.
+2. All <style> tags should be scoped to the component.
+3. All CSS styles should use SCSS syntax, and the <style> tag should have the lang="scss" attribute.
+4. The CSS framework to use is Bootstrap 5.
+5. CSS should be structured in a mobile-first approach.
+
+When working with the Python backend, use the following rules:
+
+1. All newly generated Python functions should include simple docstrings under the function declaration.
