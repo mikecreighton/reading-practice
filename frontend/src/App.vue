@@ -1,12 +1,6 @@
-<style scoped lang="scss">
-.app-content {
-  background-color: #fff;
-}
-</style>
-
 <template>
   <div class="App">
-    <div class="app-content">
+    <div class="app-content bg-white">
       <InputForm
         ref="inputFormRef"
         @storyGenerationStart="handleStoryGenerationStart"

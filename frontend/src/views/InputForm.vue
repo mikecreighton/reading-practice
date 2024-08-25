@@ -1,168 +1,109 @@
-<style lang="scss" scoped>
-$form-padding: 40px;
-$action-buttons-height: 104px;
-$form-max-width: 700px;
-
-form {
-  background-color: #fff;
-  max-width: $form-max-width;
-  padding: $form-padding;
-  min-height: calc(100vh - ($action-buttons-height) + $form-padding);
-  padding-bottom: $form-padding * 2;
-
-  label {
-    display: flex;
-    flex-direction: column;
-    width: 100%;
-    margin-bottom: 24px;
-    font-size: 1.2rem;
-    color: #333;
-
-    .helper {
-      color: #aaa;
-      display: inline;
-      font-size: 80%;
-    }
-  }
-
-  // make the buttons sit side-by-side
-  .action-buttons-container {
-    position: fixed;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    gap: 8px;
-    height: $action-buttons-height;
-    padding: 20px $form-padding;
-    background-color: #fff;
-    box-shadow: 0 -2px 12px -1px rgba(0, 0, 0, 0.1);
-
-    div {
-      max-width: $form-max-width;
-    }
-  }
-}
-
-.word-input {
-  display: flex;
-  width: 100%;
-
-  input {
-    flex: 1;
-    margin-top: 0;
-    margin-right: 16px;
-    min-width: 0;
-  }
-}
-
-.chip {
-  display: inline-flex;
-  align-items: center;
-  background-color: #e0e0e0;
-  border-radius: 17px;
-  padding: 5px 8px 5px 15px;
-  font-size: 14px;
-  line-height: 24px;
-
-  .remove-word {
-    background: none;
-    border: none;
-    color: #666;
-    cursor: pointer;
-    font-size: 18px;
-    margin-left: 5px;
-    padding: 0 5px;
-    display: flex;
-    align-items: center;
-
-    &:hover {
-      color: #333;
-    }
-  }
-}
-
-.humor-buttons {
-  display: flex;
-  justify-content: space-between;
-}
-</style>
 <template>
   <form
     @submit.prevent
-    class="position-relative d-flex flex-column justify-content-start w-100 my-0 mx-auto"
+    class="relative flex flex-col justify-start w-full my-0 mx-auto bg-white max-w-[700px] p-10 min-h-[calc(100vh-104px+40px)] pb-20"
   >
-    <label>
-      <span class="prevent-wrap">What words should be included in the story?</span>
-      <div class="word-input mt-3">
+    <label class="flex flex-col w-full mb-6 text-lg text-gray-800">
+      <span class="whitespace-nowrap">What words should be included in the story?</span>
+      <div class="word-input mt-3 flex w-full">
         <input
           type="text"
           v-model="newWord"
           @keyup.enter.prevent="addWord"
           @keydown.enter.prevent
           placeholder="Enter a word"
-          class="form-control py-3"
+          class="flex-1 mr-4 min-w-0 py-3 px-4 border border-gray-300 rounded-md"
         />
-        <FastButton customClass="flex-shrink-0 btn-outline-primary" @click="addWord">
+        <FastButton
+          customClass="flex-shrink-0 border border-blue-500 text-blue-500 hover:bg-blue-500 hover:text-white"
+          @click="addWord"
+        >
           Add
         </FastButton>
       </div>
-      <div class="word-chips d-flex flex-wrap gap-2 mt-3">
-        <span v-for="(word, index) in wordList" :key="index" class="chip">
+      <div class="word-chips flex flex-wrap gap-2 mt-3">
+        <span
+          v-for="(word, index) in wordList"
+          :key="index"
+          class="inline-flex items-center bg-gray-200 rounded-full py-1 px-3 text-sm"
+        >
           {{ word }}
-          <button @click="removeWord(index)" class="remove-word">
+          <button @click="removeWord(index)" class="ml-1 text-gray-600 hover:text-gray-800">
             <i class="bi-x-circle"></i>
           </button>
         </span>
       </div>
     </label>
-    <div class="w-100 form-character-location-wrap">
-      <label>
+    <div class="w-full form-character-location-wrap">
+      <label class="flex flex-col w-full mb-6 text-lg text-gray-800">
         Who's the main character?
-        <input type="text" v-model="characterName" class="form-control mt-3 py-3" />
+        <input
+          type="text"
+          v-model="characterName"
+          class="mt-3 py-3 px-4 border border-gray-300 rounded-md"
+        />
       </label>
-      <label>
+      <label class="flex flex-col w-full mb-6 text-lg text-gray-800">
         Where does the story take place?
-        <input type="text" v-model="setting" class="form-control mt-3 py-3" />
+        <input
+          type="text"
+          v-model="setting"
+          class="mt-3 py-3 px-4 border border-gray-300 rounded-md"
+        />
       </label>
     </div>
-    <div class="w-100 mb-5 form-humor-wrap">
-      <label class="mb-3">How funny should the story be?</label>
-      <div class="humor-buttons">
+    <div class="w-full mb-5 form-humor-wrap">
+      <label class="mb-3 text-lg text-gray-800">How funny should the story be?</label>
+      <div class="humor-buttons flex justify-between">
         <button
           type="button"
           @click="setHumor(1)"
-          :class="{ active: humor === 1, 'btn-outline-primary': true, btn: true, 'btn-lg': true }"
+          :class="{
+            'bg-blue-500 text-white': humor === 1,
+            'border border-blue-500 text-blue-500': humor !== 1,
+            'py-2 px-4 rounded-lg text-2xl': true,
+          }"
         >
           😐
         </button>
         <button
           type="button"
           @click="setHumor(5)"
-          :class="{ active: humor === 5, 'btn-outline-primary': true, btn: true, 'btn-lg': true }"
+          :class="{
+            'bg-blue-500 text-white': humor === 5,
+            'border border-blue-500 text-blue-500': humor !== 5,
+            'py-2 px-4 rounded-lg text-2xl': true,
+          }"
         >
           😊
         </button>
         <button
           type="button"
           @click="setHumor(10)"
-          :class="{ active: humor === 10, 'btn-outline-primary': true, btn: true, 'btn-lg': true }"
+          :class="{
+            'bg-blue-500 text-white': humor === 10,
+            'border border-blue-500 text-blue-500': humor !== 10,
+            'py-2 px-4 rounded-lg text-2xl': true,
+          }"
         >
           😂
         </button>
       </div>
     </div>
-    <div class="action-buttons-container w-100">
-      <div class="d-flex justify-content-between align-items-center mx-auto my-0">
+    <div
+      class="action-buttons-container fixed bottom-0 left-0 right-0 h-[104px] p-5 bg-white shadow-md"
+    >
+      <div class="flex justify-between items-center max-w-[700px] mx-auto my-0">
         <FastButton
           :disabled="isLoading || (!wordList.length && !characterName && !setting)"
-          customClass="btn-secondary btn-lg"
+          customClass="bg-gray-500 text-white py-2 px-4 rounded-lg text-lg"
           @click="handleReset"
         >
           Reset
         </FastButton>
         <FastButton
           :disabled="isLoading || !wordList.length || !characterName || !setting"
-          customClass="btn-primary btn-lg"
+          customClass="bg-blue-500 text-white py-2 px-4 rounded-lg text-lg"
           @click="handleSubmit"
         >
           Generate Story
@@ -279,3 +220,7 @@ defineExpose({
   cancelRequest,
 })
 </script>
+
+<style lang="scss" scoped>
+// Remove all styles here, as they're now handled by Tailwind classes
+</style>

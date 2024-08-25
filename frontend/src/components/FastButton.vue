@@ -1,17 +1,10 @@
-<style scoped lang="scss">
-.button-labeled.active {
-  /* Active state styles */
-  background-color: #505050;
-}
-</style>
 <template>
   <button
     :class="[
       'button-labeled',
-      'btn',
-      { active: isActive },
+      { 'bg-gray-700': isActive },
       customClass,
-      { disabled: isDisabled },
+      { 'opacity-50 cursor-not-allowed': isDisabled },
       'py-3',
       'px-4',
     ]"
@@ -52,3 +45,7 @@ const deactivate = () => {
   isActive.value = false
 }
 </script>
+
+<style scoped>
+/* Remove all styles here, as they're now handled by Tailwind classes */
+</style>
