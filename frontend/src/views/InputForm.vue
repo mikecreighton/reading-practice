@@ -4,7 +4,7 @@
     class="relative flex flex-col justify-start w-full my-0 mx-auto bg-white max-w-[700px] p-10 min-h-[calc(100vh-104px+40px)] pb-20"
   >
     <label class="flex flex-col w-full mb-6 text-lg text-gray-800">
-      <span class="whitespace-nowrap">What words should be included in the story?</span>
+      <span>What words should be included in the story?</span>
       <div class="word-input mt-3 flex w-full">
         <input
           type="text"
@@ -53,7 +53,7 @@
       </label>
     </div>
     <div class="w-full mb-5 form-humor-wrap">
-      <label class="mb-3 text-lg text-gray-800">How funny should the story be?</label>
+      <label class="text-lg text-gray-800 mb-3 block">How funny should the story be?</label>
       <div class="humor-buttons flex justify-between">
         <button
           type="button"
@@ -118,7 +118,7 @@ import { ref, inject } from "vue"
 import FastButton from "@/components/FastButton.vue"
 import { generateStory, generateIllustration } from "@/services/ai"
 
-const DEBUG_STORY_GENERATION = ref(false)
+const DEBUG_STORY_GENERATION = ref(true)
 const DEFAULT_HUMOR_VALUE = 5
 
 const newWord = ref("")

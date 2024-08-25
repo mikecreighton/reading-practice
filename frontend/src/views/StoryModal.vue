@@ -7,7 +7,7 @@
         :src="illustration"
         alt="Illustration"
       />
-      <p class="text-xl md:text-3xl lg:text-4xl leading-relaxed">{{ story }}</p>
+      <p class="text-xl md:text-3xl lg:text-4xl leading-relaxed text-gray-800">{{ story }}</p>
       <FastButton
         customClass="absolute top-5 right-5 w-15 h-15 text-3xl text-white bg-gray-900 hover:bg-gray-700 rounded-xl"
         @click="emit('closeRequest')"
