@@ -3,10 +3,10 @@ When working with Vue.js frontend code, use the following rules:
 1. You're working with a Vue 3 frontend. Always use Vue Single-File Components (SFCs) for all Vue components.
 2. All <style> tags should be scoped to the component.
 3. All CSS styles should use SCSS syntax, and the <style> tag should have the lang="scss" attribute.
-4. The CSS framework to use is Bootstrap 5.
+4. THIS IS IMPORTANT: The CSS framework we're currently using is Bootstrap 5. However, we're trying to refactor and migrate to Tailwind CSS.
 5. CSS should be structured in a mobile-first approach.
 6. gsap should be used for all animations, unless they're simple and can be done with CSS transitions.
-7. Bootstrap Icons should be used for all icons. The current version being used is 1.11.0 or newer.
+7. Bootstrap Icons should be used for all icons even though we're trying to migrate to Tailwind CSS. The current version being used is 1.11.0 or newer.
 8. The <i> tag should be used for all icons. Specify the icon name in the class attribute: ex. <i class="bi-alarm"></i>
 9. To change the color of an icon, add an additional class to the <i> tag and define the `color` within the component's <style> tag.
 10. To change the size of an icon, add an additional class to the <i> tag and define the `font-size` within the component's <style> tag.

@@ -1,20 +1,4 @@
 <style scoped lang="scss">
-.button-labeled {
-  /* Base styles */
-  // font-size: 24px;
-  // width: auto;
-  // display: inline-block;
-  // padding: 24px 36px;
-  // cursor: pointer;
-  // user-select: none;
-  // border: none;
-  // color: #FFF;
-  // text-align: center;
-  // background-color: #101010;
-  // border-radius: 12px;
-  // transition: background-color 0.1s ease-in-out;
-}
-
 .button-labeled.active {
   /* Active state styles */
   background-color: #505050;
