@@ -9,7 +9,7 @@
 }
 
 $form-padding: 40px;
-$action-buttons-height: 96px;
+$action-buttons-height: 104px;
 $form-max-width: 700px;
 
 form {
