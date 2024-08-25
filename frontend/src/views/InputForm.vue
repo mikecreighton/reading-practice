@@ -12,14 +12,9 @@
           @keyup.enter.prevent="addWord"
           @keydown.enter.prevent
           placeholder="Enter a word"
-          class="flex-1 mr-4 min-w-0 py-3 px-4 border border-gray-300 rounded-md"
+          class="flex-1 mr-4 min-w-0 py-3 px-4 border border-input-border bg-input-background focus:outline-none focus:border-input-border-focus rounded-md"
         />
-        <FastButton
-          customClass="flex-shrink-0 border border-blue-500 text-blue-500 hover:bg-blue-500 hover:text-white"
-          @click="addWord"
-        >
-          Add
-        </FastButton>
+        <FastButton customClass="flex-shrink-0" @click="addWord">Add</FastButton>
       </div>
       <div class="word-chips flex flex-wrap gap-2 mt-3">
         <span
@@ -40,7 +35,7 @@
         <input
           type="text"
           v-model="characterName"
-          class="mt-3 py-3 px-4 border border-gray-300 rounded-md"
+          class="mt-3 py-3 px-4 border border-input-border bg-input-background focus:outline-none focus:border-input-border-focus rounded-md"
         />
       </label>
       <label class="flex flex-col w-full mb-6 text-lg text-gray-800">
@@ -48,7 +43,7 @@
         <input
           type="text"
           v-model="setting"
-          class="mt-3 py-3 px-4 border border-gray-300 rounded-md"
+          class="mt-3 py-3 px-4 border border-input-border bg-input-background focus:outline-none focus:border-input-border-focus rounded-md"
         />
       </label>
     </div>
@@ -56,37 +51,17 @@
       <label class="text-lg text-gray-800 mb-3 block">How funny should the story be?</label>
       <div class="humor-buttons flex justify-between">
         <button
+          v-for="i in [1, 5, 10]"
+          :key="i"
           type="button"
-          @click="setHumor(1)"
+          @click="setHumor(i)"
           :class="{
-            'bg-blue-500 text-white': humor === 1,
-            'border border-blue-500 text-blue-500': humor !== 1,
-            'py-2 px-4 rounded-lg text-2xl': true,
+            'bg-input-background border border-input-border-focus': humor === i,
+            'bg-white border border-input-border': humor !== i,
+            'py-3 px-4 rounded-lg text-2xl': true,
           }"
         >
-          😐
-        </button>
-        <button
-          type="button"
-          @click="setHumor(5)"
-          :class="{
-            'bg-blue-500 text-white': humor === 5,
-            'border border-blue-500 text-blue-500': humor !== 5,
-            'py-2 px-4 rounded-lg text-2xl': true,
-          }"
-        >
-          😊
-        </button>
-        <button
-          type="button"
-          @click="setHumor(10)"
-          :class="{
-            'bg-blue-500 text-white': humor === 10,
-            'border border-blue-500 text-blue-500': humor !== 10,
-            'py-2 px-4 rounded-lg text-2xl': true,
-          }"
-        >
-          😂
+          {{ i == 1 ? "😐" : i == 5 ? "😊" : "😂" }}
         </button>
       </div>
     </div>
@@ -96,14 +71,14 @@
       <div class="flex justify-between items-center max-w-[700px] mx-auto my-0">
         <FastButton
           :disabled="isLoading || (!wordList.length && !characterName && !setting)"
-          customClass="bg-gray-500 text-white py-2 px-4 rounded-lg text-lg"
+          type="secondary"
           @click="handleReset"
         >
           Reset
         </FastButton>
         <FastButton
           :disabled="isLoading || !wordList.length || !characterName || !setting"
-          customClass="bg-blue-500 text-white py-2 px-4 rounded-lg text-lg"
+          customClass=""
           @click="handleSubmit"
         >
           Generate Story
