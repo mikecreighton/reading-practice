@@ -1,13 +1,15 @@
 {
 	"folders": [
 		{
-			"path": ".",
-			"name": "Root"
+			"name": "Root",
+			"path": "."
 		},
 		{
+			"name": "Backend",
 			"path": "backend"
 		},
 		{
+			"name": "Frontend",
 			"path": "frontend"
 		}
 	],
@@ -21,6 +23,18 @@
 		"prettier.requireConfig": true,
 		"prettier.vueIndentScriptAndStyle": false,
 		"editor.formatOnSave": true,
-		"prettier.singleAttributePerLine": false
+		"prettier.singleAttributePerLine": false,
+		"terminal.integrated.profiles.linux": {
+		  "frontend": {
+			"path": "/bin/zsh",
+			"args": ["-c", "cd ${workspaceFolder}/frontend && exec $SHELL"]
+		  },
+		  "backend": {
+			"path": "/bin/zsh",
+			"args": ["-c", "cd ${workspaceFolder}/backend && exec $SHELL"]
+		  }
+		},
+		"terminal.integrated.defaultProfile.linux": "frontend",
+		"terminal.integrated.splitCwd": "workspaceRoot"
 	}
 }
