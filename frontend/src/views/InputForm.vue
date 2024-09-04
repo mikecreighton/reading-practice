@@ -83,7 +83,7 @@
           customClass=""
           @click="handleSubmit"
         >
-          Generate Story
+          Go!
         </FastButton>
       </div>
     </div>
