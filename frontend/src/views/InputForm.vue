@@ -22,10 +22,10 @@
         <span
           v-for="(word, index) in wordList"
           :key="index"
-          class="inline-flex items-center bg-gray-200 rounded-full py-1 px-3 text-sm"
+          class="inline-flex items-center bg-gray-200 rounded-full pt-[6px] pb-1 pl-[14px] pr-3 text-md"
         >
           {{ word }}
-          <button @click="removeWord(index)" class="ml-1 text-gray-600 hover:text-gray-800">
+          <button @click="removeWord(index)" class="ml-2 text-gray-600 hover:text-gray-800">
             <i class="bi-x-circle"></i>
           </button>
         </span>
