@@ -1,18 +1,8 @@
-<style scoped lang="scss">
-.fade-enter-active,
-.fade-leave-active {
-  transition: opacity 0.5s ease;
-}
-
-.fade-enter-from,
-.fade-leave-to {
-  opacity: 0;
-}
-</style>
+<style scoped></style>
 
 <template>
   <div class="App">
-    <div class="app-content">
+    <div class="app-content bg-white">
       <InputForm
         ref="inputFormRef"
         @storyGenerationStart="handleStoryGenerationStart"
@@ -28,6 +18,7 @@
           v-if="isModalOpen"
           :story="story"
           :illustration="illustration"
+          :isLoading="isLoading"
           @regenerate="handleRegenerate"
           @closeRequest="handleStoryModalCloseRequest"
         />
@@ -48,6 +39,7 @@ const illustration = ref(null)
 const inputFormRef = ref(null)
 const isOpenAIAvailable = ref(false)
 const isModalOpen = ref(false)
+const isLoading = ref(false)
 
 // Create a global variable to store the isOpenAIAvailable value
 provide("isOpenAIAvailable", isOpenAIAvailable)
@@ -65,21 +57,24 @@ onMounted(() => {
 const handleStoryGenerationStart = () => {
   story.value = ""
   isModalOpen.value = true
+  isLoading.value = true
 }
 
 const handleStoryGenerationComplete = (generatedStory, generatedIllustration) => {
   story.value = generatedStory
   illustration.value = generatedIllustration
+  isLoading.value = false
 }
 
 const handleStoryModalCloseRequest = () => {
   isModalOpen.value = false
+  isLoading.value = false
 }
 
 const onStoryModalEnter = (el, done) => {
   gsap.to(el, {
     duration: 0.5,
-    y: "0%",
+    y: "0",
     ease: Power4.easeOut,
     onComplete: () => done(),
   })

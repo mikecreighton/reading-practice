@@ -1,79 +1,51 @@
-<style scoped lang="scss">
-.button-labeled {
-  /* Base styles */
-  font-size: 24px;
-  width: auto;
-  display: inline-block;
-  padding: 24px 36px;
-  cursor: pointer;
-  user-select: none;
-  border: none;
-  color: #FFF;
-  text-align: center;
-  background-color: #101010;
-  border-radius: 12px;
-  transition: background-color 0.1s ease-in-out;
-}
-
-.button-labeled.active {
-  /* Active state styles */
-  background-color: #505050;
-}
-
-/* Responsive styles */
-@media (max-width: 768px) {
-  .button-labeled {
-    font-size: 20px;
-    padding: 20px 30px;
-  }
-}
-@media (max-width: 480px) {
-  .button-labeled {
-    font-size: 16px;
-    padding: 16px 24px;
-  }
-}
-@media (max-width: 360px) {
-  .button-labeled {
-    font-size: 12px;
-    padding: 12px 18px;
-  }
-}
-
-</style>
+<style scoped></style>
 <template>
-    <button 
-      :class="[
-        'button-labeled',
-        { active: isActive },
-        customClass
-      ]" 
-      @touchstart.passive="activate" 
-      @touchend.passive="deactivate"
-      @touchcancel.passive="deactivate"
-      @click.prevent="$emit('click')"
-    >
-      {{ buttonText }}
-    </button>
-  </template>
-  
+  <button
+    :class="[
+      {
+        'bg-primary border border-primary text-white hover:bg-gray-900 hover:border-gray-900':
+          type === 'primary',
+      },
+      {
+        'border border-secondary text-gray-800 hover:bg-gray-300 hover:text-gray-900 hover:border-gray-900':
+          type === 'secondary',
+      },
+      { 'opacity-40 cursor-not-allowed': isDisabled },
+      'py-3 px-4 rounded-lg',
+      customClass,
+    ]"
+    @touchstart.passive="activate"
+    @touchend.passive="deactivate"
+    @touchcancel.passive="deactivate"
+    @click.prevent="$emit('click')"
+  >
+    <slot></slot>
+  </button>
+</template>
+
 <script setup>
-import { ref } from 'vue'
+import { ref } from "vue"
 
 const isActive = ref(false)
 
-defineEmits(['click'])
+defineEmits(["click"])
 
 defineProps({
-  buttonText: {
-    type: String,
-    required: true
-  },
   customClass: {
     type: [String, Array],
     required: false,
-    default: ''
-  }
+    default: "",
+  },
+  type: {
+    type: String,
+    required: false,
+    default: "primary",
+  },
+  isDisabled: {
+    type: Boolean,
+    required: false,
+    default: false,
+  },
 })
 
 const activate = () => {

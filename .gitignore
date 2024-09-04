@@ -12,9 +12,12 @@ instance/
 .coverage
 htmlcov/
 
+
 dist/
 build/
 *.egg-info/
 
 .aidigestignore
+.aider*
+
 reading-practice.md

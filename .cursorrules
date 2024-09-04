@@ -1,0 +1,15 @@
+When working with Vue.js frontend code, use the following rules:
+
+1. You're working with a Vue 3 frontend. Always use Vue Single-File Components (SFCs) for all Vue components.
+2. All `<style>` tags should be scoped to the component. `<style>` tags should be at the TOP of the component file.
+3. The CSS framework is Tailwind CSS as a PostCSS plugin.
+4. CSS should be structured in a mobile-first approach.
+5. `gsap` should be used for all animations, unless they're simple and can be done with CSS transitions.
+6. Bootstrap Icons should be used for all icons even though we're using Tailwind CSS. The current version being used is 1.11.0 or newer.
+7. The `<i>` tag should be used for all icons. Specify the icon name in the class attribute: ex. `<i class="bi-alarm"></i>`
+8. To change the color of an icon, add an additional class to the `<i> `tag and define the `color` within the component's `<style>` tag.
+9. To change the size of an icon, add an additional class to the `<i>` tag and define the `font-size` within the component's `<style>` tag.
+
+When working with the Python backend, use the following rules:
+
+1. All newly generated Python functions should include simple docstrings under the function declaration.

@@ -1,203 +1,105 @@
-<style lang="scss" scoped>
-form {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  margin: 0 auto;
-  width: 100%;
-  max-width: 700px;
-  padding: 40px 40px;
-  background-color: #fff;
+<style scoped></style>
 
-  label {
-    display: flex;
-    flex-direction: column;
-    width: 100%;
-    margin-bottom: 30px;
-    font-size: 1.2rem;
-    color: #333;
-
-    .helper {
-      color: #aaa;
-      display: inline;
-      font-size: 80%;
-    }
-  }
-
-  input {
-    margin-top: 12px;
-    height: 60px;
-    line-height: 40px;
-    padding: 0 20px;
-    font-size: 20px;
-    border-radius: 4px;
-    border: 1px solid #aaa;
-    background-color: #f0f0f0;
-    color: #333;
-  }
-
-  input.slider {
-    display: none;
-  }
-
-  // make the buttons sit side-by-side
-  .buttons-container {
-    display: flex;
-    justify-content: flex-end;
-    gap: 20px;
-    width: 100%;
-
-    @media (max-width: 768px) {
-      gap: 16px;
-    }
-    @media (max-width: 480px) {
-      gap: 12px;
-      justify-content: space-between;
-    }
-    @media (max-width: 375px) {
-      gap: 8px;
-    }
-  }
-}
-
-.word-input {
-  display: flex;
-  margin-top: 12px;
-  width: 100%;
-
-  input {
-    flex: 1;
-    margin-top: 0;
-    margin-right: 10px;
-    min-width: 0;
-  }
-
-  button {
-    height: 60px;
-    padding: 0 20px;
-    font-size: 18px;
-    background-color: #f0f0f0;
-    border: 1px solid #aaa;
-    border-radius: 4px;
-    cursor: pointer;
-    flex-shrink: 0;
-
-    &:hover {
-      background-color: #e0e0e0;
-    }
-  }
-}
-
-.word-chips {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 10px;
-  margin-top: 10px;
-}
-
-.chip {
-  display: inline-flex;
-  align-items: center;
-  background-color: #e0e0e0;
-  border-radius: 16px;
-  padding: 5px 10px;
-  font-size: 14px;
-
-  .remove-word {
-    background: none;
-    border: none;
-    color: #666;
-    cursor: pointer;
-    font-size: 18px;
-    margin-left: 5px;
-    padding: 0 5px;
-
-    &:hover {
-      color: #333;
-    }
-  }
-}
-
-.humor-buttons {
-  display: flex;
-  justify-content: space-between;
-  margin-top: 12px;
-
-  button {
-    font-size: 24px;
-    padding: 10px 20px;
-    border: 2px solid #aaa;
-    background-color: #f0f0f0;
-    border-radius: 8px;
-    cursor: pointer;
-    transition: all 0.3s ease;
-
-    &:hover {
-      background-color: #e0e0e0;
-    }
-
-    &.active {
-      border-color: #333;
-      background-color: #d0d0d0;
-    }
-  }
-}
-</style>
 <template>
-  <form @submit.prevent>
-    <label>
-      <span class="prevent-wrap">Words to Include in the Story</span>
-      <div class="word-input">
+  <form
+    @submit.prevent
+    class="relative flex flex-col justify-start w-full my-0 mx-auto bg-white max-w-[700px] min-h-[calc(100vh-104px+40px)] p-10 pb-20"
+  >
+    <label class="flex flex-col w-full mb-6 text-lg text-gray-800">
+      <span>What words should be included in the story?</span>
+      <div class="word-input mt-3 flex w-full">
         <input
           type="text"
           v-model="newWord"
           @keyup.enter.prevent="addWord"
+          @keydown.enter.prevent
           placeholder="Enter a word"
+          class="flex-1 mr-4 min-w-0 py-3 px-4 border border-input-border bg-input-background focus:outline-none focus:border-input-border-focus rounded-md"
         />
-        <button type="button" @click="addWord">Add</button>
+        <FastButton customClass="flex-shrink-0" @click="addWord">Add</FastButton>
       </div>
-      <div class="word-chips">
-        <span v-for="(word, index) in wordList" :key="index" class="chip">
+      <div class="word-chips flex flex-wrap gap-2 mt-3">
+        <span
+          v-for="(word, index) in wordList"
+          :key="index"
+          class="inline-flex items-center bg-gray-200 rounded-full pt-[6px] pb-1 pl-[14px] pr-3 text-md"
+        >
           {{ word }}
-          <button @click="removeWord(index)" class="remove-word">&times;</button>
+          <button @click="removeWord(index)" class="ml-2 text-gray-600 hover:text-gray-800">
+            <i class="bi-x-circle"></i>
+          </button>
         </span>
       </div>
     </label>
-    <label>
-      The Story's Main Character
-      <input type="text" v-model="characterName" />
-    </label>
-    <label>
-      Where the Story Takes Place
-      <input type="text" v-model="setting" />
-    </label>
-    <label>
-      Humor Level
-      <div class="humor-buttons">
-        <button type="button" @click="setHumor(1)" :class="{ active: humor === 1 }">😐</button>
-        <button type="button" @click="setHumor(5)" :class="{ active: humor === 5 }">😊</button>
-        <button type="button" @click="setHumor(10)" :class="{ active: humor === 10 }">😂</button>
+    <div class="w-full form-character-location-wrap">
+      <label class="flex flex-col w-full mb-6 text-lg text-gray-800">
+        Who's the main character?
+        <input
+          type="text"
+          v-model="characterName"
+          class="mt-3 py-3 px-4 border border-input-border bg-input-background focus:outline-none focus:border-input-border-focus rounded-md"
+        />
+      </label>
+      <label class="flex flex-col w-full mb-6 text-lg text-gray-800">
+        Where does the story take place?
+        <input
+          type="text"
+          v-model="setting"
+          class="mt-3 py-3 px-4 border border-input-border bg-input-background focus:outline-none focus:border-input-border-focus rounded-md"
+        />
+      </label>
+    </div>
+    <div class="w-full mb-5 form-humor-wrap">
+      <label class="text-lg text-gray-800 mb-3 block">How funny should the story be?</label>
+      <div class="humor-buttons flex justify-between">
+        <button
+          v-for="i in [1, 5, 10]"
+          :key="i"
+          type="button"
+          @click="setHumor(i)"
+          :class="{
+            'bg-input-background border border-input-border-focus': humor === i,
+            'bg-white border border-input-border': humor !== i,
+            'py-3 px-4 rounded-lg text-2xl': true,
+          }"
+        >
+          {{ i == 1 ? "😐" : i == 5 ? "😊" : "😂" }}
+        </button>
       </div>
-    </label>
-    <div class="buttons-container">
-      <FastButton
-        :disabled="isLoading"
-        buttonText="Generate Story"
-        @click="handleSubmit"
-      ></FastButton>
-      <FastButton buttonText="Reset" @click="handleReset"></FastButton>
+    </div>
+    <div
+      class="action-buttons-container fixed bottom-0 left-0 right-0 px-10 py-5 bg-white drop-shadow-bar"
+    >
+      <div class="flex justify-between items-center max-w-[700px] mx-auto my-0">
+        <FastButton
+          :disabled="isLoading || (!wordList.length && !characterName && !setting)"
+          :isDisabled="isLoading || (!wordList.length && !characterName && !setting)"
+          type="secondary"
+          @click="handleReset"
+        >
+          Reset
+        </FastButton>
+        <FastButton
+          :disabled="isLoading || !wordList.length || !characterName || !setting"
+          :isDisabled="isLoading || !wordList.length || !characterName || !setting"
+          customClass=""
+          @click="handleSubmit"
+        >
+          Go!
+        </FastButton>
+      </div>
     </div>
   </form>
 </template>
 
 <script setup>
-import { ref, inject, computed } from "vue"
+import { ref, inject } from "vue"
 import FastButton from "@/components/FastButton.vue"
 import { generateStory, generateIllustration } from "@/services/ai"
 
-const DEBUG_STORY_GENERATION = ref(true)
-const DEFAULT_HUMOR_VALUE = 3
+const DEBUG_INPUT_FORM = ref(true)
+const DEBUG_STORY_GENERATION = ref(false)
+const DEFAULT_HUMOR_VALUE = 5
 
 const newWord = ref("")
 const wordList = ref([])
@@ -226,7 +128,7 @@ const emit = defineEmits([
   "storyGenerationError",
 ])
 
-if (DEBUG_STORY_GENERATION.value) {
+if (DEBUG_INPUT_FORM.value) {
   wordList.value = ["friend", "because", "weather", "bicycle", "favorite"]
   characterName.value = "The Big Bad Wolf"
   setting.value = "A school bus"
@@ -241,6 +143,13 @@ const submitForm = async () => {
   isLoading.value = true
 
   emit("storyGenerationStart")
+
+  if (DEBUG_STORY_GENERATION.value) {
+    const tempStory = `The Big Bad Wolf hopped on the school bus, carrying his favorite bicycle. His friend, a little pig, asked, "Why did you bring that?" The wolf replied, "Because the weather is nice for riding!" Suddenly, the bus driver hit a bump, and the wolf's bicycle bounced around. It knocked over lunch boxes and backpacks. The bicycle wheels spun wildly, spraying mud everywhere. All the kids on the bus got splattered, and their hair stood up like crazy mohawks. The wolf looked at the mess and said, "Oops! I guess bikes don't belong on buses!" The Big Bad Wolf hopped on the school bus, carrying his favorite bicycle. His friend, a little pig, asked, "Why did you bring that?" The wolf replied, "Because the weather is nice for riding!" Suddenly, the bus driver hit a bump, and the wolf's bicycle bounced around. It knocked over lunch boxes and backpacks. The bicycle wheels spun wildly, spraying mud everywhere. All the kids on the bus got splattered, and their hair stood up like crazy mohawks. The wolf looked at the mess and said, "Oops! I guess bikes don't belong on buses!"`
+    emit("storyGenerationComplete", tempStory, "https://placehold.co/600x400")
+    isLoading.value = false
+    return
+  }
 
   abortController.value = new AbortController()
 

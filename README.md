@@ -7,7 +7,7 @@ This project is a small web app prototype that generates custom stories for youn
 The project is divided into two main components:
 
 1. Backend (Python/Flask)
-2. Frontend (Vue.js/Vite)
+2. Frontend (Vue.js/Vite/Tailwind)
 
 ### Backend
 
@@ -76,6 +76,10 @@ To set up this project locally, follow these steps:
 3. Enter a setting for the story.
 4. Adjust the humor level using the slider.
 5. Click "Generate Story" to create a custom story.
+
+## Customizing CSS Themes
+
+All themes are managed by Tailwind using the [tailwindcss-themer](https://github.com/RyanClementsHax/tailwindcss-themer?tab=readme-ov-file) package.
 
 ## License
 

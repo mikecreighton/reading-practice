@@ -1,80 +1,80 @@
-<style lang="scss" scoped>
-.story-modal {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background-color: #fff;
-  overflow-y: scroll;
-  transform: translateY(100%);
+<style scoped>
+.ball {
+  animation: moveUpDown 1.5s ease-in-out infinite;
+}
 
-  .story-modal-content {
-    padding: 100px 20px 80px 20px;
-    width: 100%;
-
-    p {
-      font-size: 20px;
-      line-height: 1.8;
-    }
-
-    @media (min-width: 768px) {
-      padding: 60px 40px 100px 40px;
-      p {
-        font-size: 30px;
-        line-height: 1.6;
-      }
-    }
-
-    @media (min-width: 1200px) {
-      p {
-        font-size: 36px;
-      }
-    }
+@keyframes moveUpDown {
+  0%,
+  100% {
+    transform: translateY(0);
   }
-
-  .story-modal-close-button {
-    position: absolute;
-    top: 20px;
-    right: 20px;
-    font-size: 30px;
-    width: 60px;
-    height: 60px;
-    cursor: pointer;
-    user-select: none;
-    border: none;
-    color: #fff;
-    text-align: center;
-    background-color: #101010;
-    border-radius: 12px;
-    transition: background-color 0.1s ease-in-out;
-    padding: 0;
-
-    &:hover,
-    &:focus,
-    &:active {
-      background-color: #303030;
-    }
+  50% {
+    transform: translateY(-60px);
   }
 }
+.fade-enter-active,
+.fade-leave-active {
+  transition: opacity 0.5s ease;
+}
+
+.fade-enter-from,
+.fade-leave-to {
+  opacity: 0;
+}
+
+.fade-enter-active {
+  transition-delay: 0.5s;
+}
 </style>
+
 <template>
-  <div class="story-modal">
-    <div class="story-modal-content d-flex flex-column justify-content-center align-items-center">
-      <img
-        width="100%"
-        class="mb-4"
-        v-if="isOpenAIAvailable && illustration"
-        :src="illustration"
-        alt="Illustration"
-      />
-      <p>{{ story }}</p>
-      <button class="story-modal-close-button" @click="emit('closeRequest')">&#x2715;</button>
-      <FastButton
-        customClass="regenerate-button"
-        buttonText="Regenerate"
-        @click="$emit('regenerate')"
-      ></FastButton>
+  <div class="absolute top-0 left-0 right-0 translate-y-full bg-white h-[100vh] w-full">
+    <transition name="fade">
+      <div
+        v-if="isLoading"
+        class="loader-wrapper flex justify-center absolute items-center w-full h-full top-0"
+      >
+        <div class="loader flex justify-center items-center h-full gap-[20px]">
+          <div
+            class="ball w-[20px] h-[20px] bg-primary rounded-full relative"
+            v-for="n in 3"
+            :key="n"
+            :style="{ animationDelay: `${(n - 1) * 0.2}s` }"
+          ></div>
+        </div>
+      </div>
+    </transition>
+    <transition name="fade">
+      <div
+        v-if="!isLoading"
+        class="story-wrapper pb-[104px] overflow-y-scroll absolute w-full h-full top-0"
+      >
+        <div class="p-10 md:p-[60px_40px_100px_40px]">
+          <img
+            class="w-full mb-6"
+            v-if="isOpenAIAvailable && illustration"
+            :src="illustration"
+            alt="Illustration"
+          />
+          <p class="text-xl md:text-3xl lg:text-4xl leading-relaxed text-gray-800">{{ story }}</p>
+        </div>
+      </div>
+    </transition>
+    <!-- Bottom action buttons -->
+    <div
+      class="action-buttons-container fixed bottom-0 left-0 right-0 px-10 py-5 bg-white drop-shadow-bar"
+    >
+      <div class="flex justify-between items-center max-w-[700px] mx-auto my-0">
+        <FastButton type="secondary" @click="emit('closeRequest')">Close</FastButton>
+        <FastButton
+          :disabled="isLoading"
+          :isDisabled="isLoading"
+          customClass=""
+          @click="$emit('regenerate')"
+        >
+          Tell me another story
+        </FastButton>
+      </div>
     </div>
   </div>
 </template>
@@ -93,6 +93,10 @@ const props = defineProps({
   illustration: {
     type: String,
     required: false,
+  },
+  isLoading: {
+    type: Boolean,
+    required: true,
   },
 })
 

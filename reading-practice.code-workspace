@@ -1,8 +1,8 @@
 {
 	"folders": [
 		{
-			"path": ".",
-			"name": "Root"
+			"name": "Root",
+			"path": "."
 		},
 		{
 			"path": "backend"
