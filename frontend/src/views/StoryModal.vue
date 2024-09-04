@@ -1,3 +1,5 @@
+<style scoped></style>
+
 <template>
   <div class="fixed inset-0 bg-white overflow-y-scroll transform translate-y-full">
     <div class="p-10 md:p-[60px_40px_100px_40px] w-full">
@@ -43,7 +45,3 @@ const props = defineProps({
 
 const emit = defineEmits(["regenerate", "closeRequest"])
 </script>
-
-<style scoped>
-/* Remove all styles here, as they're now handled by Tailwind classes */
-</style>

@@ -1,3 +1,4 @@
+<style scoped></style>
 <template>
   <button
     :class="[
@@ -55,7 +56,3 @@ const deactivate = () => {
   isActive.value = false
 }
 </script>
-
-<style scoped>
-/* Remove all styles here, as they're now handled by Tailwind classes */
-</style>

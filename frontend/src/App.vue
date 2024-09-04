@@ -1,3 +1,5 @@
+<style scoped></style>
+
 <template>
   <div class="App">
     <div class="app-content bg-white">

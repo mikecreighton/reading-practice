@@ -1,3 +1,5 @@
+<style scoped></style>
+
 <template>
   <form
     @submit.prevent
@@ -195,7 +197,3 @@ defineExpose({
   cancelRequest,
 })
 </script>
-
-<style lang="scss" scoped>
-// Remove all styles here, as they're now handled by Tailwind classes
-</style>
