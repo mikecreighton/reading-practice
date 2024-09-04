@@ -3,7 +3,7 @@
 <template>
   <form
     @submit.prevent
-    class="relative flex flex-col justify-start w-full my-0 mx-auto bg-white max-w-[700px] p-10 min-h-[calc(100vh-104px+40px)] pb-20"
+    class="relative flex flex-col justify-start w-full my-0 mx-auto bg-white max-w-[700px] min-h-[calc(100vh-104px+40px)] p-10 pb-20"
   >
     <label class="flex flex-col w-full mb-6 text-lg text-gray-800">
       <span>What words should be included in the story?</span>
@@ -68,11 +68,12 @@
       </div>
     </div>
     <div
-      class="action-buttons-container fixed bottom-0 left-0 right-0 h-[104px] p-5 bg-white shadow-md"
+      class="action-buttons-container fixed bottom-0 left-0 right-0 px-10 py-5 bg-white drop-shadow-bar"
     >
       <div class="flex justify-between items-center max-w-[700px] mx-auto my-0">
         <FastButton
           :disabled="isLoading || (!wordList.length && !characterName && !setting)"
+          :isDisabled="isLoading || (!wordList.length && !characterName && !setting)"
           type="secondary"
           @click="handleReset"
         >
@@ -80,6 +81,7 @@
         </FastButton>
         <FastButton
           :disabled="isLoading || !wordList.length || !characterName || !setting"
+          :isDisabled="isLoading || !wordList.length || !characterName || !setting"
           customClass=""
           @click="handleSubmit"
         >
@@ -95,7 +97,8 @@ import { ref, inject } from "vue"
 import FastButton from "@/components/FastButton.vue"
 import { generateStory, generateIllustration } from "@/services/ai"
 
-const DEBUG_STORY_GENERATION = ref(true)
+const DEBUG_INPUT_FORM = ref(true)
+const DEBUG_STORY_GENERATION = ref(false)
 const DEFAULT_HUMOR_VALUE = 5
 
 const newWord = ref("")
@@ -125,7 +128,7 @@ const emit = defineEmits([
   "storyGenerationError",
 ])
 
-if (DEBUG_STORY_GENERATION.value) {
+if (DEBUG_INPUT_FORM.value) {
   wordList.value = ["friend", "because", "weather", "bicycle", "favorite"]
   characterName.value = "The Big Bad Wolf"
   setting.value = "A school bus"
@@ -140,6 +143,13 @@ const submitForm = async () => {
   isLoading.value = true
 
   emit("storyGenerationStart")
+
+  if (DEBUG_STORY_GENERATION.value) {
+    const tempStory = `The Big Bad Wolf hopped on the school bus, carrying his favorite bicycle. His friend, a little pig, asked, "Why did you bring that?" The wolf replied, "Because the weather is nice for riding!" Suddenly, the bus driver hit a bump, and the wolf's bicycle bounced around. It knocked over lunch boxes and backpacks. The bicycle wheels spun wildly, spraying mud everywhere. All the kids on the bus got splattered, and their hair stood up like crazy mohawks. The wolf looked at the mess and said, "Oops! I guess bikes don't belong on buses!" The Big Bad Wolf hopped on the school bus, carrying his favorite bicycle. His friend, a little pig, asked, "Why did you bring that?" The wolf replied, "Because the weather is nice for riding!" Suddenly, the bus driver hit a bump, and the wolf's bicycle bounced around. It knocked over lunch boxes and backpacks. The bicycle wheels spun wildly, spraying mud everywhere. All the kids on the bus got splattered, and their hair stood up like crazy mohawks. The wolf looked at the mess and said, "Oops! I guess bikes don't belong on buses!"`
+    emit("storyGenerationComplete", tempStory, "https://placehold.co/600x400")
+    isLoading.value = false
+    return
+  }
 
   abortController.value = new AbortController()
 

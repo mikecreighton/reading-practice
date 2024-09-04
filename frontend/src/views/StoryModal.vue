@@ -1,27 +1,80 @@
-<style scoped></style>
+<style scoped>
+.ball {
+  animation: moveUpDown 1.5s ease-in-out infinite;
+}
+
+@keyframes moveUpDown {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-60px);
+  }
+}
+.fade-enter-active,
+.fade-leave-active {
+  transition: opacity 0.5s ease;
+}
+
+.fade-enter-from,
+.fade-leave-to {
+  opacity: 0;
+}
+
+.fade-enter-active {
+  transition-delay: 0.5s;
+}
+</style>
 
 <template>
-  <div class="fixed inset-0 bg-white overflow-y-scroll transform translate-y-full">
-    <div class="p-10 md:p-[60px_40px_100px_40px] w-full">
-      <img
-        class="w-full mb-4"
-        v-if="isOpenAIAvailable && illustration"
-        :src="illustration"
-        alt="Illustration"
-      />
-      <p class="text-xl md:text-3xl lg:text-4xl leading-relaxed text-gray-800">{{ story }}</p>
-      <FastButton
-        customClass="absolute top-5 right-5 w-15 h-15 text-3xl text-white bg-gray-900 hover:bg-gray-700 rounded-xl"
-        @click="emit('closeRequest')"
+  <div class="absolute top-0 left-0 right-0 translate-y-full bg-white h-[100vh] w-full">
+    <transition name="fade">
+      <div
+        v-if="isLoading"
+        class="loader-wrapper flex justify-center absolute items-center w-full h-full top-0"
       >
-        &#x2715;
-      </FastButton>
-      <FastButton
-        customClass="mt-4 bg-blue-500 text-white py-2 px-4 rounded-lg"
-        @click="$emit('regenerate')"
+        <div class="loader flex justify-center items-center h-full gap-[20px]">
+          <div
+            class="ball w-[20px] h-[20px] bg-primary rounded-full relative"
+            v-for="n in 3"
+            :key="n"
+            :style="{ animationDelay: `${(n - 1) * 0.2}s` }"
+          ></div>
+        </div>
+      </div>
+    </transition>
+    <transition name="fade">
+      <div
+        v-if="!isLoading"
+        class="story-wrapper pb-[104px] overflow-y-scroll absolute w-full h-full top-0"
       >
-        Regenerate
-      </FastButton>
+        <div class="p-10 md:p-[60px_40px_100px_40px]">
+          <img
+            class="w-full mb-6"
+            v-if="isOpenAIAvailable && illustration"
+            :src="illustration"
+            alt="Illustration"
+          />
+          <p class="text-xl md:text-3xl lg:text-4xl leading-relaxed text-gray-800">{{ story }}</p>
+        </div>
+      </div>
+    </transition>
+    <!-- Bottom action buttons -->
+    <div
+      class="action-buttons-container fixed bottom-0 left-0 right-0 px-10 py-5 bg-white drop-shadow-bar"
+    >
+      <div class="flex justify-between items-center max-w-[700px] mx-auto my-0">
+        <FastButton type="secondary" @click="emit('closeRequest')">Close</FastButton>
+        <FastButton
+          :disabled="isLoading"
+          :isDisabled="isLoading"
+          customClass=""
+          @click="$emit('regenerate')"
+        >
+          Tell me another story
+        </FastButton>
+      </div>
     </div>
   </div>
 </template>
@@ -40,6 +93,10 @@ const props = defineProps({
   illustration: {
     type: String,
     required: false,
+  },
+  isLoading: {
+    type: Boolean,
+    required: true,
   },
 })
 

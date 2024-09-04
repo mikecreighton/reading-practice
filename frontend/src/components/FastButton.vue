@@ -10,7 +10,7 @@
         'border border-secondary text-gray-800 hover:bg-gray-300 hover:text-gray-900 hover:border-gray-900':
           type === 'secondary',
       },
-      { 'opacity-50 cursor-not-allowed': isDisabled },
+      { 'opacity-40 cursor-not-allowed': isDisabled },
       'py-3 px-4 rounded-lg',
       customClass,
     ]"
