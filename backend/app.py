@@ -34,16 +34,21 @@ TEMPERATURE = 0.8
 MAX_TOKENS = 256
 
 # Instantiate the Flask app
-app = Flask(__name__, static_url_path='', static_folder='./static')
+app = Flask(__name__, static_url_path="", static_folder="./static")
 
 # Allow CORS for all origins if FLASK_ENV is "development"
 if os.getenv("FLASK_ENV") == "development":
     CORS(app, resources={r"/*": {"origins": "*"}})
 else:
-    CORS(app, resources={r"/*": {
-        "origins": [os.getenv("FRONTEND_ORIGIN")],
-        "methods": ["POST", "OPTIONS"],
-    }})
+    CORS(
+        app,
+        resources={
+            r"/*": {
+                "origins": [os.getenv("FRONTEND_ORIGIN")],
+                "methods": ["POST", "OPTIONS"],
+            }
+        },
+    )
 
 # -----------------------------------------
 #
@@ -51,16 +56,25 @@ else:
 #
 # -----------------------------------------
 
+
 def construct_user_prompt(words, subject, setting, humor):
-    user_prompt = USER_PROMPT.replace('{{words}}', words).replace('{{subject}}', subject).replace('{{setting}}', setting).replace('{{humor}}', humor)
+    user_prompt = (
+        USER_PROMPT.replace("{{words}}", words)
+        .replace("{{subject}}", subject)
+        .replace("{{setting}}", setting)
+        .replace("{{humor}}", humor)
+    )
     # Add a timestamp to prevent caching when using OpenRouter
     if AI_TEXT_PROVIDER == "openrouter":
         user_prompt += f"\n\n[IGNORE THIS: Timestamp: {time.time()}]"
     return user_prompt
 
+
 def construct_illustration_user_prompt(story):
-    user_prompt = ILLUSTRATION_USER_PROMPT.replace('{{story}}', story)
+    user_prompt = ILLUSTRATION_USER_PROMPT.replace("{{story}}", story)
     return user_prompt
+
+
 # -----------------------------------------
 #
 # HELPERS
@@ -81,16 +95,18 @@ def construct_illustration_user_prompt(story):
 #
 # -----------------------------------------
 
-@app.route('/')
+
+@app.route("/")
 def home():
     """
 
     Serve the homepage
 
     """
-    return app.send_static_file('index.html')
+    return app.send_static_file("index.html")
 
-@app.route('/<path:path>')
+
+@app.route("/<path:path>")
 def serve_static(path):
     """
 
@@ -99,29 +115,26 @@ def serve_static(path):
     """
     return app.send_static_file(path)
 
-@app.route('/stream', methods=['POST'])
+
+@app.route("/stream", methods=["POST"])
 def stream():
     """
 
     Used for a _streaming_ request to generate a story.
 
     """
+
     def process_stream(user_prompt):
         try:
-            stream = client.chat.completions.create(model=AI_TEXT_MODEL,
+            stream = client.chat.completions.create(
+                model=AI_TEXT_MODEL,
                 messages=[
-                    {
-                        "role": "system",
-                        "content": SYSTEM_PROMPT
-                    },
-                    {
-                        "role":"user",
-                        "content": user_prompt
-                    },
+                    {"role": "system", "content": SYSTEM_PROMPT},
+                    {"role": "user", "content": user_prompt},
                 ],
                 temperature=TEMPERATURE,
                 max_tokens=MAX_TOKENS,
-                stream=True
+                stream=True,
             )
             for chunk in stream:
                 if chunk.choices[0].delta.content is not None:
@@ -130,16 +143,17 @@ def stream():
         except Exception as e:
             print(f"Error during streaming: {e}")
             yield f"Error: {e}"
-    
-    words = request.json['words']
-    subject = request.json['subject']
-    setting = request.json['setting']
-    humor = request.json['humor']
-    user_prompt = construct_user_prompt(words, subject, setting, humor)
-    
-    return Response(process_stream(user_prompt), mimetype='text/event-stream')
 
-@app.route('/generate_story', methods=['POST'])
+    words = request.json["words"]
+    subject = request.json["subject"]
+    setting = request.json["setting"]
+    humor = request.json["humor"]
+    user_prompt = construct_user_prompt(words, subject, setting, humor)
+
+    return Response(process_stream(user_prompt), mimetype="text/event-stream")
+
+
+@app.route("/generate_story", methods=["POST"])
 def generate_story():
     """
 
@@ -149,10 +163,10 @@ def generate_story():
     # start a timer to evaluate how long this request takes
     start = time.time()
 
-    words = request.json['words']
-    subject = request.json['subject']
-    setting = request.json['setting']
-    humor = request.json['humor']
+    words = request.json["words"]
+    subject = request.json["subject"]
+    setting = request.json["setting"]
+    humor = request.json["humor"]
 
     user_prompt = construct_user_prompt(words, subject, setting, humor)
 
@@ -165,16 +179,11 @@ def generate_story():
     print(user_prompt)
     print("-----------------------------------------")
 
-    response = text_client.chat.completions.create(model=AI_TEXT_MODEL,
+    response = text_client.chat.completions.create(
+        model=AI_TEXT_MODEL,
         messages=[
-            {
-                "role": "system",
-                "content": SYSTEM_PROMPT
-            },
-            {
-                "role":"user",
-                "content": user_prompt
-            },
+            {"role": "system", "content": SYSTEM_PROMPT},
+            {"role": "user", "content": user_prompt},
         ],
         temperature=TEMPERATURE,
         max_tokens=MAX_TOKENS,
@@ -185,12 +194,11 @@ def generate_story():
     end = time.time()
     print("/generate_story - Time elapsed: ", end - start)
 
-    story_object = {
-        "story": llm_response_content
-    }
+    story_object = {"story": llm_response_content}
     return jsonify(story_object)
 
-@app.route('/openai_available', methods=['GET'])
+
+@app.route("/openai_available", methods=["GET"])
 def openai_available():
     if os.getenv("OPENAI_API_KEY"):
         return jsonify({"message": True})
@@ -198,7 +206,7 @@ def openai_available():
         return jsonify({"message": False})
 
 
-@app.route('/generate_illustration', methods=['POST'])
+@app.route("/generate_illustration", methods=["POST"])
 def generate_illustration():
     """
 
@@ -211,7 +219,7 @@ def generate_illustration():
         # start a timer to evaluate how long this request takes
         start = time.time()
 
-        story = request.json['story']
+        story = request.json["story"]
         user_prompt = construct_illustration_user_prompt(story)
         # AI_ILLUSTRATION_TEXT_MODEL = os.getenv("AI_ILLUSTRATION_TEXT_MODEL", "meta-llama/llama-3.1-70b-instruct")
         AI_ILLUSTRATION_TEXT_MODEL = os.getenv("AI_ILLUSTRATION_TEXT_MODEL", "anthropic/claude-3.5-sonnet")
@@ -225,16 +233,11 @@ def generate_illustration():
         print(user_prompt)
         print("-----------------------------------------")
 
-        response = text_client.chat.completions.create(model=AI_ILLUSTRATION_TEXT_MODEL,
+        response = text_client.chat.completions.create(
+            model=AI_ILLUSTRATION_TEXT_MODEL,
             messages=[
-                {
-                    "role": "system",
-                    "content": ILLUSTRATION_SYSTEM_PROMPT
-                },
-                {
-                    "role":"user",
-                    "content": user_prompt
-                },
+                {"role": "system", "content": ILLUSTRATION_SYSTEM_PROMPT},
+                {"role": "user", "content": user_prompt},
             ],
             temperature=TEMPERATURE,
             max_tokens=MAX_TOKENS,
@@ -263,12 +266,11 @@ def generate_illustration():
         end = time.time()
         print("/generate_illustration - Time elapsed: ", end - start)
 
-        iamge_object = {
-            "image": image_gen_response_b64
-        }
+        iamge_object = {"image": image_gen_response_b64}
         return jsonify(iamge_object)
     else:
         return jsonify({"error": "No OPENAI_API_KEY environment variable set."})
+
 
 # Determine if we should use debug based on environment.
 # We'll default to debug for anything that isn't "production".
@@ -277,5 +279,5 @@ if os.getenv("FLASK_ENV") == "production":
 else:
     debug = True
 
-if __name__ == '__main__':
-    app.run(debug=debug, host='0.0.0.0', port=8080)
+if __name__ == "__main__":
+    app.run(debug=debug, host="0.0.0.0", port=8080)
