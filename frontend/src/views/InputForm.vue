@@ -104,7 +104,7 @@
 </template>
 
 <script setup>
-import { ref, inject } from "vue"
+import { ref, inject, watch } from "vue"
 import FastButton from "@/components/FastButton.vue"
 import { generateStory, generateIllustration, checkSafety } from "@/services/ai"
 
@@ -134,6 +134,13 @@ const isLoading = ref(false)
 const abortController = ref(null)
 const isOpenAIAvailable = inject("isOpenAIAvailable")
 
+const props = defineProps({
+  settings: {
+    type: Object,
+    required: true
+  }
+})
+
 const emit = defineEmits([
   "storyGenerationStart",
   "storyGenerationComplete",
@@ -152,6 +159,11 @@ if (DEBUG_INPUT_FORM.value) {
 const setHumor = (value) => {
   humor.value = value
 }
+
+// Update gradeLevel when settings change
+watch(() => props.settings.gradeLevel, (newGradeLevel) => {
+  gradeLevel.value = newGradeLevel
+})
 
 const submitForm = async () => {
   isLoading.value = true
@@ -181,11 +193,12 @@ const submitForm = async () => {
         setting.value,
         humor.value,
         gradeLevel.value,
+        props.settings.theme, // Add theme to story generation
         abortController.value.signal,
       )
         .then((story) => {
           if (isOpenAIAvailable.value) {
-            generateIllustration(story, abortController.value.signal).then((illustration) => {
+            generateIllustration(story, props.settings.theme, abortController.value.signal).then((illustration) => {
               emit("storyGenerationComplete", story, illustration)
             })
           } else {

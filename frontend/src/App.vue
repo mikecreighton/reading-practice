@@ -5,6 +5,7 @@
     <div class="app-content bg-white">
       <InputForm
         ref="inputFormRef"
+        :settings="settings"
         @storyGenerationStart="handleStoryGenerationStart"
         @storyGenerationComplete="handleStoryGenerationComplete"
         @storyGenerationError="handleStoryGenerationError"
@@ -30,6 +31,7 @@
       >
         <SettingsModal
           v-if="isSettingsModalOpen"
+          v-model:settings="settings"
           @close="handleSettingsModalClose"
           @cancel="handleSettingsModalCancel"
         />
@@ -53,6 +55,10 @@ const isOpenAIAvailable = ref(false)
 const isModalOpen = ref(false)
 const isLoading = ref(false)
 const isSettingsModalOpen = ref(false)
+const settings = ref({
+  gradeLevel: '2nd',
+  theme: 'Default'
+})
 
 // Create a global variable to store the isOpenAIAvailable value
 provide("isOpenAIAvailable", isOpenAIAvailable)
@@ -127,10 +133,12 @@ const handleOpenSettings = () => {
 
 const handleSettingsModalClose = () => {
   isSettingsModalOpen.value = false
+  // Settings are automatically updated due to v-model:settings
 }
 
 const handleSettingsModalCancel = () => {
   isSettingsModalOpen.value = false
+  // No need to update settings as they were not changed
 }
 
 const onSettingsModalEnter = (el, done) => {
