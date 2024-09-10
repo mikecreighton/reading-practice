@@ -13,6 +13,8 @@
           v-model="newWord"
           @keyup.enter.prevent="addWord"
           @keydown.enter.prevent
+          @keyup.space.prevent="addWord"
+          @keyup.comma.prevent="addWord"
           placeholder="Enter a word"
           class="flex-1 mr-4 min-w-0 py-3 px-4 border border-input-border bg-input-background focus:outline-none focus:border-input-border-focus rounded-md"
         />
@@ -107,7 +109,7 @@ const gradeLevel = ref("2nd")
 
 const addWord = () => {
   if (newWord.value.trim()) {
-    wordList.value.push(newWord.value.trim())
+    wordList.value.push(newWord.value.trim().toLowerCase())
     newWord.value = ""
   }
 }
@@ -193,7 +195,15 @@ const submitForm = async () => {
     } else {
       emit("storyGenerationError", "The story is not appropriate for the given grade level.")
     }
-  }) 
+  })
+  .catch((error) => {
+      console.error("Error:", error)
+      emit("storyGenerationError", error.message)
+    })
+    .finally(() => {
+    isLoading.value = false
+    abortController.value = null
+  })
 }
 
 const handleSubmit = () => {

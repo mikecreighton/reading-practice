@@ -28,6 +28,7 @@ You will be provided with the inputs in the following format:
 
 # Important
 
+- If a vocabulary word appears to be misspelled, then you should use the correct spelling of the word.
 - If the Humor Level is high, then the story should be funny.
 - A humorous story should NOT state that events are funny.
 - A humorous story should NOT have characters laughing.
