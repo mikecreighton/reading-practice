@@ -5,6 +5,8 @@ from flask import Flask, request, jsonify, Response
 from flask_cors import CORS
 import time
 from prompts import USER_PROMPT, SYSTEM_PROMPT, ILLUSTRATION_SYSTEM_PROMPT, ILLUSTRATION_USER_PROMPT
+from safety_prompts import SYSTEM_PROMPT as SAFETY_SYSTEM_PROMPT, USER_PROMPT_TEMPLATE as SAFETY_USER_PROMPT_TEMPLATE
+import json
 
 # -----------------------------------------
 #
@@ -16,6 +18,7 @@ load_dotenv(override=True)
 
 # First, we'll figure out which API service to use for text generation
 AI_TEXT_PROVIDER = os.getenv("AI_TEXT_PROVIDER", "openai")
+AI_SAFETY_MODEL = os.getenv("AI_SAFETY_MODEL", "meta-llama/llama-3.1-8b-instruct:free")
 
 if AI_TEXT_PROVIDER == "openai":
     AI_TEXT_API_KEY = os.getenv("OPENAI_API_KEY")
@@ -57,12 +60,13 @@ else:
 # -----------------------------------------
 
 
-def construct_user_prompt(words, subject, setting, humor):
+def construct_user_prompt(words, subject, setting, humor, grade):
     user_prompt = (
         USER_PROMPT.replace("{{words}}", words)
         .replace("{{subject}}", subject)
         .replace("{{setting}}", setting)
         .replace("{{humor}}", humor)
+        .replace("{{grade}}", grade)
     )
     # Add a timestamp to prevent caching when using OpenRouter
     if AI_TEXT_PROVIDER == "openrouter":
@@ -148,9 +152,57 @@ def stream():
     subject = request.json["subject"]
     setting = request.json["setting"]
     humor = request.json["humor"]
-    user_prompt = construct_user_prompt(words, subject, setting, humor)
+    grade = request.json["grade"]
+    user_prompt = construct_user_prompt(words, subject, setting, humor, grade)
 
     return Response(process_stream(user_prompt), mimetype="text/event-stream")
+
+
+@app.route("/check_safety", methods=["POST"])
+def check_safety():
+    """
+
+    Used for a non-streaming request to check the safety of a story.
+
+    """
+    words = request.json["words"]
+    grade = request.json["grade"]
+    subject = request.json["subject"]
+    setting = request.json["setting"]
+
+    user_prompt = (
+        SAFETY_USER_PROMPT_TEMPLATE.replace("{{words}}", words)
+        .replace("{{grade}}", grade)
+        .replace("{{subject}}", subject)
+        .replace("{{setting}}", setting)
+    )
+    response = text_client.chat.completions.create(
+        model=AI_SAFETY_MODEL,
+        messages=[
+            {"role": "system", "content": SAFETY_SYSTEM_PROMPT},
+            {"role": "user", "content": user_prompt},
+        ],
+        temperature=0,
+        max_tokens=256,
+    )
+
+    llm_response_content = response.choices[0].message.content
+
+    print("-- LLM RESPONSE FOR SAFETY --")
+    print(llm_response_content)
+    print("-- /LLM RESPONSE FOR SAFETY --")
+
+    # Check if ```json is in the response. If it is, then we need to parse the response as JSON.
+    if "```json" in llm_response_content:
+        # Extract the JSON part from the response
+        json_part = llm_response_content.split("```json")[1].split("```")[0]
+        # Parse the JSON part
+        llm_response_content = json.loads(json_part)
+    else:
+        # Let's assume the LLM response is a valid JSON object string.
+        llm_response_content = json.loads(llm_response_content)
+
+    return jsonify(llm_response_content)
 
 
 @app.route("/generate_story", methods=["POST"])
@@ -167,8 +219,9 @@ def generate_story():
     subject = request.json["subject"]
     setting = request.json["setting"]
     humor = request.json["humor"]
+    grade = request.json["grade"]
 
-    user_prompt = construct_user_prompt(words, subject, setting, humor)
+    user_prompt = construct_user_prompt(words, subject, setting, humor, grade)
 
     print("-----------------------------------------")
     print("Story model: ", AI_TEXT_MODEL)

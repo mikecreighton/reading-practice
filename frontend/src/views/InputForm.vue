@@ -95,7 +95,7 @@
 <script setup>
 import { ref, inject } from "vue"
 import FastButton from "@/components/FastButton.vue"
-import { generateStory, generateIllustration } from "@/services/ai"
+import { generateStory, generateIllustration, checkSafety } from "@/services/ai"
 
 const DEBUG_INPUT_FORM = ref(true)
 const DEBUG_STORY_GENERATION = ref(false)
@@ -103,6 +103,7 @@ const DEFAULT_HUMOR_VALUE = 5
 
 const newWord = ref("")
 const wordList = ref([])
+const gradeLevel = ref("2nd")
 
 const addWord = () => {
   if (newWord.value.trim()) {
@@ -129,10 +130,11 @@ const emit = defineEmits([
 ])
 
 if (DEBUG_INPUT_FORM.value) {
-  wordList.value = ["friend", "because", "weather", "bicycle", "favorite"]
-  characterName.value = "The Big Bad Wolf"
+  wordList.value = ["Collaborate", "Decipher", "Empathy", "Hypothesis", "Innovative"]
+  characterName.value = "A scientist"
   setting.value = "A school bus"
   humor.value = 10
+  gradeLevel.value = "6th"
 }
 
 const setHumor = (value) => {
@@ -141,6 +143,9 @@ const setHumor = (value) => {
 
 const submitForm = async () => {
   isLoading.value = true
+
+  // Make sure all the words are lowercase
+  wordList.value = wordList.value.map((word) => word.toLowerCase())
 
   emit("storyGenerationStart")
 
@@ -155,32 +160,40 @@ const submitForm = async () => {
 
   const words = wordList.value.join(",")
 
-  generateStory(
-    words,
-    characterName.value,
-    setting.value,
-    humor.value,
-    abortController.value.signal,
-  )
-    .then((story) => {
-      if (isOpenAIAvailable.value) {
-        generateIllustration(story, abortController.value.signal).then((illustration) => {
-          emit("storyGenerationComplete", story, illustration)
+  checkSafety(words, characterName.value, setting.value, gradeLevel.value, abortController.value.signal).then((isSafe) => {
+    console.log("isSafe:", isSafe)
+    if (isSafe) { 
+      generateStory(
+        words,
+        characterName.value,
+        setting.value,
+        humor.value,
+        gradeLevel.value,
+        abortController.value.signal,
+      )
+        .then((story) => {
+          if (isOpenAIAvailable.value) {
+            generateIllustration(story, abortController.value.signal).then((illustration) => {
+              emit("storyGenerationComplete", story, illustration)
+            })
+          } else {
+            emit("storyGenerationComplete", story, null)
+          }
         })
-      } else {
-        emit("storyGenerationComplete", story, null)
-      }
-    })
-    .catch((error) => {
-      if (error.name !== "AbortError") {
-        console.error("Error:", error)
-        emit("storyGenerationError", error)
-      }
-    })
-    .finally(() => {
-      isLoading.value = false
-      abortController.value = null
-    })
+        .catch((error) => {
+          if (error.name !== "AbortError") {
+            console.error("Error:", error)
+            emit("storyGenerationError", error)
+          }
+        })
+        .finally(() => {
+          isLoading.value = false
+          abortController.value = null
+        })
+    } else {
+      emit("storyGenerationError", "The story is not appropriate for the given grade level.")
+    }
+  }) 
 }
 
 const handleSubmit = () => {
