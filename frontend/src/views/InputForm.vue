@@ -73,14 +73,23 @@
       class="action-buttons-container fixed bottom-0 left-0 right-0 px-10 py-5 bg-white drop-shadow-bar"
     >
       <div class="flex justify-between items-center max-w-[700px] mx-auto my-0">
-        <FastButton
-          :disabled="isLoading || (!wordList.length && !characterName && !setting)"
-          :isDisabled="isLoading || (!wordList.length && !characterName && !setting)"
-          type="secondary"
-          @click="handleReset"
-        >
-          Reset
-        </FastButton>
+        <div class="flex items-center">
+          <FastButton
+            type="secondary"
+            customClass="mr-4"
+            @click="$emit('openSettings')"
+          >
+            <i class="bi-gear"></i>
+          </FastButton>
+          <FastButton
+            :disabled="isLoading || (!wordList.length && !characterName && !setting)"
+            :isDisabled="isLoading || (!wordList.length && !characterName && !setting)"
+            type="secondary"
+            @click="handleReset"
+          >
+            Reset
+          </FastButton>
+        </div>
         <FastButton
           :disabled="isLoading || !wordList.length || !characterName || !setting"
           :isDisabled="isLoading || !wordList.length || !characterName || !setting"
@@ -129,6 +138,7 @@ const emit = defineEmits([
   "storyGenerationStart",
   "storyGenerationComplete",
   "storyGenerationError",
+  "openSettings",
 ])
 
 if (DEBUG_INPUT_FORM.value) {

@@ -8,6 +8,7 @@
         @storyGenerationStart="handleStoryGenerationStart"
         @storyGenerationComplete="handleStoryGenerationComplete"
         @storyGenerationError="handleStoryGenerationError"
+        @openSettings="handleOpenSettings"
       />
       <Transition
         @enter="onStoryModalEnter"
@@ -23,6 +24,16 @@
           @closeRequest="handleStoryModalCloseRequest"
         />
       </Transition>
+      <Transition
+        @enter="onSettingsModalEnter"
+        @leave="onSettingsModalLeave"
+      >
+        <SettingsModal
+          v-if="isSettingsModalOpen"
+          @close="handleSettingsModalClose"
+          @cancel="handleSettingsModalCancel"
+        />
+      </Transition>
     </div>
   </div>
 </template>
@@ -30,6 +41,7 @@
 <script setup>
 import { ref, provide, onMounted } from "vue"
 import StoryModal from "@/views/StoryModal.vue"
+import SettingsModal from "@/views/SettingsModal.vue"
 import InputForm from "@/views/InputForm.vue"
 import { detectOpenAI } from "@/services/ai"
 import gsap, { Power4 } from "gsap"
@@ -40,6 +52,7 @@ const inputFormRef = ref(null)
 const isOpenAIAvailable = ref(false)
 const isModalOpen = ref(false)
 const isLoading = ref(false)
+const isSettingsModalOpen = ref(false)
 
 // Create a global variable to store the isOpenAIAvailable value
 provide("isOpenAIAvailable", isOpenAIAvailable)
@@ -106,5 +119,40 @@ const handleStoryGenerationError = (error) => {
   illustration.value = null
   isLoading.value = false
   story.value = error
+}
+
+const handleOpenSettings = () => {
+  isSettingsModalOpen.value = true
+}
+
+const handleSettingsModalClose = () => {
+  isSettingsModalOpen.value = false
+}
+
+const handleSettingsModalCancel = () => {
+  isSettingsModalOpen.value = false
+}
+
+const onSettingsModalEnter = (el, done) => {
+  gsap.to(el, {
+    duration: 0.5,
+    y: "0",
+    ease: Power4.easeOut,
+    onComplete: () => done(),
+  })
+}
+
+const onSettingsModalLeave = (el, done) => {
+  gsap.to(el, {
+    duration: 0.5,
+    y: "100%",
+    ease: Power4.easeInOut,
+    onComplete: () => done(),
+  })
+}
+
+const onSettingsModalAfterLeave = () => {
+  illustration.value = null
+  story.value = null
 }
 </script>

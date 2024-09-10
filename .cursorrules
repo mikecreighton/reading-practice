@@ -1,3 +1,9 @@
+# About this app
+
+This project is a small web app prototype that generates custom stories for young students to practice their reading and spelling skills. It consists of a Flask backend that generates text stories and illustrations using AI, and a Vue frontend that provides an interface for inputting story parameters and displaying the generated stories.
+
+# Rules
+
 When working with Vue.js frontend code, use the following rules:
 
 1. You're working with a Vue 3 frontend. Always use Vue Single-File Components (SFCs) for all Vue components.
