@@ -42,15 +42,14 @@ export const checkSafety = async (words, subject, setting, grade, abortSignal) =
       return response.json()
     })
     .then((data) => {
-      console.log("data", data)
-      return data.inappropriate || data.unsafe
+      return data.appropriate && data.safe
     })
     .catch((error) => {
       throw error
     })
 }
 
-export const generateStory = async (words, characterName, setting, humor, abortSignal) => {
+export const generateStory = async (words, characterName, setting, humor, grade, abortSignal) => {
   let baseURL = getBaseURL()
 
   let payload = JSON.stringify({
@@ -58,6 +57,7 @@ export const generateStory = async (words, characterName, setting, humor, abortS
     subject: characterName,
     setting: setting,
     humor: humor + "",
+    grade: grade,
   })
 
   console.log("payload", payload)

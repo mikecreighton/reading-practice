@@ -60,12 +60,13 @@ else:
 # -----------------------------------------
 
 
-def construct_user_prompt(words, subject, setting, humor):
+def construct_user_prompt(words, subject, setting, humor, grade):
     user_prompt = (
         USER_PROMPT.replace("{{words}}", words)
         .replace("{{subject}}", subject)
         .replace("{{setting}}", setting)
         .replace("{{humor}}", humor)
+        .replace("{{grade}}", grade)
     )
     # Add a timestamp to prevent caching when using OpenRouter
     if AI_TEXT_PROVIDER == "openrouter":
@@ -151,7 +152,8 @@ def stream():
     subject = request.json["subject"]
     setting = request.json["setting"]
     humor = request.json["humor"]
-    user_prompt = construct_user_prompt(words, subject, setting, humor)
+    grade = request.json["grade"]
+    user_prompt = construct_user_prompt(words, subject, setting, humor, grade)
 
     return Response(process_stream(user_prompt), mimetype="text/event-stream")
 
@@ -217,8 +219,9 @@ def generate_story():
     subject = request.json["subject"]
     setting = request.json["setting"]
     humor = request.json["humor"]
+    grade = request.json["grade"]
 
-    user_prompt = construct_user_prompt(words, subject, setting, humor)
+    user_prompt = construct_user_prompt(words, subject, setting, humor, grade)
 
     print("-----------------------------------------")
     print("Story model: ", AI_TEXT_MODEL)
