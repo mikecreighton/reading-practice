@@ -95,7 +95,7 @@
 <script setup>
 import { ref, inject } from "vue"
 import FastButton from "@/components/FastButton.vue"
-import { generateStory, generateIllustration } from "@/services/ai"
+import { generateStory, generateIllustration, checkSafety } from "@/services/ai"
 
 const DEBUG_INPUT_FORM = ref(true)
 const DEBUG_STORY_GENERATION = ref(false)
@@ -155,32 +155,42 @@ const submitForm = async () => {
 
   const words = wordList.value.join(",")
 
-  generateStory(
-    words,
-    characterName.value,
-    setting.value,
-    humor.value,
-    abortController.value.signal,
-  )
-    .then((story) => {
-      if (isOpenAIAvailable.value) {
-        generateIllustration(story, abortController.value.signal).then((illustration) => {
-          emit("storyGenerationComplete", story, illustration)
+  checkSafety(words, characterName.value, setting.value, "2nd grade", abortController.value.signal).then((isSafe) => {
+
+    console.log("isSafe", isSafe)
+    return
+
+    if (isSafe) { 
+      generateStory(
+        words,
+        characterName.value,
+        setting.value,
+        humor.value,
+        abortController.value.signal,
+      )
+        .then((story) => {
+          if (isOpenAIAvailable.value) {
+            generateIllustration(story, abortController.value.signal).then((illustration) => {
+              emit("storyGenerationComplete", story, illustration)
+            })
+          } else {
+            emit("storyGenerationComplete", story, null)
+          }
         })
-      } else {
-        emit("storyGenerationComplete", story, null)
-      }
-    })
-    .catch((error) => {
-      if (error.name !== "AbortError") {
-        console.error("Error:", error)
-        emit("storyGenerationError", error)
-      }
-    })
-    .finally(() => {
-      isLoading.value = false
-      abortController.value = null
-    })
+        .catch((error) => {
+          if (error.name !== "AbortError") {
+            console.error("Error:", error)
+            emit("storyGenerationError", error)
+          }
+        })
+        .finally(() => {
+          isLoading.value = false
+          abortController.value = null
+        })
+    } else {
+      emit("storyGenerationError", "The story is not appropriate for the given grade level.")
+    }
+  }) 
 }
 
 const handleSubmit = () => {
