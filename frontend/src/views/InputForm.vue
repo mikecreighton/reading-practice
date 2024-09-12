@@ -73,14 +73,23 @@
       class="action-buttons-container fixed bottom-0 left-0 right-0 px-10 py-5 bg-white drop-shadow-bar"
     >
       <div class="flex justify-between items-center max-w-[700px] mx-auto my-0">
-        <FastButton
-          :disabled="isLoading || (!wordList.length && !characterName && !setting)"
-          :isDisabled="isLoading || (!wordList.length && !characterName && !setting)"
-          type="secondary"
-          @click="handleReset"
-        >
-          Reset
-        </FastButton>
+        <div class="flex items-center">
+          <FastButton
+            type="secondary"
+            customClass="mr-4"
+            @click="$emit('openSettings')"
+          >
+            <i class="bi-gear"></i>
+          </FastButton>
+          <FastButton
+            :disabled="isLoading || (!wordList.length && !characterName && !setting)"
+            :isDisabled="isLoading || (!wordList.length && !characterName && !setting)"
+            type="secondary"
+            @click="handleReset"
+          >
+            Reset
+          </FastButton>
+        </div>
         <FastButton
           :disabled="isLoading || !wordList.length || !characterName || !setting"
           :isDisabled="isLoading || !wordList.length || !characterName || !setting"
@@ -95,7 +104,7 @@
 </template>
 
 <script setup>
-import { ref, inject } from "vue"
+import { ref, inject, watch } from "vue"
 import FastButton from "@/components/FastButton.vue"
 import { generateStory, generateIllustration, checkSafety } from "@/services/ai"
 
@@ -125,10 +134,18 @@ const isLoading = ref(false)
 const abortController = ref(null)
 const isOpenAIAvailable = inject("isOpenAIAvailable")
 
+const props = defineProps({
+  settings: {
+    type: Object,
+    required: true
+  }
+})
+
 const emit = defineEmits([
   "storyGenerationStart",
   "storyGenerationComplete",
   "storyGenerationError",
+  "openSettings",
 ])
 
 if (DEBUG_INPUT_FORM.value) {
@@ -142,6 +159,11 @@ if (DEBUG_INPUT_FORM.value) {
 const setHumor = (value) => {
   humor.value = value
 }
+
+// Update gradeLevel when settings change
+watch(() => props.settings.gradeLevel, (newGradeLevel) => {
+  gradeLevel.value = newGradeLevel
+})
 
 const submitForm = async () => {
   isLoading.value = true
@@ -164,7 +186,7 @@ const submitForm = async () => {
 
   checkSafety(words, characterName.value, setting.value, gradeLevel.value, abortController.value.signal).then((isSafe) => {
     console.log("isSafe:", isSafe)
-    if (isSafe) { 
+    if (isSafe) {
       generateStory(
         words,
         characterName.value,
@@ -175,6 +197,7 @@ const submitForm = async () => {
       )
         .then((story) => {
           if (isOpenAIAvailable.value) {
+            abortController.value = new AbortController()
             generateIllustration(story, abortController.value.signal).then((illustration) => {
               emit("storyGenerationComplete", story, illustration)
             })

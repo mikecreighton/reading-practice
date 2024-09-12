@@ -1,13 +1,15 @@
-<style scoped></style>
+<style scoped style="postcss"></style>
 
 <template>
-  <div class="App">
+  <div :class="['App', 'theme-' + settings.theme]">
     <div class="app-content bg-white">
       <InputForm
         ref="inputFormRef"
+        :settings="settings"
         @storyGenerationStart="handleStoryGenerationStart"
         @storyGenerationComplete="handleStoryGenerationComplete"
         @storyGenerationError="handleStoryGenerationError"
+        @openSettings="handleOpenSettings"
       />
       <Transition
         @enter="onStoryModalEnter"
@@ -23,6 +25,16 @@
           @closeRequest="handleStoryModalCloseRequest"
         />
       </Transition>
+      <Transition
+        @enter="onSettingsModalEnter"
+        @leave="onSettingsModalLeave"
+      >
+        <SettingsModal
+          v-if="isSettingsModalOpen"
+          v-model:settings="settings"
+          @save="handleSettingsModalSave"
+        />
+      </Transition>
     </div>
   </div>
 </template>
@@ -30,6 +42,7 @@
 <script setup>
 import { ref, provide, onMounted } from "vue"
 import StoryModal from "@/views/StoryModal.vue"
+import SettingsModal from "@/views/SettingsModal.vue"
 import InputForm from "@/views/InputForm.vue"
 import { detectOpenAI } from "@/services/ai"
 import gsap, { Power4 } from "gsap"
@@ -40,6 +53,11 @@ const inputFormRef = ref(null)
 const isOpenAIAvailable = ref(false)
 const isModalOpen = ref(false)
 const isLoading = ref(false)
+const isSettingsModalOpen = ref(false)
+const settings = ref({
+  gradeLevel: '2nd',
+  theme: 'default'
+})
 
 // Create a global variable to store the isOpenAIAvailable value
 provide("isOpenAIAvailable", isOpenAIAvailable)
@@ -106,5 +124,33 @@ const handleStoryGenerationError = (error) => {
   illustration.value = null
   isLoading.value = false
   story.value = error
+}
+
+const handleOpenSettings = () => {
+  isSettingsModalOpen.value = true
+}
+
+const handleSettingsModalSave = () => {
+  isSettingsModalOpen.value = false
+  // Settings are automatically updated due to v-model:settings
+  // You can add any additional logic here if needed
+}
+
+const onSettingsModalEnter = (el, done) => {
+  gsap.to(el, {
+    duration: 0.5,
+    y: "0",
+    ease: Power4.easeOut,
+    onComplete: () => done(),
+  })
+}
+
+const onSettingsModalLeave = (el, done) => {
+  gsap.to(el, {
+    duration: 0.5,
+    y: "100%",
+    ease: Power4.easeInOut,
+    onComplete: () => done(),
+  })
 }
 </script>
