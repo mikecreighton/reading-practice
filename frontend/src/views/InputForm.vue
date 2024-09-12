@@ -58,7 +58,7 @@
           v-for="i in [1, 5, 10]"
           :key="i"
           type="button"
-          @click="setHumor(i)"
+          @click="humor = i"
           :class="{
             'bg-input-background border border-input-border-focus': humor === i,
             'bg-white border border-input-border': humor !== i,
@@ -104,13 +104,11 @@
 </template>
 
 <script setup>
-import { ref, inject, watch } from "vue"
+import { ref, inject, watch, onMounted } from "vue"
 import FastButton from "@/components/FastButton.vue"
 import { generateStory, generateIllustration } from "@/services/ai"
 
-const DEBUG_INPUT_FORM = ref(true)
-const DEBUG_STORY_GENERATION = ref(false)
-const DEFAULT_HUMOR_VALUE = 5
+const DEBUG_INPUT_FORM = ref(false)
 
 const newWord = ref("")
 const wordList = ref([])
@@ -129,7 +127,7 @@ const removeWord = (index) => {
 
 const characterName = ref("")
 const setting = ref("")
-const humor = ref(DEFAULT_HUMOR_VALUE)
+const humor = ref(5)
 const isLoading = ref(false)
 const abortController = ref(null)
 const isOpenAIAvailable = inject("isOpenAIAvailable")
@@ -138,6 +136,11 @@ const props = defineProps({
   settings: {
     type: Object,
     required: true
+  },
+  savedInputs: {
+    type: Object,
+    required: false,
+    default: () => ({})
   }
 })
 
@@ -148,22 +151,45 @@ const emit = defineEmits([
   "openSettings",
 ])
 
-if (DEBUG_INPUT_FORM.value) {
-  wordList.value = ["Collaborate", "Decipher", "Empathy", "Hypothesis", "Innovative"]
-  characterName.value = "A scientist"
-  setting.value = "A school bus"
-  humor.value = 10
-  gradeLevel.value = "6th"
+const loadSavedInputs = () => {
+  if (!DEBUG_INPUT_FORM.value) {
+    console.log("InputForm.props.savedInputs", props.savedInputs)
+    wordList.value = props.savedInputs.wordList || []
+    characterName.value = props.savedInputs.characterName || ""
+    setting.value = props.savedInputs.setting || ""
+    humor.value = props.savedInputs.humor || 5
+  } else {
+    // Set debug values
+    wordList.value = ["Collaborate", "Decipher", "Empathy", "Hypothesis", "Innovative"]
+    characterName.value = "A scientist"
+    setting.value = "A school bus"
+    humor.value = 10
+    gradeLevel.value = "6th"
+  }
 }
 
-const setHumor = (value) => {
-  humor.value = value
-}
+// Watch for changes in savedInputs prop
+watch(() => props.savedInputs, (newSavedInputs) => {
+  if (Object.keys(newSavedInputs).length > 0) {
+    loadSavedInputs()
+  }
+}, { immediate: true, deep: true })
 
-// Update gradeLevel when settings change
-watch(() => props.settings.gradeLevel, (newGradeLevel) => {
-  gradeLevel.value = newGradeLevel
+onMounted(() => {
+  loadSavedInputs()
 })
+
+// Watch for changes in input values and save to local storage
+watch([wordList, characterName, setting, humor], () => {
+  const inputValues = {
+    wordList: wordList.value,
+    characterName: characterName.value,
+    setting: setting.value,
+    humor: humor.value
+  }
+  console.log("InputForm Watch", inputValues)
+  localStorage.setItem('userInputs', JSON.stringify(inputValues))
+}, { deep: true })
 
 const submitForm = async () => {
   isLoading.value = true
@@ -222,7 +248,7 @@ const handleReset = () => {
   newWord.value = ""
   characterName.value = ""
   setting.value = ""
-  humor.value = DEFAULT_HUMOR_VALUE
+  humor.value = 5
 }
 
 const cancelRequest = () => {

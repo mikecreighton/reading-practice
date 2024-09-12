@@ -6,6 +6,7 @@
       <InputForm
         ref="inputFormRef"
         :settings="settings"
+        :savedInputs="savedInputs"
         @storyGenerationStart="handleStoryGenerationStart"
         @storyGenerationComplete="handleStoryGenerationComplete"
         @storyGenerationError="handleStoryGenerationError"
@@ -40,7 +41,7 @@
 </template>
 
 <script setup>
-import { ref, provide, onMounted } from "vue"
+import { ref, provide, onMounted, nextTick } from "vue"
 import StoryModal from "@/views/StoryModal.vue"
 import SettingsModal from "@/views/SettingsModal.vue"
 import InputForm from "@/views/InputForm.vue"
@@ -58,11 +59,29 @@ const settings = ref({
   gradeLevel: '2nd',
   theme: 'default'
 })
+const savedInputs = ref({})
+
+const loadSavedInputs = () => {
+  const savedInputsData = localStorage.getItem('userInputs')
+  console.log("savedInputsData", savedInputsData)
+  if (savedInputsData) {
+    savedInputs.value = JSON.parse(savedInputsData)
+  }
+}
+
+// Call this immediately
+loadSavedInputs()
 
 // Create a global variable to store the isOpenAIAvailable value
 provide("isOpenAIAvailable", isOpenAIAvailable)
 
 onMounted(() => {
+  // Load settings from local storage
+  const savedSettings = localStorage.getItem('userSettings')
+  if (savedSettings) {
+    settings.value = JSON.parse(savedSettings)
+  }
+
   detectOpenAI()
     .then((available) => {
       isOpenAIAvailable.value = available
@@ -131,7 +150,8 @@ const handleOpenSettings = () => {
 
 const handleSettingsModalSave = () => {
   isSettingsModalOpen.value = false
-  // Settings are automatically updated due to v-model:settings
+  // Save settings to local storage
+  localStorage.setItem('userSettings', JSON.stringify(settings.value))
   // You can add any additional logic here if needed
 }
 
