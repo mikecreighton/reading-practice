@@ -120,44 +120,6 @@ def serve_static(path):
     return app.send_static_file(path)
 
 
-@app.route("/stream", methods=["POST"])
-def stream():
-    """
-
-    Used for a _streaming_ request to generate a story.
-
-    """
-
-    def process_stream(user_prompt):
-        try:
-            stream = client.chat.completions.create(
-                model=AI_TEXT_MODEL,
-                messages=[
-                    {"role": "system", "content": SYSTEM_PROMPT},
-                    {"role": "user", "content": user_prompt},
-                ],
-                temperature=TEMPERATURE,
-                max_tokens=MAX_TOKENS,
-                stream=True,
-            )
-            for chunk in stream:
-                if chunk.choices[0].delta.content is not None:
-                    content = chunk.choices[0].delta.content
-                    yield content
-        except Exception as e:
-            print(f"Error during streaming: {e}")
-            yield f"Error: {e}"
-
-    words = request.json["words"]
-    subject = request.json["subject"]
-    setting = request.json["setting"]
-    humor = request.json["humor"]
-    grade = request.json["grade"]
-    user_prompt = construct_user_prompt(words, subject, setting, humor, grade)
-
-    return Response(process_stream(user_prompt), mimetype="text/event-stream")
-
-
 @app.route("/generate_story", methods=["POST"])
 def generate_story():
     """
