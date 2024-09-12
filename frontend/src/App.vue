@@ -120,10 +120,9 @@ const handleRegenerate = () => {
 }
 
 const handleStoryGenerationError = (error) => {
-  console.log("error:", error)
   illustration.value = null
   isLoading.value = false
-  story.value = error
+  story.value = error.message
 }
 
 const handleOpenSettings = () => {

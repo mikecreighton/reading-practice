@@ -120,99 +120,11 @@ def serve_static(path):
     return app.send_static_file(path)
 
 
-@app.route("/stream", methods=["POST"])
-def stream():
-    """
-
-    Used for a _streaming_ request to generate a story.
-
-    """
-
-    def process_stream(user_prompt):
-        try:
-            stream = client.chat.completions.create(
-                model=AI_TEXT_MODEL,
-                messages=[
-                    {"role": "system", "content": SYSTEM_PROMPT},
-                    {"role": "user", "content": user_prompt},
-                ],
-                temperature=TEMPERATURE,
-                max_tokens=MAX_TOKENS,
-                stream=True,
-            )
-            for chunk in stream:
-                if chunk.choices[0].delta.content is not None:
-                    content = chunk.choices[0].delta.content
-                    yield content
-        except Exception as e:
-            print(f"Error during streaming: {e}")
-            yield f"Error: {e}"
-
-    words = request.json["words"]
-    subject = request.json["subject"]
-    setting = request.json["setting"]
-    humor = request.json["humor"]
-    grade = request.json["grade"]
-    user_prompt = construct_user_prompt(words, subject, setting, humor, grade)
-
-    return Response(process_stream(user_prompt), mimetype="text/event-stream")
-
-
-@app.route("/check_safety", methods=["POST"])
-def check_safety():
-    """
-
-    Used for a non-streaming request to check the safety of a story.
-
-    """
-    words = request.json["words"]
-    grade = request.json["grade"]
-    subject = request.json["subject"]
-    setting = request.json["setting"]
-
-    user_prompt = (
-        SAFETY_USER_PROMPT_TEMPLATE.replace("{{words}}", words)
-        .replace("{{grade}}", grade)
-        .replace("{{subject}}", subject)
-        .replace("{{setting}}", setting)
-    )
-    response = text_client.chat.completions.create(
-        model=AI_SAFETY_MODEL,
-        messages=[
-            {"role": "system", "content": SAFETY_SYSTEM_PROMPT},
-            {"role": "user", "content": user_prompt},
-        ],
-        temperature=0,
-        max_tokens=256,
-    )
-
-    llm_response_content = response.choices[0].message.content
-
-    print("-- LLM RESPONSE FOR SAFETY --")
-    print(llm_response_content)
-    print("-- /LLM RESPONSE FOR SAFETY --")
-
-    # Check if ```json is in the response. If it is, then we need to parse the response as JSON.
-    if "```json" in llm_response_content:
-        # Extract the JSON part from the response
-        json_part = llm_response_content.split("```json")[1].split("```")[0]
-        # Parse the JSON part
-        llm_response_content = json.loads(json_part)
-    else:
-        # Let's assume the LLM response is a valid JSON object string.
-        llm_response_content = json.loads(llm_response_content)
-
-    return jsonify(llm_response_content)
-
-
 @app.route("/generate_story", methods=["POST"])
 def generate_story():
     """
-
-    Used for a non-streaming request to generate a story.
-
+    Used for a non-streaming request to generate a story with integrated safety check.
     """
-    # start a timer to evaluate how long this request takes
     start = time.time()
 
     words = request.json["words"]
@@ -221,16 +133,44 @@ def generate_story():
     humor = request.json["humor"]
     grade = request.json["grade"]
 
-    user_prompt = construct_user_prompt(words, subject, setting, humor, grade)
+    # Perform safety check
+    safety_user_prompt = (
+        SAFETY_USER_PROMPT_TEMPLATE.replace("{{words}}", words)
+        .replace("{{grade}}", grade)
+        .replace("{{subject}}", subject)
+        .replace("{{setting}}", setting)
+    )
+    safety_response = text_client.chat.completions.create(
+        model=AI_SAFETY_MODEL,
+        messages=[
+            {"role": "system", "content": SAFETY_SYSTEM_PROMPT},
+            {"role": "user", "content": safety_user_prompt},
+        ],
+        temperature=0,
+        max_tokens=256,
+    )
 
-    print("-----------------------------------------")
-    print("Story model: ", AI_TEXT_MODEL)
-    print("Story system prompt:")
-    print(SYSTEM_PROMPT)
-    print(" ")
-    print("Story user prompt:")
-    print(user_prompt)
-    print("-----------------------------------------")
+    safety_content = safety_response.choices[0].message.content
+
+    if "```json" in safety_content:
+        json_part = safety_content.split("```json")[1].split("```")[0]
+        safety_result = json.loads(json_part)
+    else:
+        safety_result = json.loads(safety_content)
+
+    is_safe = safety_result.get("appropriate", False) and safety_result.get("safe", False)
+
+    if not is_safe:
+        return jsonify(
+            {
+                "safe": False,
+                "story": None,
+                "error": "Looks like you might have tried to tell a story with words or concepts that are not appropriate for a children's story. Please go back and try again.",
+            }
+        )
+
+    # Generate story
+    user_prompt = construct_user_prompt(words, subject, setting, humor, grade)
 
     response = text_client.chat.completions.create(
         model=AI_TEXT_MODEL,
@@ -242,13 +182,12 @@ def generate_story():
         max_tokens=MAX_TOKENS,
     )
 
-    llm_response_content = response.choices[0].message.content
+    story = response.choices[0].message.content
 
     end = time.time()
     print("/generate_story - Time elapsed: ", end - start)
 
-    story_object = {"story": llm_response_content}
-    return jsonify(story_object)
+    return jsonify({"safe": True, "story": story})
 
 
 @app.route("/openai_available", methods=["GET"])

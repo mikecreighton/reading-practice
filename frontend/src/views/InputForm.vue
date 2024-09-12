@@ -106,7 +106,7 @@
 <script setup>
 import { ref, inject, watch } from "vue"
 import FastButton from "@/components/FastButton.vue"
-import { generateStory, generateIllustration, checkSafety } from "@/services/ai"
+import { generateStory, generateIllustration } from "@/services/ai"
 
 const DEBUG_INPUT_FORM = ref(true)
 const DEBUG_STORY_GENERATION = ref(false)
@@ -184,49 +184,33 @@ const submitForm = async () => {
 
   const words = wordList.value.join(",")
 
-  checkSafety(words, characterName.value, setting.value, gradeLevel.value, abortController.value.signal).then((isSafe) => {
-    console.log("isSafe:", isSafe)
-    if (isSafe) {
-      generateStory(
-        words,
-        characterName.value,
-        setting.value,
-        humor.value,
-        gradeLevel.value,
-        abortController.value.signal,
-      )
-        .then((story) => {
-          if (isOpenAIAvailable.value) {
-            abortController.value = new AbortController()
-            generateIllustration(story, abortController.value.signal).then((illustration) => {
-              emit("storyGenerationComplete", story, illustration)
-            })
-          } else {
-            emit("storyGenerationComplete", story, null)
-          }
+  generateStory(
+    words,
+    characterName.value,
+    setting.value,
+    humor.value,
+    gradeLevel.value,
+    abortController.value.signal,
+  )
+    .then((story) => {
+      if (isOpenAIAvailable.value) {
+        abortController.value = new AbortController()
+        generateIllustration(story, abortController.value.signal).then((illustration) => {
+          emit("storyGenerationComplete", story, illustration)
         })
-        .catch((error) => {
-          if (error.name !== "AbortError") {
-            console.error("Error:", error)
-            emit("storyGenerationError", error)
-          }
-        })
-        .finally(() => {
-          isLoading.value = false
-          abortController.value = null
-        })
-    } else {
-      emit("storyGenerationError", "The story is not appropriate for the given grade level.")
-    }
-  })
-  .catch((error) => {
-      console.error("Error:", error)
-      emit("storyGenerationError", error.message)
+      } else {
+        emit("storyGenerationComplete", story, null)
+      }
+    })
+    .catch((error) => {
+      if (error.name !== "AbortError") {
+        emit("storyGenerationError", error)
+      }
     })
     .finally(() => {
-    isLoading.value = false
-    abortController.value = null
-  })
+      isLoading.value = false
+      abortController.value = null
+    })
 }
 
 const handleSubmit = () => {
