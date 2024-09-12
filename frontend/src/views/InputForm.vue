@@ -186,19 +186,19 @@ const submitForm = async () => {
 
   checkSafety(words, characterName.value, setting.value, gradeLevel.value, abortController.value.signal).then((isSafe) => {
     console.log("isSafe:", isSafe)
-    if (isSafe) { 
+    if (isSafe) {
       generateStory(
         words,
         characterName.value,
         setting.value,
         humor.value,
         gradeLevel.value,
-        props.settings.theme, // Add theme to story generation
         abortController.value.signal,
       )
         .then((story) => {
           if (isOpenAIAvailable.value) {
-            generateIllustration(story, props.settings.theme, abortController.value.signal).then((illustration) => {
+            abortController.value = new AbortController()
+            generateIllustration(story, abortController.value.signal).then((illustration) => {
               emit("storyGenerationComplete", story, illustration)
             })
           } else {

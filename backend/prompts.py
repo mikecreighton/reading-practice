@@ -41,9 +41,9 @@ Vocabulary words: {{words}}
 Main Character: {{subject}}
 Setting: {{setting}}
 Humor Level: {{humor}}
-Grade Level: {{grade}}
+Grade Level: {{grade}} grade
 
-Very important: the story MUST be written for a student in the {{grade}}, who is about 8 years old. The reading level needs to be appropriate for this age group. This is _very_ important! Do your best."""
+Very important: the story MUST be written for a student in the {{grade}} grade. The reading level needs to be appropriate for this age group. This is _very_ important! Do your best."""
 
 ILLUSTRATION_SYSTEM_PROMPT = """You are an expert at creating illustrations for children's books and stories. You will be provided with a short story and use a generative AI image model to create an illustration for it. You are also highly skilled at prompt engineering for generative AI image models, so your response will be a prompt for the image model.
 

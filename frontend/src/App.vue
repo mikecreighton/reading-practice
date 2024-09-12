@@ -1,7 +1,7 @@
-<style scoped></style>
+<style scoped style="postcss"></style>
 
 <template>
-  <div class="App">
+  <div :class="['App', 'theme-' + settings.theme]">
     <div class="app-content bg-white">
       <InputForm
         ref="inputFormRef"
@@ -32,8 +32,7 @@
         <SettingsModal
           v-if="isSettingsModalOpen"
           v-model:settings="settings"
-          @close="handleSettingsModalClose"
-          @cancel="handleSettingsModalCancel"
+          @save="handleSettingsModalSave"
         />
       </Transition>
     </div>
@@ -57,7 +56,7 @@ const isLoading = ref(false)
 const isSettingsModalOpen = ref(false)
 const settings = ref({
   gradeLevel: '2nd',
-  theme: 'Default'
+  theme: 'default'
 })
 
 // Create a global variable to store the isOpenAIAvailable value
@@ -131,14 +130,10 @@ const handleOpenSettings = () => {
   isSettingsModalOpen.value = true
 }
 
-const handleSettingsModalClose = () => {
+const handleSettingsModalSave = () => {
   isSettingsModalOpen.value = false
   // Settings are automatically updated due to v-model:settings
-}
-
-const handleSettingsModalCancel = () => {
-  isSettingsModalOpen.value = false
-  // No need to update settings as they were not changed
+  // You can add any additional logic here if needed
 }
 
 const onSettingsModalEnter = (el, done) => {
@@ -157,10 +152,5 @@ const onSettingsModalLeave = (el, done) => {
     ease: Power4.easeInOut,
     onComplete: () => done(),
   })
-}
-
-const onSettingsModalAfterLeave = () => {
-  illustration.value = null
-  story.value = null
 }
 </script>

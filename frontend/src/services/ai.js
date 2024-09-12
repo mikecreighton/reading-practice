@@ -60,8 +60,6 @@ export const generateStory = async (words, characterName, setting, humor, grade,
     grade: grade,
   })
 
-  console.log("payload", payload)
-
   return fetch(baseURL + "/generate_story", {
     method: "POST",
     headers: {
@@ -100,6 +98,7 @@ export const generateIllustration = async (story, abortSignal) => {
     signal: abortSignal,
   })
     .then((response) => {
+      console.log("generateIllustration response", response)
       if (!response.ok) {
         throw new Error(`HTTP error status: ${response.status} ${response.statusText}`)
       }
