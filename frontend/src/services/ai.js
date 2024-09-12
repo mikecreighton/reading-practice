@@ -16,39 +16,6 @@ export const detectOpenAI = async () => {
     .then((data) => data.message)
 }
 
-export const checkSafety = async (words, subject, setting, grade, abortSignal) => {
-  let baseURL = getBaseURL()
-
-  let payload = JSON.stringify({
-    words: words,
-    subject: subject,
-    setting: setting,
-    grade: grade,
-  })
-
-  return fetch(baseURL + "/check_safety", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-      Accept: "application/json",
-    },
-    body: payload,
-    signal: abortSignal,
-  })
-    .then((response) => {
-      if (!response.ok) {
-        throw new Error(`HTTP error status: ${response.status} ${response.statusText}`)
-      }
-      return response.json()
-    })
-    .then((data) => {
-      return data.appropriate && data.safe
-    })
-    .catch((error) => {
-      throw error
-    })
-}
-
 export const generateStory = async (words, characterName, setting, humor, grade, abortSignal) => {
   let baseURL = getBaseURL()
 
@@ -75,7 +42,12 @@ export const generateStory = async (words, characterName, setting, humor, grade,
       }
       return response.json()
     })
-    .then((data) => data.story)
+    .then((data) => {
+      if (!data.safe) {
+        throw new Error(data.error)
+      }
+      return data.story
+    })
     .catch((error) => {
       throw error
     })
