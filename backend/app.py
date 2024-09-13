@@ -257,19 +257,23 @@ def generate_illustration():
         image_gen_response = image_gen_client.images.generate(
             model="dall-e-3",
             prompt=image_gen_prompt,
-            size="1024x1024",
+            size="1792x1024",
             quality="standard",
             n=1,
             response_format="b64_json",
         )
+
+        # Check if there's an error code in the response
+        if "error" in image_gen_response:
+            return jsonify({"error": image_gen_response["error"]["message"]})
 
         image_gen_response_b64 = image_gen_response.data[0].b64_json
 
         end = time.time()
         print("/generate_illustration - Time elapsed: ", end - start)
 
-        iamge_object = {"image": image_gen_response_b64}
-        return jsonify(iamge_object)
+        image_object = {"image": image_gen_response_b64}
+        return jsonify(image_object)
     else:
         return jsonify({"error": "No OPENAI_API_KEY environment variable set."})
 
