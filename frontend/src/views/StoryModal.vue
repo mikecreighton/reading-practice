@@ -28,11 +28,11 @@
 </style>
 
 <template>
-  <div class="absolute top-0 left-0 right-0 translate-y-full bg-white h-[100vh] w-full">
+  <div class="absolute top-0 left-0 right-0 translate-y-full bg-background h-[100vh] w-full">
     <transition name="fade">
       <div
         v-if="isLoading"
-        class="loader-wrapper flex justify-center absolute items-center w-full h-full top-0"
+        class="loader-wrapper flex justify-center absolute items-center h-full w-full top-0"
       >
         <div class="loader flex justify-center items-center h-full gap-[20px]">
           <div
@@ -51,12 +51,12 @@
       >
         <div class="p-10 md:p-[60px_40px_100px_40px]">
           <img
-            class="w-full mb-6"
+            class="w-full mb-6 border border-input-border rounded-lg"
             v-if="isOpenAIAvailable && illustration"
             :src="illustration"
             alt="Illustration"
           />
-          <p class="text-xl md:text-3xl lg:text-4xl leading-relaxed text-gray-800">{{ story }}</p>
+          <p class="text-xl md:text-3xl md:leading-relaxed lg:text-4xl lg:leading-relaxed leading-relaxed text-text">{{ story }}</p>
         </div>
       </div>
     </transition>

@@ -2,7 +2,7 @@
 
 <template>
   <div :class="['App', 'theme-' + settings.theme]">
-    <div class="app-content bg-white">
+    <div class="app-content bg-background">
       <InputForm
         ref="inputFormRef"
         :settings="settings"

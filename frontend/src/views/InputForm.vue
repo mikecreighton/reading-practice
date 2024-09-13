@@ -3,9 +3,9 @@
 <template>
   <form
     @submit.prevent
-    class="relative flex flex-col justify-start w-full my-0 mx-auto bg-white max-w-[700px] min-h-[calc(100vh-104px+40px)] p-10 pb-20"
+    class="relative flex flex-col justify-start w-full my-0 mx-auto bg-background min-h-[calc(100vh-104px+40px)] p-10 pb-20 max-w-[700px]"
   >
-    <label class="flex flex-col w-full mb-6 text-lg text-gray-800">
+    <label class="flex flex-col w-full mb-6 text-lg text-text">
       <span>What words should be included in the story?</span>
       <div class="word-input mt-3 flex w-full">
         <input
@@ -24,17 +24,17 @@
         <span
           v-for="(word, index) in wordList"
           :key="index"
-          class="inline-flex items-center bg-gray-200 rounded-full pt-[6px] pb-1 pl-[14px] pr-3 text-md"
+          class="inline-flex items-center bg-button-secondary rounded-full pt-[6px] pb-1 pl-[14px] pr-3 text-md"
         >
           {{ word }}
-          <button @click="removeWord(index)" class="ml-2 text-gray-600 hover:text-gray-800">
+          <button @click="removeWord(index)" class="ml-2 text-secondary-texthover:text-secondary-text-hover">
             <i class="bi-x-circle"></i>
           </button>
         </span>
       </div>
     </label>
     <div class="w-full form-character-location-wrap">
-      <label class="flex flex-col w-full mb-6 text-lg text-gray-800">
+      <label class="flex flex-col w-full mb-6 text-lg text-text">
         Who's the main character?
         <input
           type="text"
@@ -42,7 +42,7 @@
           class="mt-3 py-3 px-4 border border-input-border bg-input-background focus:outline-none focus:border-input-border-focus rounded-md"
         />
       </label>
-      <label class="flex flex-col w-full mb-6 text-lg text-gray-800">
+      <label class="flex flex-col w-full mb-6 text-lg text-text">
         Where does the story take place?
         <input
           type="text"
@@ -52,7 +52,7 @@
       </label>
     </div>
     <div class="w-full mb-5 form-humor-wrap">
-      <label class="text-lg text-gray-800 mb-3 block">How funny should the story be?</label>
+      <label class="text-lg text-text mb-3 block">How funny should the story be?</label>
       <div class="humor-buttons flex justify-between">
         <button
           v-for="i in [1, 5, 10]"
@@ -60,8 +60,8 @@
           type="button"
           @click="humor = i"
           :class="{
-            'bg-input-background border border-input-border-focus': humor === i,
-            'bg-white border border-input-border': humor !== i,
+            'bg-button-secondary border border-input-border-focus': humor === i,
+            'bg-input-background border border-input-border hover:border-input-border-focus hover:bg-input-background': humor !== i,
             'py-3 px-4 rounded-lg text-2xl': true,
           }"
         >
@@ -108,11 +108,11 @@ import { ref, inject, watch, onMounted } from "vue"
 import FastButton from "@/components/FastButton.vue"
 import { generateStory, generateIllustration } from "@/services/ai"
 
-const DEBUG_INPUT_FORM = ref(false)
+const DEBUG_INPUT_FORM = ref(true)
+const DEBUG_STORY_GENERATION = ref(false)
 
 const newWord = ref("")
 const wordList = ref([])
-const gradeLevel = ref("2nd")
 
 const addWord = () => {
   if (newWord.value.trim()) {
@@ -153,7 +153,6 @@ const emit = defineEmits([
 
 const loadSavedInputs = () => {
   if (!DEBUG_INPUT_FORM.value) {
-    console.log("InputForm.props.savedInputs", props.savedInputs)
     wordList.value = props.savedInputs.wordList || []
     characterName.value = props.savedInputs.characterName || ""
     setting.value = props.savedInputs.setting || ""
@@ -164,7 +163,6 @@ const loadSavedInputs = () => {
     characterName.value = "A scientist"
     setting.value = "A school bus"
     humor.value = 10
-    gradeLevel.value = "6th"
   }
 }
 
@@ -215,7 +213,7 @@ const submitForm = async () => {
     characterName.value,
     setting.value,
     humor.value,
-    gradeLevel.value,
+    props.settings.gradeLevel,
     abortController.value.signal,
   )
     .then((story) => {

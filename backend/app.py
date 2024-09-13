@@ -172,6 +172,14 @@ def generate_story():
     # Generate story
     user_prompt = construct_user_prompt(words, subject, setting, humor, grade)
 
+    print("-----------------------------------------")
+    print("Story system prompt:")
+    print(SYSTEM_PROMPT)
+    print(" ")
+    print("Story user prompt:")
+    print(user_prompt)
+    print("-----------------------------------------")
+
     response = text_client.chat.completions.create(
         model=AI_TEXT_MODEL,
         messages=[

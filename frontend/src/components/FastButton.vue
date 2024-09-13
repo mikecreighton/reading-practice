@@ -3,11 +3,11 @@
   <button
     :class="[
       {
-        'bg-primary border border-primary text-white hover:bg-gray-900 hover:border-gray-900':
+        'border bg-button-primary border-button-primary-border text-button-primary-text hover:bg-button-primary-hover hover:border-button-primary-border':
           type === 'primary',
       },
       {
-        'border border-secondary text-gray-800 hover:bg-gray-300 hover:text-gray-900 hover:border-gray-900':
+        'border border-button-secondary text-button-secondary-text hover:bg-button-secondary-hover hover:text-button-secondary-text':
           type === 'secondary',
       },
       { 'opacity-40 cursor-not-allowed': isDisabled },

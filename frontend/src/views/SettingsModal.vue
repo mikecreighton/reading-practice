@@ -1,28 +1,18 @@
-<style scoped lang="postcss">
-.theme-button {
-  @apply py-3 px-4 rounded-lg text-lg w-full text-left;
-}
-.theme-button.active {
-  @apply bg-input-background border border-input-border-focus;
-}
-.theme-button:not(.active) {
-  @apply bg-white border border-input-border;
-}
-</style>
+<style scoped lang="postcss"></style>
 
 <template>
-  <div class="absolute top-0 left-0 right-0 translate-y-full bg-white h-[100vh] w-full">
+  <div class="absolute top-0 left-0 right-0 translate-y-full bg-background h-[100vh] w-full">
     <div class="settings-wrapper pb-[104px] overflow-y-scroll absolute w-full h-full top-0">
       <div class="p-10 md:p-[60px_40px_100px_40px]">
-        <h2 class="text-2xl md:text-3xl font-bold mb-6">Settings</h2>
+        <h2 class="text-2xl md:text-3xl font-bold mb-6 text-text">Settings</h2>
         
         <div class="mb-6">
-          <label class="block text-lg text-gray-800 mb-2" for="gradeLevel">Grade Level</label>
+          <label class="block text-lg text-text mb-2" for="gradeLevel">Grade Level</label>
           <div class="relative">
             <select
               id="gradeLevel"
               v-model="localSettings.gradeLevel"
-              class="w-full py-3 px-4 border border-input-border text-primary bg-input-background focus:outline-none focus:border-input-border-focus rounded-md appearance-none"
+              class="w-full py-3 px-4 border border-input-border text-input-text bg-input-background focus:outline-none focus:border-input-border-focus rounded-md appearance-none"
             >
               <option v-for="grade in gradeOptions" :key="grade" :value="grade">{{ grade }}</option>
             </select>
@@ -33,13 +23,18 @@
         </div>
 
         <div class="mb-6">
-          <label class="block text-lg text-gray-800 mb-2">Theme</label>
+          <label class="block text-lg text-text mb-2">Theme</label>
           <div class="flex flex-col space-y-2">
             <button
               v-for="(value, key) in themeOptions"
               :key="key"
               @click="localSettings.theme = key"
-              :class="['theme-button', 'text-primary', { active: localSettings.theme === key }]"
+              :class="[
+                'border py-3 px-4 rounded-lg',
+                'border-button-secondary text-button-secondary-text',
+                { 'bg-input-background hover:bg-button-secondary-hover hover:text-button-secondary-text': localSettings.theme !== key },
+                { 'bg-button-secondary border-button-secondary': localSettings.theme === key }
+              ]"
             >
               {{ value }}
             </button>
