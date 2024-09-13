@@ -78,11 +78,27 @@ export default {
           selectors: [".adventure", ".theme-adventure"],
           extend: {
             colors: {
-              primary: "#FF69B4", // Bubblegum pink
-              secondary: "#87CEEB", // Sky blue
-              accent: "#98FB98", // Pale green
-              background: "#FFF0F5", // Lavender blush
-              text: "#4B0082", // Indigo
+              primary: "#1A4314", // Deep jungle green
+              secondary: "#FFD700", // Golden yellow
+              accent: "#4CAF50", // Vibrant green
+              background: "#0A1F0A", // Very dark green
+              text: "#E0F2E0", // Light mint green
+
+              "button-primary": "#4CAF50",
+              "button-primary-text": "#0A1F0A",
+              "button-primary-border": "#4CAF50",
+              "button-primary-hover": "#45A049",
+
+              "button-secondary": "#FFD700",
+              "button-secondary-hover": "#FFC107",
+              "button-secondary-text": "#0A1F0A",
+              "button-secondary-border": "#FFD700",
+
+              "input-border": "#2E7D32",
+              "input-background": "#1B5E20",
+              "input-border-focus": "#4CAF50",
+              "input-text": "#E0F2E0",
+              "input-placeholder": "#81C784",
             },
           },
         },
