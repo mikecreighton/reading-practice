@@ -7,7 +7,7 @@
 
 @screen sm {
   .humor-button {
-    @apply w-[112px] h-[112px];
+    @apply w-full h-auto aspect-auto py-3 px-4 flex-row text-2xl justify-center;
   }
 }
 </style>
@@ -69,21 +69,24 @@
 
     <div class="w-full mb-5 form-humor-wrap">
       <label class="text-lg md:text-2xl text-text mb-3 block">How funny should the story be?</label>
-      <div class="humor-buttons flex gap-[10px] sm:justify-start">
+      <div class="humor-buttons flex gap-[10px]">
         <button
-          v-for="i in [1, 5, 10]"
-          :key="i"
+          v-for="(item, index) in humorOptions"
+          :key="index"
           type="button"
-          @click="humor = i"
+          @click="humor = item.value"
           :class="[
             'humor-button',
-            humor === i
+            humor === item.value
               ? 'bg-button-secondary-selected border border-button-secondary-selected-border'
               : 'bg-button-secondary border border-button-secondary-border hover:border-button-secondary-hover-border hover:bg-button-secondary-hover',
             'rounded-lg',
           ]"
         >
-          {{ i == 1 ? "😐" : i == 5 ? "😊" : "😂" }}
+          <span class="flex items-center justify-center">
+            <span>{{ item.emoji }}</span>
+            <span class="humor-label hidden sm:inline-block ml-2 mr-1 text-xl text-button-secondary-text">{{ item.label }}</span>
+          </span>
         </button>
       </div>
     </div>
@@ -274,6 +277,12 @@ const cancelRequest = () => {
     abortController.value.abort()
   }
 }
+
+const humorOptions = [
+  { value: 1, emoji: "😐", label: "Not funny" },
+  { value: 5, emoji: "😊", label: "Funny" },
+  { value: 10, emoji: "😂", label: "OMGLOL" },
+]
 
 defineExpose({
   submitForm,
