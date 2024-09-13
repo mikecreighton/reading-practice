@@ -70,9 +70,9 @@
       </div>
     </div>
     <div
-      class="action-buttons-container bg-bottom-bar fixed bottom-0 left-0 right-0 px-10 py-5 drop-shadow-bar"
+      class="action-buttons-container bg-bottom-bar fixed bottom-0 left-0 right-0 drop-shadow-bar"
     >
-      <div class="flex justify-between items-center max-w-[700px] mx-auto my-0">
+      <div class="flex justify-between items-center max-w-[700px] px-10 py-5 mx-auto my-0">
         <div class="flex items-center">
           <FastButton
             type="secondary"
@@ -109,7 +109,7 @@ import FastButton from "@/components/FastButton.vue"
 import { generateStory, generateIllustration } from "@/services/ai"
 
 const DEBUG_INPUT_FORM = ref(true)
-const DEBUG_STORY_GENERATION = ref(true)
+const DEBUG_STORY_GENERATION = ref(false)
 
 const newWord = ref("")
 const wordList = ref([])

@@ -49,7 +49,7 @@
         v-if="!isLoading"
         class="story-wrapper pb-[104px] overflow-y-scroll absolute w-full h-full top-0"
       >
-        <div class="p-10 md:p-[60px_40px_100px_40px]">
+        <div class="p-10 md:p-[60px_40px_100px_40px] max-w-[700px] mx-auto">
           <img
             class="w-full mb-6 border border-input-border rounded-lg"
             v-if="isOpenAIAvailable && illustration"
@@ -62,9 +62,9 @@
     </transition>
     <!-- Bottom action buttons -->
     <div
-      class="action-buttons-container fixed bottom-0 left-0 right-0 px-10 py-5 bg-bottom-bar drop-shadow-bar"
+      class="action-buttons-container fixed bottom-0 left-0 right-0 bg-bottom-bar drop-shadow-bar"
     >
-      <div class="flex justify-between items-center max-w-[700px] mx-auto my-0">
+      <div class="flex justify-between items-center max-w-[700px] px-10 py-5 mx-auto my-0">
         <FastButton type="secondary" @click="emit('closeRequest')">Close</FastButton>
         <FastButton
           :disabled="isLoading"
