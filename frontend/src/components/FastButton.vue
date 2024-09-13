@@ -11,7 +11,7 @@
           type === 'secondary',
       },
       { 'opacity-40 cursor-not-allowed': isDisabled },
-      'py-3 px-4 rounded-lg',
+      'py-3 px-4 rounded-lg md:text-xl',
       customClass,
     ]"
     @touchstart.passive="activate"
