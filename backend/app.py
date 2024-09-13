@@ -85,12 +85,13 @@ def construct_illustration_user_prompt(story):
 #
 # -----------------------------------------
 
+
 # A little helper logger in case you're having trouble with CORS origins.
-# @app.before_request
-# def log_request_info():
-#     if os.getenv("FLASK_ENV") != "development":
-#         print('Headers: %s', request.headers)
-#         print('Origin: %s', request.headers.get('Origin'))
+@app.before_request
+def log_request_info():
+    if os.getenv("FLASK_ENV") != "development":
+        print("Headers: %s", request.headers)
+        print("Origin: %s", request.headers.get("Origin"))
 
 
 # -----------------------------------------
