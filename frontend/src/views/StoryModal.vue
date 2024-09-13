@@ -49,7 +49,7 @@
         v-if="!isLoading"
         class="story-wrapper pb-[104px] overflow-y-scroll absolute w-full h-full top-0"
       >
-        <div class="p-10 md:p-[60px_40px_100px_40px]">
+        <div class="p-10 md:p-[60px_40px_100px_40px] max-w-[700px] mx-auto">
           <img
             class="w-full mb-6 border border-input-border rounded-lg"
             v-if="isOpenAIAvailable && illustration"

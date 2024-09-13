@@ -1,9 +1,9 @@
 <style scoped lang="postcss"></style>
 
 <template>
-  <div class="absolute top-0 left-0 right-0 translate-y-full bg-background h-[100vh] w-full">
-    <div class="settings-wrapper pb-[104px] absolute w-full h-full top-0">
-      <div class="p-10 md:p-[60px_40px_100px_40px]">
+  <div class="absolute top-0 left-0 right-0 translate-y-full bg-background h-[100vh] w-full flex flex-col justify-start items-center">
+    <div class="settings-wrapper pb-[104px] absolute max-w-[700px] w-full h-full top-0">
+      <div class="p-10 md:p-[60px_40px_100px_40px] flex-col w-full">
         <h2 class="text-2xl md:text-3xl font-bold mb-6 text-text">Settings</h2>
         
         <div class="mb-6">
