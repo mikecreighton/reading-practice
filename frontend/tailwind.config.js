@@ -134,7 +134,7 @@ export default {
               "input-background": "#4CAF50",
               "input-border-focus": "#4CAF50",
               "input-text": "#041604",
-              "input-placeholder": "#9BD49E",
+              "input-placeholder": "#28661E",
 
               "chip": '#9BD49E',
               "chip-text": "#041604",
