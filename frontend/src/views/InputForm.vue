@@ -1,11 +1,24 @@
-<style scoped></style>
+<style scoped lang="postcss">
+.humor-button {
+  @apply flex items-center justify-center text-4xl;
+  width: calc((100% - 20px) / 3);
+  aspect-ratio: 1 / 1;
+}
+
+@screen sm {
+  .humor-button {
+    @apply w-[112px] h-[112px];
+  }
+}
+</style>
 
 <template>
   <form
     @submit.prevent
     class="relative flex flex-col justify-start w-full my-0 mx-auto bg-background min-h-[calc(100vh-104px+40px)] p-10 pb-20 max-w-[700px]"
   >
-    <label class="flex flex-col w-full mb-6 text-lg text-text">
+    <label class="flex flex-col w-full mb-6 md:mb-10 text-lg md:text-2xl text-text">
+      
       <span>What words should be included in the story?</span>
       <div class="word-input mt-3 flex w-full">
         <input
@@ -20,7 +33,8 @@
         />
         <FastButton customClass="flex-shrink-0" @click="addWord">Add</FastButton>
       </div>
-      <div class="word-chips flex flex-wrap gap-2 mt-3">
+
+      <div class="word-chips flex md:text-lg flex-wrap gap-2 mt-3 md:mt-5">
         <span
           v-for="(word, index) in wordList"
           :key="index"
@@ -33,8 +47,9 @@
         </span>
       </div>
     </label>
+
     <div class="w-full form-character-location-wrap">
-      <label class="flex flex-col w-full mb-6 text-lg text-text">
+      <label class="flex flex-col w-full mb-6 md:mb-10 text-lg md:text-2xl text-text">
         Who's the main character?
         <input
           type="text"
@@ -42,7 +57,7 @@
           class="mt-3 py-3 px-4 border border-input-border text-input-text bg-input-background focus:outline-none focus:border-input-border-focus rounded-md"
         />
       </label>
-      <label class="flex flex-col w-full mb-6 text-lg text-text">
+      <label class="flex flex-col w-full mb-6 md:mb-10 text-lg md:text-2xl text-text">
         Where does the story take place?
         <input
           type="text"
@@ -51,24 +66,28 @@
         />
       </label>
     </div>
+
     <div class="w-full mb-5 form-humor-wrap">
-      <label class="text-lg text-text mb-3 block">How funny should the story be?</label>
-      <div class="humor-buttons flex justify-between">
+      <label class="text-lg md:text-2xl text-text mb-3 block">How funny should the story be?</label>
+      <div class="humor-buttons flex gap-[10px] sm:justify-start">
         <button
           v-for="i in [1, 5, 10]"
           :key="i"
           type="button"
           @click="humor = i"
-          :class="{
-            'bg-button-secondary-selected border border-button-secondary-selected-border': humor === i,
-            'bg-button-secondary border border-button-secondary-border hover:border-button-secondary-hover-border hover:bg-button-secondary-hover': humor !== i,
-            'py-3 px-4 rounded-lg text-2xl': true,
-          }"
+          :class="[
+            'humor-button',
+            humor === i
+              ? 'bg-button-secondary-selected border border-button-secondary-selected-border'
+              : 'bg-button-secondary border border-button-secondary-border hover:border-button-secondary-hover-border hover:bg-button-secondary-hover',
+            'rounded-lg',
+          ]"
         >
           {{ i == 1 ? "😐" : i == 5 ? "😊" : "😂" }}
         </button>
       </div>
     </div>
+
     <div
       class="action-buttons-container bg-bottom-bar fixed bottom-0 left-0 right-0 drop-shadow-bar"
     >
@@ -109,7 +128,7 @@ import FastButton from "@/components/FastButton.vue"
 import { generateStory, generateIllustration } from "@/services/ai"
 
 const DEBUG_INPUT_FORM = ref(true)
-const DEBUG_STORY_GENERATION = ref(false)
+const DEBUG_STORY_GENERATION = ref(true)
 
 const newWord = ref("")
 const wordList = ref([])

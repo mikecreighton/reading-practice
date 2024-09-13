@@ -4,15 +4,15 @@
   <div class="absolute top-0 left-0 right-0 translate-y-full bg-background h-[100vh] w-full flex flex-col justify-start items-center">
     <div class="settings-wrapper pb-[104px] absolute max-w-[700px] w-full h-full top-0">
       <div class="p-10 md:p-[60px_40px_100px_40px] flex-col w-full">
-        <h2 class="text-2xl md:text-3xl font-bold mb-6 text-text">Settings</h2>
+        <h2 class="text-2xl md:text-4xl font-bold mb-10 text-text">Settings</h2>
         
-        <div class="mb-6">
-          <label class="block text-lg text-text mb-2" for="gradeLevel">Grade Level</label>
+        <div class="mb-6 md:mb-10">
+          <label class="block text-xl md:text-3xl text-text mb-3 md:mb-4" for="gradeLevel">Grade Level</label>
           <div class="relative">
             <select
               id="gradeLevel"
               v-model="localSettings.gradeLevel"
-              class="w-full py-3 px-4 border border-input-border text-input-text bg-input-background focus:outline-none focus:border-input-border-focus rounded-md appearance-none"
+              class="w-full py-3 px-4 md:text-2xl border border-input-border text-input-text bg-input-background focus:outline-none focus:border-input-border-focus rounded-md appearance-none"
             >
               <option v-for="grade in gradeOptions" :key="grade" :value="grade">{{ grade }}</option>
             </select>
@@ -23,14 +23,14 @@
         </div>
 
         <div class="mb-6">
-          <label class="block text-lg text-text mb-2">Theme</label>
+          <label class="block text-xl md:text-3xl text-text mb-3 md:mb-4">Theme</label>
           <div class="flex flex-col space-y-2">
             <button
               v-for="(value, key) in themeOptions"
               :key="key"
               @click="localSettings.theme = key"
               :class="[
-                'border py-3 px-4 rounded-lg',
+                'border py-3 px-4 rounded-lg md:text-2xl',
                 { 'bg-button-secondary text-button-secondary-text border-button-secondary-border hover:text-button-secondary-hover-text hover:bg-button-secondary-hover hover:border-button-secondary-hover-border': localSettings.theme !== key },
                 { 'bg-button-secondary-selected text-button-secondary-selected-text border-button-secondary-selected-border': localSettings.theme === key }
               ]"

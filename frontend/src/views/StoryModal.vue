@@ -51,12 +51,12 @@
       >
         <div class="p-10 md:p-[60px_40px_100px_40px] max-w-[700px] mx-auto">
           <img
-            class="w-full mb-6 border border-input-border rounded-lg"
+            class="w-full mb-6 md:mb-10 border border-input-border rounded-lg"
             v-if="isOpenAIAvailable && illustration"
             :src="illustration"
             alt="Illustration"
           />
-          <p class="text-xl md:text-3xl md:leading-relaxed lg:text-4xl lg:leading-relaxed leading-relaxed text-text">{{ story }}</p>
+          <p class="text-xl leading-relaxed sm:text-2xl sm:leading-relaxed md:leading-relaxed text-text">{{ story }}</p>
         </div>
       </div>
     </transition>
