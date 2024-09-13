@@ -32,14 +32,16 @@ export default {
             "button-primary-hover": colors.gray["700"],
 
             "button-secondary": colors.white,
+            "button-secondary-text": colors.gray["800"],
+            "button-secondary-border": colors.gray["400"],
+
             "button-secondary-hover": colors.gray["200"],
             "button-secondary-hover-text": colors.gray["800"],
             "button-secondary-border": colors.gray["400"], // This is for form element buttons
+
             "button-secondary-selected": colors.gray["200"], // This is for form element buttons
-            "button-secondary-selected-border": colors.gray["400"], // This is for form element buttons
             "button-secondary-selected-text": colors.gray["600"],
-            "button-secondary-text": colors.gray["800"],
-            "button-secondary-border": colors.gray["400"],
+            "button-secondary-selected-border": colors.gray["400"], // This is for form element buttons
 
             "input-border": colors.gray["400"],
             "input-background": colors.gray["100"],
@@ -71,20 +73,22 @@ export default {
               "button-primary-hover": "#ACFCAC",
 
               "button-secondary": "#FFD6EA",
+              "button-secondary-text": "#971958",
+              "button-secondary-border": "#E285B4",
+
               "button-secondary-hover": "#B5E1F3",
               "button-secondary-hover-text": "#0E6386",
               "button-secondary-hover-border": "#3AA4CF",
+
               "button-secondary-selected": "#B5E1F3", // This is for form element buttons
-              "button-secondary-selected-border": "#3AA4CF", // This is for form element buttons
               "button-secondary-selected-text": "#0E6386",
-              "button-secondary-text": "#971958",
-              "button-secondary-border": "#E285B4",
+              "button-secondary-selected-border": "#3AA4CF", // This is for form element buttons
 
               "input-border": "#E285B4",
               "input-background": "#FFD6EA",
               "input-border-focus": "#D33484",
               "input-text": "#4B0082",
-              "input-placeholder": "#87CEEB",
+              "input-placeholder": "#D275C6",
 
               "chip": '#B5E1F3',
               "chip-text": "#0E6386",
@@ -99,24 +103,35 @@ export default {
               primary: "#1A4314", // Deep jungle green
               secondary: "#FFD700", // Golden yellow
               accent: "#4CAF50", // Vibrant green
-              background: "#0A1F0A", // Very dark green
+              background: "#0F2E0F", // Very dark green
               text: "#E0F2E0", // Light mint green
+              "bottom-bar": "#78C47B",
 
-              "button-primary": "#4CAF50",
+              "button-primary": "#FFD700",
               "button-primary-text": "#0A1F0A",
-              "button-primary-border": "#4CAF50",
-              "button-primary-hover": "#45A049",
+              "button-primary-border": "#EBC80A",
+              "button-primary-hover": "#FFE34D",
 
-              "button-secondary": "#FFD700",
-              "button-secondary-hover": "#FFC107",
-              "button-secondary-text": "#0A1F0A",
-              "button-secondary-border": "#FFD700",
+              "button-secondary": "#4CAF50",
+              "button-secondary-text": "#041604",
+              "button-secondary-border": "#429946",
+
+              "button-secondary-hover": "#47A44B",
+              "button-secondary-hover-text": "#0A1F0A",
+              "button-secondary-hover-border": "#22561A",
+
+              "button-secondary-selected": "#9BD49E", // This is for form element buttons
+              "button-secondary-selected-text": "#041604",
+              "button-secondary-selected-border": "#4CAF50", // This is for form element buttons
 
               "input-border": "#2E7D32",
-              "input-background": "#1B5E20",
+              "input-background": "#4CAF50",
               "input-border-focus": "#4CAF50",
-              "input-text": "#E0F2E0",
-              "input-placeholder": "#81C784",
+              "input-text": "#041604",
+              "input-placeholder": "#9BD49E",
+
+              "chip": '#9BD49E',
+              "chip-text": "#041604",
             },
           },
         },

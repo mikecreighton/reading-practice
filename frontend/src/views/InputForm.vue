@@ -16,7 +16,7 @@
           @keyup.space.prevent="addWord"
           @keyup.comma.prevent="addWord"
           placeholder="Enter a word"
-          class="flex-1 mr-4 min-w-0 py-3 px-4 border border-input-border bg-input-background focus:outline-none focus:border-input-border-focus rounded-md"
+          class="flex-1 mr-4 min-w-0 py-3 px-4 border border-input-border text-input-text bg-input-background focus:outline-none focus:border-input-border-focus placeholder:text-input-placeholder rounded-md"
         />
         <FastButton customClass="flex-shrink-0" @click="addWord">Add</FastButton>
       </div>
@@ -39,7 +39,7 @@
         <input
           type="text"
           v-model="characterName"
-          class="mt-3 py-3 px-4 border border-input-border bg-input-background focus:outline-none focus:border-input-border-focus rounded-md"
+          class="mt-3 py-3 px-4 border border-input-border text-input-text bg-input-background focus:outline-none focus:border-input-border-focus rounded-md"
         />
       </label>
       <label class="flex flex-col w-full mb-6 text-lg text-text">
@@ -47,7 +47,7 @@
         <input
           type="text"
           v-model="setting"
-          class="mt-3 py-3 px-4 border border-input-border bg-input-background focus:outline-none focus:border-input-border-focus rounded-md"
+          class="mt-3 py-3 px-4 border border-input-border text-input-text bg-input-background focus:outline-none focus:border-input-border-focus rounded-md"
         />
       </label>
     </div>
