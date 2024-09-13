@@ -24,6 +24,9 @@ export default {
             secondary: colors.gray["400"],
             background: colors.white,
             text: colors.gray["800"],
+            "bottom-bar": colors.white,
+
+            "story": colors.white,
 
             "button-primary": colors.gray["800"],
             "button-primary-text": colors.white,
@@ -31,10 +34,16 @@ export default {
             "button-primary-hover": colors.gray["700"],
 
             "button-secondary": colors.white,
-            "button-secondary-hover": colors.gray["200"],
-            "button-secondary-selected": colors.gray["200"], // This is for form element buttons
             "button-secondary-text": colors.gray["800"],
             "button-secondary-border": colors.gray["400"],
+
+            "button-secondary-hover": colors.gray["200"],
+            "button-secondary-hover-text": colors.gray["800"],
+            "button-secondary-border": colors.gray["400"], // This is for form element buttons
+
+            "button-secondary-selected": colors.gray["200"], // This is for form element buttons
+            "button-secondary-selected-text": colors.gray["600"],
+            "button-secondary-selected-border": colors.gray["400"], // This is for form element buttons
 
             "input-border": colors.gray["400"],
             "input-background": colors.gray["100"],
@@ -53,27 +62,40 @@ export default {
           selectors: [".bubblegum", ".theme-bubblegum"],
           extend: {
             colors: {
-              primary: "#FF69B4", // Bubblegum pink
-              secondary: "#87CEEB", // Sky blue
-              accent: "#98FB98", // Pale green
-              background: "#FFF0F5", // Lavender blush
-              text: "#4B0082", // Indigo
+              primary: "#98FB98",
+              secondary: "#87CEEB",
+              accent: "#FF69B4",
+              background: "#FFB6DA",
+              text: "#4B0082",
+              "bottom-bar": "#FF80BF",
 
-              "button-primary": "#FF69B4",
-              "button-primary-text": "#FFF0F5",
-              "button-primary-border": "#FF69B4",
-              "button-primary-hover": "#FFB6C1",
+              "story": "#FFB6DA",
 
-              "button-secondary": "#87CEEB",
-              "button-secondary-hover": "#66B2FF",
-              "button-secondary-text": "#4B0082",
-              "button-secondary-border": "#4B0082",
+              "button-primary": "#98FB98",
+              "button-primary-text": "#215921",
+              "button-primary-border": "#8CF88C",
+              "button-primary-hover": "#ACFCAC",
 
-              "input-border": "#87CEEB",
-              "input-background": "#FFFFFF",
-              "input-border-focus": "#4B0082",
+              "button-secondary": "#FFD6EA",
+              "button-secondary-text": "#971958",
+              "button-secondary-border": "#E285B4",
+
+              "button-secondary-hover": "#B5E1F3",
+              "button-secondary-hover-text": "#0E6386",
+              "button-secondary-hover-border": "#3AA4CF",
+
+              "button-secondary-selected": "#B5E1F3", // This is for form element buttons
+              "button-secondary-selected-text": "#0E6386",
+              "button-secondary-selected-border": "#3AA4CF", // This is for form element buttons
+
+              "input-border": "#E285B4",
+              "input-background": "#FFD6EA",
+              "input-border-focus": "#D33484",
               "input-text": "#4B0082",
-              "input-placeholder": "#87CEEB",
+              "input-placeholder": "#D275C6",
+
+              "chip": '#B5E1F3',
+              "chip-text": "#0E6386",
             },
           },
         },
@@ -85,24 +107,37 @@ export default {
               primary: "#1A4314", // Deep jungle green
               secondary: "#FFD700", // Golden yellow
               accent: "#4CAF50", // Vibrant green
-              background: "#0A1F0A", // Very dark green
+              background: "#0F2E0F", // Very dark green
               text: "#E0F2E0", // Light mint green
+              "bottom-bar": "#78C47B",
 
-              "button-primary": "#4CAF50",
+              "story": "#429946",
+
+              "button-primary": "#FFD700",
               "button-primary-text": "#0A1F0A",
-              "button-primary-border": "#4CAF50",
-              "button-primary-hover": "#45A049",
+              "button-primary-border": "#EBC80A",
+              "button-primary-hover": "#FFE34D",
 
-              "button-secondary": "#FFD700",
-              "button-secondary-hover": "#FFC107",
-              "button-secondary-text": "#0A1F0A",
-              "button-secondary-border": "#FFD700",
+              "button-secondary": "#4CAF50",
+              "button-secondary-text": "#041604",
+              "button-secondary-border": "#429946",
+
+              "button-secondary-hover": "#47A44B",
+              "button-secondary-hover-text": "#0A1F0A",
+              "button-secondary-hover-border": "#22561A",
+
+              "button-secondary-selected": "#9BD49E", // This is for form element buttons
+              "button-secondary-selected-text": "#041604",
+              "button-secondary-selected-border": "#4CAF50", // This is for form element buttons
 
               "input-border": "#2E7D32",
-              "input-background": "#1B5E20",
+              "input-background": "#4CAF50",
               "input-border-focus": "#4CAF50",
-              "input-text": "#E0F2E0",
-              "input-placeholder": "#81C784",
+              "input-text": "#041604",
+              "input-placeholder": "#9BD49E",
+
+              "chip": '#9BD49E',
+              "chip-text": "#041604",
             },
           },
         },

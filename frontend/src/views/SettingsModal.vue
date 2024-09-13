@@ -31,9 +31,8 @@
               @click="localSettings.theme = key"
               :class="[
                 'border py-3 px-4 rounded-lg',
-                'text-button-secondary-text border-button-secondary-border',
-                { 'bg-button-secondary hover:bg-button-secondary-hover': localSettings.theme !== key },
-                { 'bg-button-secondary-selected border-button-secondary-border': localSettings.theme === key }
+                { 'bg-button-secondary text-button-secondary-text border-button-secondary-border hover:text-button-secondary-hover-text hover:bg-button-secondary-hover hover:border-button-secondary-hover-border': localSettings.theme !== key },
+                { 'bg-button-secondary-selected text-button-secondary-selected-text border-button-secondary-selected-border': localSettings.theme === key }
               ]"
             >
               <i v-if="localSettings.theme === key" class="bi-check"></i> {{ value }}
@@ -44,7 +43,7 @@
     </div>
     <!-- Bottom action buttons -->
     <div
-      class="action-buttons-container fixed bottom-0 left-0 right-0 px-10 py-5 bg-white drop-shadow-bar"
+      class="action-buttons-container fixed bottom-0 left-0 right-0 px-10 py-5 bg-bottom-bar drop-shadow-bar"
     >
       <div class="flex justify-end items-center max-w-[700px] mx-auto my-0">
         <FastButton @click="handleSave">Save</FastButton>

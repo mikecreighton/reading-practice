@@ -7,7 +7,7 @@
           type === 'primary',
       },
       {
-        'border text-button-secondary-text bg-button-secondary border-button-secondary-border hover:text-button-secondary-text hover:bg-button-secondary-hover':
+        'border text-button-secondary-text bg-button-secondary border-button-secondary-border hover:text-button-secondary-hover-text hover:bg-button-secondary-hover hover:border-button-secondary-hover-border':
           type === 'secondary',
       },
       { 'opacity-40 cursor-not-allowed': isDisabled },

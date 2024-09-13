@@ -16,7 +16,7 @@
           @keyup.space.prevent="addWord"
           @keyup.comma.prevent="addWord"
           placeholder="Enter a word"
-          class="flex-1 mr-4 min-w-0 py-3 px-4 border border-input-border bg-input-background focus:outline-none focus:border-input-border-focus rounded-md"
+          class="flex-1 mr-4 min-w-0 py-3 px-4 border border-input-border text-input-text bg-input-background focus:outline-none focus:border-input-border-focus placeholder:text-input-placeholder rounded-md"
         />
         <FastButton customClass="flex-shrink-0" @click="addWord">Add</FastButton>
       </div>
@@ -24,10 +24,10 @@
         <span
           v-for="(word, index) in wordList"
           :key="index"
-          class="inline-flex items-center bg-chip rounded-full pt-[6px] pb-1 pl-[14px] pr-3 text-md"
+          class="inline-flex items-center bg-chip rounded-full pt-[6px] pb-1 pl-[14px] pr-3 text-chip-text text-md"
         >
           {{ word }}
-          <button @click="removeWord(index)" class="ml-2 text-chip-text">
+          <button @click="removeWord(index)" class="ml-2">
             <i class="bi-x-circle"></i>
           </button>
         </span>
@@ -39,7 +39,7 @@
         <input
           type="text"
           v-model="characterName"
-          class="mt-3 py-3 px-4 border border-input-border bg-input-background focus:outline-none focus:border-input-border-focus rounded-md"
+          class="mt-3 py-3 px-4 border border-input-border text-input-text bg-input-background focus:outline-none focus:border-input-border-focus rounded-md"
         />
       </label>
       <label class="flex flex-col w-full mb-6 text-lg text-text">
@@ -47,7 +47,7 @@
         <input
           type="text"
           v-model="setting"
-          class="mt-3 py-3 px-4 border border-input-border bg-input-background focus:outline-none focus:border-input-border-focus rounded-md"
+          class="mt-3 py-3 px-4 border border-input-border text-input-text bg-input-background focus:outline-none focus:border-input-border-focus rounded-md"
         />
       </label>
     </div>
@@ -60,8 +60,8 @@
           type="button"
           @click="humor = i"
           :class="{
-            'bg-button-secondary-selected border border-button-primary-border': humor === i,
-            'bg-button-secondary border border-button-secondary-border hover:border-button-secondary-border hover:bg-button-secondary-hover': humor !== i,
+            'bg-button-secondary-selected border border-button-secondary-selected-border': humor === i,
+            'bg-button-secondary border border-button-secondary-border hover:border-button-secondary-hover-border hover:bg-button-secondary-hover': humor !== i,
             'py-3 px-4 rounded-lg text-2xl': true,
           }"
         >
@@ -70,7 +70,7 @@
       </div>
     </div>
     <div
-      class="action-buttons-container fixed bottom-0 left-0 right-0 px-10 py-5 bg-white drop-shadow-bar"
+      class="action-buttons-container bg-bottom-bar fixed bottom-0 left-0 right-0 px-10 py-5 drop-shadow-bar"
     >
       <div class="flex justify-between items-center max-w-[700px] mx-auto my-0">
         <div class="flex items-center">
@@ -108,8 +108,8 @@ import { ref, inject, watch, onMounted } from "vue"
 import FastButton from "@/components/FastButton.vue"
 import { generateStory, generateIllustration } from "@/services/ai"
 
-const DEBUG_INPUT_FORM = ref(false)
-const DEBUG_STORY_GENERATION = ref(false)
+const DEBUG_INPUT_FORM = ref(true)
+const DEBUG_STORY_GENERATION = ref(true)
 
 const newWord = ref("")
 const wordList = ref([])
@@ -159,7 +159,7 @@ const loadSavedInputs = () => {
     humor.value = props.savedInputs.humor || 5
   } else {
     // Set debug values
-    wordList.value = ["Collaborate", "Decipher", "Empathy", "Hypothesis", "Innovative"]
+    wordList.value = ["collaborate", "decipher", "empathy", "hypothesis", "innovative"]
     characterName.value = "A scientist"
     setting.value = "A school bus"
     humor.value = 10
