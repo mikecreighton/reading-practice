@@ -51,6 +51,7 @@ ILLUSTRATION_SYSTEM_PROMPT = """You are an expert at creating illustrations for 
 - Keep your prompts to less than 100 words.
 - Don't use imperative language. Simply describe the image you want to see.
 - The image model will never see the story itself. It will only see your prompt.
+- IMPORTANT: Add stylistic descriptors that will make the image suitable for a child in {{grade}} grade.
 
 # Your Inputs
 

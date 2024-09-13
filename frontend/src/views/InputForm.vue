@@ -24,10 +24,10 @@
         <span
           v-for="(word, index) in wordList"
           :key="index"
-          class="inline-flex items-center bg-button-secondary rounded-full pt-[6px] pb-1 pl-[14px] pr-3 text-md"
+          class="inline-flex items-center bg-chip rounded-full pt-[6px] pb-1 pl-[14px] pr-3 text-md"
         >
           {{ word }}
-          <button @click="removeWord(index)" class="ml-2 text-secondary-texthover:text-secondary-text-hover">
+          <button @click="removeWord(index)" class="ml-2 text-chip-text">
             <i class="bi-x-circle"></i>
           </button>
         </span>
@@ -60,8 +60,8 @@
           type="button"
           @click="humor = i"
           :class="{
-            'bg-button-secondary border border-input-border-focus': humor === i,
-            'bg-input-background border border-input-border hover:border-input-border-focus hover:bg-input-background': humor !== i,
+            'bg-button-secondary-selected border border-button-primary-border': humor === i,
+            'bg-button-secondary border border-button-secondary-border hover:border-button-secondary-border hover:bg-button-secondary-hover': humor !== i,
             'py-3 px-4 rounded-lg text-2xl': true,
           }"
         >
@@ -219,7 +219,7 @@ const submitForm = async () => {
     .then((story) => {
       if (isOpenAIAvailable.value) {
         abortController.value = new AbortController()
-        generateIllustration(story, abortController.value.signal).then((illustration) => {
+        generateIllustration(story, props.settings.gradeLevel, abortController.value.signal).then((illustration) => {
           emit("storyGenerationComplete", story, illustration)
         })
       } else {

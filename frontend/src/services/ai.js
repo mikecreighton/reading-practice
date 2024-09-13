@@ -53,11 +53,12 @@ export const generateStory = async (words, characterName, setting, humor, grade,
     })
 }
 
-export const generateIllustration = async (story, abortSignal) => {
+export const generateIllustration = async (story, grade, abortSignal) => {
   let baseURL = getBaseURL()
 
   let payload = JSON.stringify({
     story: story,
+    grade: grade,
   })
 
   return fetch(baseURL + "/generate_illustration", {

@@ -74,8 +74,8 @@ def construct_user_prompt(words, subject, setting, humor, grade):
     return user_prompt
 
 
-def construct_illustration_user_prompt(story):
-    user_prompt = ILLUSTRATION_USER_PROMPT.replace("{{story}}", story)
+def construct_illustration_user_prompt(story, grade):
+    user_prompt = ILLUSTRATION_USER_PROMPT.replace("{{story}}", story).replace("{{grade}}", grade)
     return user_prompt
 
 
@@ -221,7 +221,8 @@ def generate_illustration():
         start = time.time()
 
         story = request.json["story"]
-        user_prompt = construct_illustration_user_prompt(story)
+        grade = request.json["grade"]
+        user_prompt = construct_illustration_user_prompt(story, grade)
         # AI_ILLUSTRATION_TEXT_MODEL = os.getenv("AI_ILLUSTRATION_TEXT_MODEL", "meta-llama/llama-3.1-70b-instruct")
         AI_ILLUSTRATION_TEXT_MODEL = os.getenv("AI_ILLUSTRATION_TEXT_MODEL", "anthropic/claude-3.5-sonnet")
 

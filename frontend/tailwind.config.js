@@ -30,16 +30,20 @@ export default {
             "button-primary-border": colors.gray["800"],
             "button-primary-hover": colors.gray["700"],
 
-            "button-secondary": colors.gray["300"],
+            "button-secondary": colors.white,
             "button-secondary-hover": colors.gray["200"],
+            "button-secondary-selected": colors.gray["200"], // This is for form element buttons
             "button-secondary-text": colors.gray["800"],
             "button-secondary-border": colors.gray["400"],
 
-            "input-border": colors.gray["300"],
+            "input-border": colors.gray["400"],
             "input-background": colors.gray["100"],
             "input-border-focus": colors.gray["600"],
             "input-text": colors.gray["800"],
             "input-placeholder": colors.gray["400"],
+
+            "chip": colors.gray["200"],
+            "chip-text": colors.gray["800"],
           },
         },
       },

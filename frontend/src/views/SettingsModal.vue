@@ -2,7 +2,7 @@
 
 <template>
   <div class="absolute top-0 left-0 right-0 translate-y-full bg-background h-[100vh] w-full">
-    <div class="settings-wrapper pb-[104px] overflow-y-scroll absolute w-full h-full top-0">
+    <div class="settings-wrapper pb-[104px] absolute w-full h-full top-0">
       <div class="p-10 md:p-[60px_40px_100px_40px]">
         <h2 class="text-2xl md:text-3xl font-bold mb-6 text-text">Settings</h2>
         
@@ -31,12 +31,12 @@
               @click="localSettings.theme = key"
               :class="[
                 'border py-3 px-4 rounded-lg',
-                'border-button-secondary text-button-secondary-text',
-                { 'bg-input-background hover:bg-button-secondary-hover hover:text-button-secondary-text': localSettings.theme !== key },
-                { 'bg-button-secondary border-button-secondary': localSettings.theme === key }
+                'text-button-secondary-text border-button-secondary-border',
+                { 'bg-button-secondary hover:bg-button-secondary-hover': localSettings.theme !== key },
+                { 'bg-button-secondary-selected border-button-secondary-border': localSettings.theme === key }
               ]"
             >
-              {{ value }}
+              <i v-if="localSettings.theme === key" class="bi-check"></i> {{ value }}
             </button>
           </div>
         </div>
