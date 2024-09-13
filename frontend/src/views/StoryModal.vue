@@ -62,7 +62,7 @@
     </transition>
     <!-- Bottom action buttons -->
     <div
-      class="action-buttons-container fixed bottom-0 left-0 right-0 px-10 py-5 bg-white drop-shadow-bar"
+      class="action-buttons-container fixed bottom-0 left-0 right-0 px-10 py-5 bg-bottom-bar drop-shadow-bar"
     >
       <div class="flex justify-between items-center max-w-[700px] mx-auto my-0">
         <FastButton type="secondary" @click="emit('closeRequest')">Close</FastButton>
