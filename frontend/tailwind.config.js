@@ -26,6 +26,8 @@ export default {
             text: colors.gray["800"],
             "bottom-bar": colors.white,
 
+            "story": colors.white,
+
             "button-primary": colors.gray["800"],
             "button-primary-text": colors.white,
             "button-primary-border": colors.gray["800"],
@@ -67,6 +69,8 @@ export default {
               text: "#4B0082",
               "bottom-bar": "#FF80BF",
 
+              "story": "#FFB6DA",
+
               "button-primary": "#98FB98",
               "button-primary-text": "#215921",
               "button-primary-border": "#8CF88C",
@@ -106,6 +110,8 @@ export default {
               background: "#0F2E0F", // Very dark green
               text: "#E0F2E0", // Light mint green
               "bottom-bar": "#78C47B",
+
+              "story": "#429946",
 
               "button-primary": "#FFD700",
               "button-primary-text": "#0A1F0A",

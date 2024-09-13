@@ -28,7 +28,7 @@
 </style>
 
 <template>
-  <div class="absolute top-0 left-0 right-0 translate-y-full bg-background h-[100vh] w-full">
+  <div class="absolute top-0 left-0 right-0 translate-y-full bg-story h-[100vh] w-full">
     <transition name="fade">
       <div
         v-if="isLoading"
