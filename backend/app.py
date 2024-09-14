@@ -1,8 +1,8 @@
 import os
 from openai import AsyncOpenAI
 from dotenv import load_dotenv
-from fastapi import FastAPI, HTTPException, Depends, Request
-from fastapi.responses import JSONResponse, HTMLResponse
+from fastapi import FastAPI, HTTPException
+from fastapi.responses import HTMLResponse
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 import time
@@ -103,28 +103,11 @@ class IllustrationRequest(BaseModel):
     grade: str
 
 
-class UnsafeStoryException(Exception):
-    def __init__(self, name: str):
-        self.name = name
-
-
 # -----------------------------------------
 #
 # Routes
 #
 # -----------------------------------------
-
-
-@app.exception_handler(UnsafeStoryException)
-async def unsafe_story_exception_handler(request: Request, exc: UnsafeStoryException):
-    return JSONResponse(
-        status_code=400,
-        content={
-            "safe": False,
-            "story": None,
-            "error": "Looks like you might have tried to tell a story with words or concepts that are not appropriate for a children's story. Please go back and try again.",
-        },
-    )
 
 
 @app.post("/generate_story")
@@ -163,10 +146,16 @@ async def generate_story(request: StoryRequest):
     is_safe = appropriate_value and safe_value
 
     if not is_safe:
-        if appropriate_value == False:
-            raise UnsafeStoryException("inappropriate")
-        else:
-            raise UnsafeStoryException("unsafe")
+        print("-----------------------------------------")
+        print("Unsafe story detected:")
+        print(safety_content)
+        print("-----------------------------------------")
+        return {
+            "safe": False,
+            "story": None,
+            "reason": "unsafe" if not safe_value else "inappropriate",
+            "error": "Looks like you might have tried to tell a story with words or concepts that are not appropriate for a children's story. Please go back and try again.",
+        }
 
     # Generate story
     user_prompt = construct_user_prompt(request.words, request.subject, request.setting, request.humor, request.grade)

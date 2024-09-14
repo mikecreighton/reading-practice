@@ -48,7 +48,7 @@
         <div class="loader flex flex-col items-center">
           <div class="flex justify-center items-center gap-[20px] mb-[80px]">
             <div
-              class="ball w-[20px] h-[20px] bg-primary rounded-full relative"
+              class="ball w-[20px] h-[20px] bg-text rounded-full relative"
               v-for="n in 3"
               :key="n"
               :style="{ animationDelay: `${(n - 1) * 0.2}s` }"
