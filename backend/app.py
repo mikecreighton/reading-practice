@@ -2,7 +2,7 @@ import os
 from openai import AsyncOpenAI
 from dotenv import load_dotenv
 from fastapi import FastAPI, HTTPException, Depends, Request
-from fastapi.responses import JSONResponse
+from fastapi.responses import JSONResponse, HTMLResponse
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 import time
@@ -258,6 +258,23 @@ async def generate_illustration(request: IllustrationRequest):
     print("/generate_illustration - Time elapsed: ", end - start)
 
     return {"image": image_gen_response_b64}
+
+
+# Add this new route handler near the other route definitions
+@app.get("/", response_class=HTMLResponse)
+async def root():
+    """
+    Serve a blank page for the root route.
+    """
+    return """
+    <html>
+        <head>
+            <title>Reading Practice Backend</title>
+        </head>
+        <body>
+        </body>
+    </html>
+    """
 
 
 # -----------------------------------------
