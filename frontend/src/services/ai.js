@@ -71,7 +71,6 @@ export const generateIllustration = async (story, grade, abortSignal) => {
     signal: abortSignal,
   })
     .then((response) => {
-      console.log("generateIllustration response", response)
       if (!response.ok) {
         throw new Error(`HTTP error status: ${response.status} ${response.statusText}`)
       }

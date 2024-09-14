@@ -131,10 +131,14 @@ async def generate_story(request: StoryRequest):
             {"role": "user", "content": safety_user_prompt},
         ],
         temperature=0,
-        max_tokens=256,
+        max_tokens=768,
     )
 
     safety_content = safety_response.choices[0].message.content
+    print("-----------------------------------------")
+    print("Raw safety evaluation response:")
+    print(safety_content)
+    print("-----------------------------------------")
 
     if "```json" in safety_content:
         json_part = safety_content.split("```json")[1].split("```")[0]
@@ -146,10 +150,6 @@ async def generate_story(request: StoryRequest):
     is_safe = appropriate_value and safe_value
 
     if not is_safe:
-        print("-----------------------------------------")
-        print("Unsafe story detected:")
-        print(safety_content)
-        print("-----------------------------------------")
         return {
             "safe": False,
             "story": None,

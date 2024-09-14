@@ -152,6 +152,7 @@ const setting = ref("")
 const humor = ref(5)
 const isLoading = ref(false)
 const abortController = ref(null)
+const illustrationAbortController = ref(null)
 const isOpenAIAvailable = inject("isOpenAIAvailable")
 
 const props = defineProps({
@@ -207,7 +208,6 @@ watch([wordList, characterName, setting, humor], () => {
     setting: setting.value,
     humor: humor.value
   }
-  console.log("InputForm Watch", inputValues)
   localStorage.setItem('userInputs', JSON.stringify(inputValues))
 }, { deep: true })
 
@@ -230,6 +230,7 @@ const submitForm = async () => {
 
   const words = wordList.value.join(",")
 
+  console.log("1. Generating story")
   generateStory(
     words,
     characterName.value,
@@ -240,22 +241,32 @@ const submitForm = async () => {
   )
     .then((story) => {
       if (isOpenAIAvailable.value) {
-        abortController.value = new AbortController()
-        generateIllustration(story, props.settings.gradeLevel, abortController.value.signal).then((illustration) => {
-          emit("storyGenerationComplete", story, illustration)
+        console.log("2. Generating illustration")
+        illustrationAbortController.value = new AbortController()
+        return generateIllustration(story, props.settings.gradeLevel, illustrationAbortController.value.signal)
+        .then((illustration) => {
+          console.log("3. Story and illustration generated")
+          return { story, illustration }
         })
       } else {
-        emit("storyGenerationComplete", story, null)
+          console.log("2. Story generated")
+          return { story, illustration: null }
       }
     })
+    .then(({ story, illustration }) => {
+      emit("storyGenerationComplete", story, illustration)
+    })
     .catch((error) => {
+      console.log("Error generating story or illustration", error)
       if (error.name !== "AbortError") {
         emit("storyGenerationError", error)
       }
     })
     .finally(() => {
+      console.log("Finally: Story and illustration (if applicable) generation complete")
       isLoading.value = false
       abortController.value = null
+      illustrationAbortController.value = null
     })
 }
 
@@ -275,6 +286,13 @@ const cancelRequest = () => {
   if (abortController.value) {
     isLoading.value = false
     abortController.value.abort()
+  }
+  console.log("illustrationAbortController", illustrationAbortController.value)
+
+  if (illustrationAbortController.value) {
+    console.log("Cancelling illustration request")
+    isLoading.value = false
+    illustrationAbortController.value.abort()
   }
 }
 
