@@ -4,3 +4,4 @@ openai
 fastapi
 uvicorn
 pydantic
+gunicorn
