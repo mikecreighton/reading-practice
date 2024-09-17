@@ -18,7 +18,6 @@
     class="relative flex flex-col justify-start w-full my-0 mx-auto bg-background min-h-[calc(100dvh-104px+40px)] p-10 pb-24 max-w-[700px]"
   >
     <label class="flex flex-col w-full mb-6 md:mb-10 text-lg md:text-2xl text-text">
-      
       <span>What words should be included in the story?</span>
       <div class="word-input mt-3 flex w-full">
         <input
@@ -29,7 +28,7 @@
           @keyup.space.prevent="addWord"
           @keyup.comma.prevent="addWord"
           placeholder="Enter a word"
-          class="flex-1 mr-4 min-w-0 py-3 px-4 border border-input-border text-input-text bg-input-background focus:outline-none focus:border-input-border-focus placeholder:text-input-placeholder rounded-md"
+          class="flex-1 mr-4 min-w-0 py-3 px-4 border border-input-border text-input-text bg-input-background focus:outline-none focus:border-input-border-focus focus:bg-input-background-focus placeholder:text-input-placeholder rounded-lg"
         />
         <FastButton customClass="flex-shrink-0" @click="addWord">Add</FastButton>
       </div>
@@ -54,7 +53,7 @@
         <input
           type="text"
           v-model="characterName"
-          class="mt-3 py-3 px-4 border border-input-border text-input-text bg-input-background focus:outline-none focus:border-input-border-focus rounded-md"
+          class="mt-3 py-3 px-4 border border-input-border text-input-text bg-input-background focus:outline-none focus:border-input-border-focus focus:bg-input-background-focus rounded-lg"
         />
       </label>
       <label class="flex flex-col w-full mb-6 md:mb-10 text-lg md:text-2xl text-text">
@@ -62,7 +61,7 @@
         <input
           type="text"
           v-model="setting"
-          class="mt-3 py-3 px-4 border border-input-border text-input-text bg-input-background focus:outline-none focus:border-input-border-focus rounded-md"
+          class="mt-3 py-3 px-4 border border-input-border text-input-text bg-input-background focus:outline-none focus:border-input-border-focus focus:bg-input-background-focus rounded-lg"
         />
       </label>
     </div>
@@ -78,14 +77,18 @@
           :class="[
             'humor-button',
             humor === item.value
-              ? 'bg-button-secondary-selected border border-button-secondary-selected-border'
-              : 'bg-button-secondary border border-button-secondary-border hover:border-button-secondary-hover-border hover:bg-button-secondary-hover',
+              ? 'bg-button-option-selected border border-button-option-selected-border'
+              : 'bg-button-option border border-button-option-border hover:border-button-option-hover-border hover:bg-button-option-hover',
             'rounded-lg',
           ]"
         >
           <span class="flex items-center justify-center">
             <span>{{ item.emoji }}</span>
-            <span class="humor-label hidden sm:inline-block ml-2 mr-1 text-xl text-button-secondary-text">{{ item.label }}</span>
+            <span
+              class="humor-label hidden sm:inline-block ml-2 mr-1 text-xl text-button-secondary-text"
+            >
+              {{ item.label }}
+            </span>
           </span>
         </button>
       </div>
@@ -134,7 +137,7 @@ import FastButton from "@/components/FastButton.vue"
 import { generateStory, generateIllustration } from "@/services/ai"
 
 const DEBUG_INPUT_FORM = ref(true)
-const DEBUG_STORY_GENERATION = ref(false)
+const DEBUG_STORY_GENERATION = ref(true)
 
 const newWord = ref("")
 const wordList = ref([])
@@ -161,13 +164,13 @@ const isOpenAIAvailable = inject("isOpenAIAvailable")
 const props = defineProps({
   settings: {
     type: Object,
-    required: true
+    required: true,
   },
   savedInputs: {
     type: Object,
     required: false,
-    default: () => ({})
-  }
+    default: () => ({}),
+  },
 })
 
 const emit = defineEmits([
@@ -193,26 +196,34 @@ const loadSavedInputs = () => {
 }
 
 // Watch for changes in savedInputs prop
-watch(() => props.savedInputs, (newSavedInputs) => {
-  if (Object.keys(newSavedInputs).length > 0) {
-    loadSavedInputs()
-  }
-}, { immediate: true, deep: true })
+watch(
+  () => props.savedInputs,
+  (newSavedInputs) => {
+    if (Object.keys(newSavedInputs).length > 0) {
+      loadSavedInputs()
+    }
+  },
+  { immediate: true, deep: true },
+)
 
 onMounted(() => {
   loadSavedInputs()
 })
 
 // Watch for changes in input values and save to local storage
-watch([wordList, characterName, setting, humor], () => {
-  const inputValues = {
-    wordList: wordList.value,
-    characterName: characterName.value,
-    setting: setting.value,
-    humor: humor.value
-  }
-  localStorage.setItem('userInputs', JSON.stringify(inputValues))
-}, { deep: true })
+watch(
+  [wordList, characterName, setting, humor],
+  () => {
+    const inputValues = {
+      wordList: wordList.value,
+      characterName: characterName.value,
+      setting: setting.value,
+      humor: humor.value,
+    }
+    localStorage.setItem("userInputs", JSON.stringify(inputValues))
+  },
+  { deep: true },
+)
 
 const submitForm = async () => {
   isLoading.value = true
@@ -244,12 +255,15 @@ const submitForm = async () => {
     .then((story) => {
       if (isOpenAIAvailable.value) {
         illustrationAbortController.value = new AbortController()
-        return generateIllustration(story, props.settings.gradeLevel, illustrationAbortController.value.signal)
-        .then((illustration) => {
+        return generateIllustration(
+          story,
+          props.settings.gradeLevel,
+          illustrationAbortController.value.signal,
+        ).then((illustration) => {
           return { story, illustration }
         })
       } else {
-          return { story, illustration: null }
+        return { story, illustration: null }
       }
     })
     .then(({ story, illustration }) => {

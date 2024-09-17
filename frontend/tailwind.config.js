@@ -22,37 +22,47 @@ export default {
 
             primary: colors.gray["800"],
             secondary: colors.gray["400"],
-            background: colors.white,
+            background: colors.gray["200"],
             text: colors.gray["800"],
-            "bottom-bar": colors.white,
 
-            "story": colors.white,
+            "bottom-bar": colors.gray["100"],
+            story: colors.gray["200"],
+            "story-illustration-border": colors.gray["300"],
+
+            chip: colors.gray["300"],
+            "chip-text": colors.gray["800"],
 
             "button-primary": colors.gray["800"],
             "button-primary-text": colors.white,
             "button-primary-border": colors.gray["800"],
             "button-primary-hover": colors.gray["700"],
 
-            "button-secondary": colors.white,
+            "button-secondary": colors.gray["300"],
             "button-secondary-text": colors.gray["800"],
-            "button-secondary-border": colors.gray["400"],
+            "button-secondary-border": colors.gray["300"],
 
             "button-secondary-hover": colors.gray["200"],
             "button-secondary-hover-text": colors.gray["800"],
-            "button-secondary-border": colors.gray["400"], // This is for form element buttons
+            "button-secondary-hover-border": colors.gray["400"],
 
-            "button-secondary-selected": colors.gray["200"], // This is for form element buttons
-            "button-secondary-selected-text": colors.gray["600"],
-            "button-secondary-selected-border": colors.gray["400"], // This is for form element buttons
+            "button-option": colors.gray["50"],
+            "button-option-text": colors.gray["800"],
+            "button-option-border": colors.gray["50"],
 
-            "input-border": colors.gray["400"],
-            "input-background": colors.gray["100"],
-            "input-border-focus": colors.gray["600"],
+            "button-option-hover": colors.gray["50"],
+            "button-option-hover-text": colors.gray["800"],
+            "button-option-hover-border": colors.gray["300"],
+
+            "button-option-selected": colors.white,
+            "button-option-selected-text": colors.gray["600"],
+            "button-option-selected-border": colors.gray["500"], // This is for form element buttons
+
+            "input-border": colors.gray["50"],
+            "input-background": colors.gray["50"],
+            "input-border-focus": colors.gray["500"],
+            "input-background-focus": colors.white,
             "input-text": colors.gray["800"],
             "input-placeholder": colors.gray["400"],
-
-            "chip": colors.gray["200"],
-            "chip-text": colors.gray["800"],
           },
         },
       },
@@ -69,7 +79,7 @@ export default {
               text: "#4B0082",
               "bottom-bar": "#FF80BF",
 
-              "story": "#FFB6DA",
+              story: "#FFB6DA",
 
               "button-primary": "#98FB98",
               "button-primary-text": "#215921",
@@ -94,7 +104,7 @@ export default {
               "input-text": "#4B0082",
               "input-placeholder": "#D275C6",
 
-              "chip": '#B5E1F3',
+              chip: "#B5E1F3",
               "chip-text": "#0E6386",
             },
           },
@@ -111,7 +121,7 @@ export default {
               text: "#E0F2E0", // Light mint green
               "bottom-bar": "#78C47B",
 
-              "story": "#429946",
+              story: "#429946",
 
               "button-primary": "#FFD700",
               "button-primary-text": "#0A1F0A",
@@ -136,7 +146,7 @@ export default {
               "input-text": "#041604",
               "input-placeholder": "#28661E",
 
-              "chip": '#9BD49E',
+              chip: "#9BD49E",
               "chip-text": "#041604",
             },
           },

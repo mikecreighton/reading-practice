@@ -15,19 +15,23 @@
     <div class="settings-content">
       <div class="max-w-[700px] w-full mx-auto p-10 md:p-[60px_40px_100px_40px]">
         <h2 class="text-2xl md:text-4xl font-bold mb-10 text-text">Settings</h2>
-        
+
         <div class="mb-6 md:mb-10">
-          <label class="block text-xl md:text-3xl text-text mb-3 md:mb-4" for="gradeLevel">Grade Level</label>
+          <label class="block text-xl md:text-3xl text-text mb-3 md:mb-4" for="gradeLevel">
+            Grade Level
+          </label>
           <div class="relative">
             <select
               id="gradeLevel"
               v-model="localSettings.gradeLevel"
-              class="w-full py-3 px-4 md:text-2xl border border-input-border text-input-text bg-input-background focus:outline-none focus:border-input-border-focus rounded-md appearance-none"
+              class="w-full py-3 px-4 md:text-2xl border border-input-border text-input-text bg-input-background focus:outline-none focus:border-input-border-focus rounded-lg appearance-none"
             >
               <option v-for="grade in gradeOptions" :key="grade" :value="grade">{{ grade }}</option>
             </select>
-            <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700">
-              <i class="bi-chevron-down" style="position: absolute; right: 10px;"></i>
+            <div
+              class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700"
+            >
+              <i class="bi-chevron-down" style="position: absolute; right: 10px"></i>
             </div>
           </div>
         </div>
@@ -41,11 +45,18 @@
               @click="localSettings.theme = key"
               :class="[
                 'border py-3 px-4 rounded-lg md:text-2xl',
-                { 'bg-button-secondary text-button-secondary-text border-button-secondary-border hover:text-button-secondary-hover-text hover:bg-button-secondary-hover hover:border-button-secondary-hover-border': localSettings.theme !== key },
-                { 'bg-button-secondary-selected text-button-secondary-selected-text border-button-secondary-selected-border': localSettings.theme === key }
+                {
+                  'bg-button-option text-button-option-text border-button-option-border hover:text-button-option-hover-text hover:bg-button-option-hover hover:border-button-option-hover-border':
+                    localSettings.theme !== key,
+                },
+                {
+                  'bg-button-option-selected text-button-option-selected-text border-button-option-selected-border':
+                    localSettings.theme === key,
+                },
               ]"
             >
-              <i v-if="localSettings.theme === key" class="bi-check"></i> {{ value }}
+              <i v-if="localSettings.theme === key" class="bi-check"></i>
+              {{ value }}
             </button>
           </div>
         </div>
@@ -63,14 +74,14 @@
 </template>
 
 <script setup>
-import { ref, watch } from 'vue'
+import { ref, watch } from "vue"
 import FastButton from "@/components/FastButton.vue"
 
 const props = defineProps({
   settings: {
     type: Object,
-    required: true
-  }
+    required: true,
+  },
 })
 
 const emit = defineEmits(["update:settings", "save"])
@@ -78,21 +89,25 @@ const emit = defineEmits(["update:settings", "save"])
 const localSettings = ref({ ...props.settings })
 
 // Watch for changes in localSettings and emit updates
-watch(localSettings, (newSettings) => {
-  emit('update:settings', newSettings)
-}, { deep: true })
+watch(
+  localSettings,
+  (newSettings) => {
+    emit("update:settings", newSettings)
+  },
+  { deep: true },
+)
 
 const themeOptions = {
-  'default': 'Default',
-  'bubblegum': 'Bubblegum',
-  'adventure': 'Adventure'
+  default: "Default",
+  bubblegum: "Bubblegum",
+  adventure: "Adventure",
 }
 
-const gradeOptions = ['1st', '2nd', '3rd', '4th', '5th', '6th', '7th', '8th']
+const gradeOptions = ["1st", "2nd", "3rd", "4th", "5th", "6th", "7th", "8th"]
 
 const handleSave = () => {
   // Save settings to local storage
-  localStorage.setItem('userSettings', JSON.stringify(localSettings.value))
-  emit('save')
+  localStorage.setItem("userSettings", JSON.stringify(localSettings.value))
+  emit("save")
 }
 </script>

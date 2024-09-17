@@ -15,7 +15,7 @@
 
 @keyframes moveUpDown {
   0%,
-   100% {
+  100% {
     transform: translateY(0);
   }
   50% {
@@ -64,7 +64,8 @@
               :style="{ animationDelay: `${(n - 1) * 0.2}s` }"
             ></div>
           </div>
-          <div class="h-[40px] relative w-full flex justify-center"> <!-- Reserve space for text -->
+          <div class="h-[40px] relative w-full flex justify-center">
+            <!-- Reserve space for text -->
             <transition name="generating-text" mode="out-in">
               <div v-if="showGeneratingText" :key="currentTextIndex" class="text-text text-2xl">
                 {{ generatingTexts[currentTextIndex] }}
@@ -74,22 +75,25 @@
         </div>
       </div>
     </transition>
+
     <transition name="fade">
-      <div
-        v-if="!isLoading"
-        class="story-content"
-      >
+      <div v-if="!isLoading" class="story-content">
         <div class="p-10 md:p-[60px_40px_100px_40px] max-w-[700px] mx-auto">
           <img
-            class="w-full mb-6 md:mb-10 border border-input-border rounded-lg"
+            class="w-full mb-6 md:mb-10 border border-story-illustration-border rounded-lg"
             v-if="isOpenAIAvailable && illustration"
             :src="illustration"
             alt="Illustration"
           />
-          <p class="text-xl leading-relaxed sm:text-2xl sm:leading-relaxed md:leading-relaxed text-text">{{ story }}</p>
+          <p
+            class="text-xl leading-relaxed sm:text-2xl sm:leading-relaxed md:leading-relaxed text-text"
+          >
+            {{ story }}
+          </p>
         </div>
       </div>
     </transition>
+
     <!-- Bottom action buttons -->
     <div
       class="action-buttons-container fixed bottom-0 left-0 right-0 bg-bottom-bar drop-shadow-bar"
@@ -133,7 +137,7 @@ const generatingTexts = [
   "Adding whimsical details...",
   "Creating memorable scenes...",
   "Sprinkling in vocabulary words...",
-  "Polishing the story's rhythm..."
+  "Polishing the story's rhythm...",
 ]
 
 const props = defineProps({
@@ -190,14 +194,17 @@ onUnmounted(() => {
   clearTextInterval()
 })
 
-watch(() => props.isLoading, (newValue) => {
-  if (!newValue) {
-    clearTextInterval()
-    showGeneratingText.value = false
-  } else {
-    randomizedGeneratingTexts.value = generatingTexts.sort(() => 0.5 - Math.random())
-    waitToStartGeneratingText()
-    setTimeout(startGeneratingText, 4500)
-  }
-})
+watch(
+  () => props.isLoading,
+  (newValue) => {
+    if (!newValue) {
+      clearTextInterval()
+      showGeneratingText.value = false
+    } else {
+      randomizedGeneratingTexts.value = generatingTexts.sort(() => 0.5 - Math.random())
+      waitToStartGeneratingText()
+      setTimeout(startGeneratingText, 4500)
+    }
+  },
+)
 </script>
