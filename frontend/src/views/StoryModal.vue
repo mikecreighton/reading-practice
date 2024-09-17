@@ -1,6 +1,6 @@
 <style scoped lang="postcss">
 .story-modal {
-  @apply fixed inset-0 translate-y-full w-full bg-story h-[100dvh];
+  @apply fixed inset-0 w-full bg-story h-[100dvh];
   height: -webkit-fill-available;
 }
 
