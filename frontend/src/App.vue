@@ -63,7 +63,6 @@ const savedInputs = ref({})
 
 const loadSavedInputs = () => {
   const savedInputsData = localStorage.getItem('userInputs')
-  console.log("savedInputsData", savedInputsData)
   if (savedInputsData) {
     savedInputs.value = JSON.parse(savedInputsData)
   }
