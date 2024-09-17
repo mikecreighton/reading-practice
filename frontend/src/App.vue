@@ -41,7 +41,7 @@
 </template>
 
 <script setup>
-import { ref, provide, onMounted, nextTick } from "vue"
+import { ref, provide, onMounted, watch } from "vue"
 import StoryModal from "@/views/StoryModal.vue"
 import SettingsModal from "@/views/SettingsModal.vue"
 import InputForm from "@/views/InputForm.vue"
@@ -88,6 +88,22 @@ onMounted(() => {
     .catch((error) => {
       // console.error("Error detecting OpenAI availability:", error)
     })
+})
+// Add this watch effect
+watch(isSettingsModalOpen, (isOpen) => {
+  if (isOpen) {
+    document.body.classList.add('modal-open')
+  } else {
+    document.body.classList.remove('modal-open')
+  }
+})
+
+watch(isModalOpen, (isOpen) => {
+  if (isOpen) {
+    document.body.classList.add('modal-open')
+  } else {
+    document.body.classList.remove('modal-open')
+  }
 })
 
 const handleStoryGenerationStart = () => {

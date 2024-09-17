@@ -1,6 +1,7 @@
 <style scoped></style>
 <template>
   <button
+    ref="buttonRef"
     :class="[
       {
         'border text-button-primary-text bg-button-primary border-button-primary-border hover:bg-button-primary-hover hover:border-button-primary-border':
@@ -27,6 +28,7 @@
 import { ref } from "vue"
 
 const isActive = ref(false)
+const buttonRef = ref(null)
 
 defineEmits(["click"])
 
@@ -45,6 +47,10 @@ defineProps({
     type: Boolean,
     required: false,
     default: false,
+  },
+  name: {
+    type: String,
+    required: true,
   },
 })
 
