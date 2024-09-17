@@ -15,7 +15,7 @@
 <template>
   <form
     @submit.prevent
-    class="relative flex flex-col justify-start w-full my-0 mx-auto bg-background min-h-[calc(100vh-104px+40px)] p-10 pb-20 max-w-[700px]"
+    class="relative flex flex-col justify-start w-full my-0 mx-auto bg-background min-h-[calc(100dvh-104px+40px)] p-10 pb-24 max-w-[700px]"
   >
     <label class="flex flex-col w-full mb-6 md:mb-10 text-lg md:text-2xl text-text">
       
@@ -100,6 +100,7 @@
             type="secondary"
             customClass="mr-4"
             @click="$emit('openSettings')"
+            name="Settings"
           >
             <i class="bi-gear"></i>
           </FastButton>
@@ -108,6 +109,7 @@
             :isDisabled="isLoading || (!wordList.length && !characterName && !setting)"
             type="secondary"
             @click="handleReset"
+            name="Reset"
           >
             Reset
           </FastButton>
@@ -117,6 +119,7 @@
           :isDisabled="isLoading || !wordList.length || !characterName || !setting"
           customClass=""
           @click="handleSubmit"
+          name="Go"
         >
           Go!
         </FastButton>
@@ -130,7 +133,7 @@ import { ref, inject, watch, onMounted } from "vue"
 import FastButton from "@/components/FastButton.vue"
 import { generateStory, generateIllustration } from "@/services/ai"
 
-const DEBUG_INPUT_FORM = ref(false)
+const DEBUG_INPUT_FORM = ref(true)
 const DEBUG_STORY_GENERATION = ref(false)
 
 const newWord = ref("")
@@ -230,7 +233,6 @@ const submitForm = async () => {
 
   const words = wordList.value.join(",")
 
-  console.log("1. Generating story")
   generateStory(
     words,
     characterName.value,
@@ -241,15 +243,12 @@ const submitForm = async () => {
   )
     .then((story) => {
       if (isOpenAIAvailable.value) {
-        console.log("2. Generating illustration")
         illustrationAbortController.value = new AbortController()
         return generateIllustration(story, props.settings.gradeLevel, illustrationAbortController.value.signal)
         .then((illustration) => {
-          console.log("3. Story and illustration generated")
           return { story, illustration }
         })
       } else {
-          console.log("2. Story generated")
           return { story, illustration: null }
       }
     })
@@ -263,7 +262,6 @@ const submitForm = async () => {
       }
     })
     .finally(() => {
-      console.log("Finally: Story and illustration (if applicable) generation complete")
       isLoading.value = false
       abortController.value = null
       illustrationAbortController.value = null
@@ -287,8 +285,6 @@ const cancelRequest = () => {
     isLoading.value = false
     abortController.value.abort()
   }
-  console.log("illustrationAbortController", illustrationAbortController.value)
-
   if (illustrationAbortController.value) {
     console.log("Cancelling illustration request")
     isLoading.value = false

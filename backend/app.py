@@ -6,8 +6,16 @@ from fastapi.responses import HTMLResponse
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 import time
-from prompts import USER_PROMPT, SYSTEM_PROMPT, ILLUSTRATION_SYSTEM_PROMPT, ILLUSTRATION_USER_PROMPT
-from safety_prompts import SYSTEM_PROMPT as SAFETY_SYSTEM_PROMPT, USER_PROMPT_TEMPLATE as SAFETY_USER_PROMPT_TEMPLATE
+from prompts import (
+    USER_PROMPT,
+    SYSTEM_PROMPT,
+    ILLUSTRATION_SYSTEM_PROMPT,
+    ILLUSTRATION_USER_PROMPT,
+)
+from safety_prompts import (
+    SYSTEM_PROMPT as SAFETY_SYSTEM_PROMPT,
+    USER_PROMPT_TEMPLATE as SAFETY_USER_PROMPT_TEMPLATE,
+)
 import json
 
 # -----------------------------------------
@@ -42,6 +50,7 @@ app = FastAPI()
 
 # CORS configuration
 if os.getenv("SERVER_ENV") == "development":
+    print("CORS configuration for development")
     app.add_middleware(
         CORSMiddleware,
         allow_origins=["*"],
@@ -158,7 +167,9 @@ async def generate_story(request: StoryRequest):
         }
 
     # Generate story
-    user_prompt = construct_user_prompt(request.words, request.subject, request.setting, request.humor, request.grade)
+    user_prompt = construct_user_prompt(
+        request.words, request.subject, request.setting, request.humor, request.grade
+    )
 
     print("-----------------------------------------")
     print("Story system prompt:")
@@ -197,12 +208,16 @@ async def generate_illustration(request: IllustrationRequest):
     Generate an illustration for a given story.
     """
     if not os.getenv("OPENAI_API_KEY"):
-        raise HTTPException(status_code=400, detail="No OPENAI_API_KEY environment variable set.")
+        raise HTTPException(
+            status_code=400, detail="No OPENAI_API_KEY environment variable set."
+        )
 
     start = time.time()
 
     user_prompt = construct_illustration_user_prompt(request.story, request.grade)
-    AI_ILLUSTRATION_TEXT_MODEL = os.getenv("AI_ILLUSTRATION_TEXT_MODEL", "anthropic/claude-3.5-sonnet")
+    AI_ILLUSTRATION_TEXT_MODEL = os.getenv(
+        "AI_ILLUSTRATION_TEXT_MODEL", "anthropic/claude-3.5-sonnet"
+    )
 
     print("-----------------------------------------")
     print("Illustration model: ", AI_ILLUSTRATION_TEXT_MODEL)
@@ -275,7 +290,7 @@ async def root():
 if __name__ == "__main__":
     import uvicorn
 
-    host = os.getenv("HOST", "0.0.0.0")
+    host = os.getenv("HOST", "localhost")
     port = int(os.getenv("PORT", 8080))
     reload = os.getenv("SERVER_ENV") != "production"
 

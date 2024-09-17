@@ -12,20 +12,25 @@
         @storyGenerationError="handleStoryGenerationError"
         @openSettings="handleOpenSettings"
       />
-      <Transition
-        @enter="onStoryModalEnter"
-        @leave="onStoryModalLeave"
-        @after-leave="onStoryModalAfterLeave"
-      >
-        <StoryModal
-          v-if="isModalOpen"
-          :story="story"
-          :illustration="illustration"
-          :isLoading="isLoading"
-          @regenerate="handleRegenerate"
-          @closeRequest="handleStoryModalCloseRequest"
-        />
-      </Transition>
+
+      <div ref="storyModalContainer" class="hidden fixed inset-0 h-full w-full">
+        <Transition
+          @enter="onStoryModalEnter"
+          @leave="onStoryModalLeave"
+          @after-leave="onStoryModalAfterLeave"
+        >
+          <StoryModal
+            v-if="isModalOpen"
+            :story="story"
+            :illustration="illustration"
+            :isLoading="isLoading"
+            @regenerate="handleRegenerate"
+            @closeRequest="handleStoryModalCloseRequest"
+          />
+        </Transition>
+      </div>
+
+      <div ref="settingsModalRef" class="hidden fixed inset-0 h-full w-full">
       <Transition
         @enter="onSettingsModalEnter"
         @leave="onSettingsModalLeave"
@@ -34,14 +39,15 @@
           v-if="isSettingsModalOpen"
           v-model:settings="settings"
           @save="handleSettingsModalSave"
-        />
-      </Transition>
+          />
+        </Transition>
+      </div>
     </div>
   </div>
 </template>
 
 <script setup>
-import { ref, provide, onMounted, nextTick } from "vue"
+import { ref, provide, onMounted, watch } from "vue"
 import StoryModal from "@/views/StoryModal.vue"
 import SettingsModal from "@/views/SettingsModal.vue"
 import InputForm from "@/views/InputForm.vue"
@@ -60,6 +66,8 @@ const settings = ref({
   theme: 'default'
 })
 const savedInputs = ref({})
+const storyModalContainer = ref(null)
+const settingsModalRef = ref(null)
 
 const loadSavedInputs = () => {
   const savedInputsData = localStorage.getItem('userInputs')
@@ -89,6 +97,22 @@ onMounted(() => {
       // console.error("Error detecting OpenAI availability:", error)
     })
 })
+// Add this watch effect
+watch(isSettingsModalOpen, (isOpen) => {
+  if (isOpen) {
+    document.body.classList.add('modal-open')
+  } else {
+    document.body.classList.remove('modal-open')
+  }
+})
+
+watch(isModalOpen, (isOpen) => {
+  if (isOpen) {
+    document.body.classList.add('modal-open')
+  } else {
+    document.body.classList.remove('modal-open')
+  }
+})
 
 const handleStoryGenerationStart = () => {
   story.value = ""
@@ -108,9 +132,11 @@ const handleStoryModalCloseRequest = () => {
 }
 
 const onStoryModalEnter = (el, done) => {
-  gsap.to(el, {
+  storyModalContainer.value.classList.remove('hidden')
+
+  gsap.from(el, {
     duration: 0.5,
-    y: "0",
+    y: "100%",
     ease: Power4.easeOut,
     onComplete: () => done(),
   })
@@ -122,7 +148,10 @@ const onStoryModalLeave = (el, done) => {
     duration: 0.5,
     y: "100%",
     ease: Power4.easeInOut,
-    onComplete: () => done(),
+    onComplete: () => {
+      storyModalContainer.value.classList.add('hidden')
+      done()
+    },
   })
 }
 
@@ -155,6 +184,8 @@ const handleSettingsModalSave = () => {
 }
 
 const onSettingsModalEnter = (el, done) => {
+  settingsModalRef.value.classList.remove('hidden')
+
   gsap.to(el, {
     duration: 0.5,
     y: "0",
@@ -168,7 +199,10 @@ const onSettingsModalLeave = (el, done) => {
     duration: 0.5,
     y: "100%",
     ease: Power4.easeInOut,
-    onComplete: () => done(),
+    onComplete: () => {
+      settingsModalRef.value.classList.add('hidden')
+      done()
+    },
   })
 }
 </script>

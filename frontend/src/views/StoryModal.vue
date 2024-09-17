@@ -1,4 +1,14 @@
-<style scoped>
+<style scoped lang="postcss">
+.story-modal {
+  @apply fixed inset-0 w-full bg-story h-[100dvh];
+  height: -webkit-fill-available;
+}
+
+.story-content {
+  @apply h-full overflow-y-auto pb-[104px];
+  -webkit-overflow-scrolling: touch;
+}
+
 .ball {
   animation: moveUpDown 1.5s ease-in-out infinite;
 }
@@ -39,11 +49,11 @@
 </style>
 
 <template>
-  <div class="absolute top-0 left-0 right-0 translate-y-full bg-story h-[100vh] w-full">
+  <div class="story-modal">
     <transition name="fade">
       <div
         v-if="isLoading"
-        class="loader-wrapper flex flex-col justify-center absolute items-center h-full w-full top-0"
+        class="loader-wrapper flex flex-col justify-center items-center h-full w-full overflow-y-hidden"
       >
         <div class="loader flex flex-col items-center">
           <div class="flex justify-center items-center gap-[20px] mb-[80px]">
@@ -67,7 +77,7 @@
     <transition name="fade">
       <div
         v-if="!isLoading"
-        class="story-wrapper pb-[104px] overflow-y-scroll absolute w-full h-full top-0"
+        class="story-content"
       >
         <div class="p-10 md:p-[60px_40px_100px_40px] max-w-[700px] mx-auto">
           <img
@@ -85,12 +95,13 @@
       class="action-buttons-container fixed bottom-0 left-0 right-0 bg-bottom-bar drop-shadow-bar"
     >
       <div class="flex justify-between items-center max-w-[700px] px-10 py-5 mx-auto my-0">
-        <FastButton type="secondary" @click="emit('closeRequest')">Close</FastButton>
+        <FastButton name="Close" type="secondary" @click="emit('closeRequest')">Close</FastButton>
         <FastButton
           :disabled="isLoading"
           :isDisabled="isLoading"
           customClass=""
           @click="$emit('regenerate')"
+          name="Regenerate"
         >
           Tell me another story
         </FastButton>
