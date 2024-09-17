@@ -33,7 +33,7 @@
         <FastButton customClass="flex-shrink-0" @click="addWord">Add</FastButton>
       </div>
 
-      <div class="word-chips flex md:text-lg flex-wrap gap-2 mt-3 md:mt-5">
+      <div v-if="wordList.length" class="word-chips flex md:text-lg mt-3 md:mt-5 flex-wrap gap-2">
         <span
           v-for="(word, index) in wordList"
           :key="index"
@@ -77,8 +77,8 @@
           :class="[
             'humor-button',
             humor === item.value
-              ? 'bg-button-option-selected border border-button-option-selected-border'
-              : 'bg-button-option border border-button-option-border hover:border-button-option-hover-border hover:bg-button-option-hover',
+              ? 'bg-button-option-selected border-2 border border-button-option-selected-border'
+              : 'bg-button-option border-2 border border-button-option-border hover:border-button-option-hover-border hover:bg-button-option-hover',
             'rounded-lg',
           ]"
         >

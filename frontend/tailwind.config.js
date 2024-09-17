@@ -129,35 +129,45 @@ export default {
               accent: "#4CAF50", // Vibrant green
               background: "#0F2E0F", // Very dark green
               text: "#E0F2E0", // Light mint green
-              "bottom-bar": "#78C47B",
 
+              "bottom-bar": "#78C47B",
               story: "#429946",
+              "story-illustration-border": "#28661E",
+
+              chip: "#9BD49E",
+              "chip-text": "#041604",
 
               "button-primary": "#FFD700",
               "button-primary-text": "#0A1F0A",
-              "button-primary-border": "#EBC80A",
+              "button-primary-border": "#FFD700",
               "button-primary-hover": "#FFE34D",
 
               "button-secondary": "#4CAF50",
               "button-secondary-text": "#041604",
-              "button-secondary-border": "#429946",
+              "button-secondary-border": "#4CAF50",
 
               "button-secondary-hover": "#47A44B",
               "button-secondary-hover-text": "#0A1F0A",
-              "button-secondary-hover-border": "#22561A",
+              "button-secondary-hover-border": "#47A44B",
 
-              "button-secondary-selected": "#9BD49E", // This is for form element buttons
-              "button-secondary-selected-text": "#041604",
-              "button-secondary-selected-border": "#4CAF50", // This is for form element buttons
+              "button-option": "#4CAF50",
+              "button-option-text": "#041604",
+              "button-option-border": "#4CAF50",
+
+              "button-option-hover": colors.pink["50"],
+              "button-option-hover-text": colors.indigo["950"],
+              "button-option-hover-border": colors.pink["300"],
+
+              "button-option-selected": "#9BD49E",
+              "button-option-selected-text": "#041604",
+              "button-option-selected-border": "#429946",
 
               "input-border": "#2E7D32",
               "input-background": "#4CAF50",
-              "input-border-focus": "#4CAF50",
+              "input-border-focus": "#ADDBAF",
+              "input-background-focus": "#9BD49E",
               "input-text": "#041604",
               "input-placeholder": "#28661E",
-
-              chip: "#9BD49E",
-              "chip-text": "#041604",
             },
           },
         },
