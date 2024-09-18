@@ -25,8 +25,12 @@ export default {
             background: colors.gray["200"],
             text: colors.gray["800"],
 
+            "loading-balls": colors.gray["800"],
+            "loading-balls-text": colors.gray["800"],
+
             "bottom-bar": colors.gray["100"],
             story: colors.gray["200"],
+            "story-text": colors.gray["800"],
             "story-illustration-border": colors.gray["300"],
 
             chip: colors.gray["300"],
@@ -78,8 +82,12 @@ export default {
               background: colors.pink["200"],
               text: colors.indigo["950"],
 
+              "loading-balls": colors.indigo["950"],
+              "loading-balls-text": colors.indigo["950"],
+
               "bottom-bar": colors.pink["100"],
               story: colors.pink["200"],
+              "story-text": colors.indigo["950"],
               "story-illustration-border": colors.pink["300"],
 
               chip: colors.pink["300"],
@@ -130,8 +138,12 @@ export default {
               background: "#0F2E0F", // Very dark green
               text: "#E0F2E0", // Light mint green
 
+              "loading-balls": "#0F2E0F",
+              "loading-balls-text": "#0F2E0F",
+
               "bottom-bar": "#78C47B",
-              story: "#429946",
+              story: "#4CAF50",
+              "story-text": "#0F2E0F",
               "story-illustration-border": "#28661E",
 
               chip: "#9BD49E",

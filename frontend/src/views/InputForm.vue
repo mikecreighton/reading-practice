@@ -137,7 +137,7 @@ import FastButton from "@/components/FastButton.vue"
 import { generateStory, generateIllustration } from "@/services/ai"
 
 const DEBUG_INPUT_FORM = ref(true)
-const DEBUG_STORY_GENERATION = ref(true)
+const DEBUG_STORY_GENERATION = ref(false)
 
 const newWord = ref("")
 const wordList = ref([])

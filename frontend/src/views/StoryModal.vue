@@ -58,7 +58,7 @@
         <div class="loader flex flex-col items-center">
           <div class="flex justify-center items-center gap-[20px] mb-[80px]">
             <div
-              class="ball w-[20px] h-[20px] bg-text rounded-full relative"
+              class="ball w-[20px] h-[20px] bg-loading-balls rounded-full relative"
               v-for="n in 3"
               :key="n"
               :style="{ animationDelay: `${(n - 1) * 0.2}s` }"
@@ -67,7 +67,11 @@
           <div class="h-[40px] relative w-full flex justify-center">
             <!-- Reserve space for text -->
             <transition name="generating-text" mode="out-in">
-              <div v-if="showGeneratingText" :key="currentTextIndex" class="text-text text-2xl">
+              <div
+                v-if="showGeneratingText"
+                :key="currentTextIndex"
+                class="text-loading-balls-text text-2xl"
+              >
                 {{ generatingTexts[currentTextIndex] }}
               </div>
             </transition>
@@ -86,7 +90,7 @@
             alt="Illustration"
           />
           <p
-            class="text-xl leading-relaxed sm:text-2xl sm:leading-relaxed md:leading-relaxed text-text"
+            class="text-xl leading-relaxed sm:text-2xl sm:leading-relaxed md:leading-relaxed text-story-text"
           >
             {{ story }}
           </p>
