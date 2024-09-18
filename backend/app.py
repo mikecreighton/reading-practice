@@ -2,7 +2,7 @@ import os
 from openai import AsyncOpenAI
 from dotenv import load_dotenv
 from fastapi import FastAPI, HTTPException
-from fastapi.responses import HTMLResponse
+from fastapi.responses import HTMLResponse, JSONResponse
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 import time
@@ -134,6 +134,11 @@ async def generate_story(request: StoryRequest):
         .replace("{{subject}}", request.subject)
         .replace("{{setting}}", request.setting)
     )
+
+    # Add a timestamp to prevent caching when using OpenRouter
+    if AI_TEXT_PROVIDER == "openrouter":
+        safety_user_prompt += f"\n\n[IGNORE THIS: Timestamp: {time.time()}]"
+
     safety_response = await text_client.chat.completions.create(
         model=AI_SAFETY_MODEL,
         messages=[
@@ -141,7 +146,7 @@ async def generate_story(request: StoryRequest):
             {"role": "user", "content": safety_user_prompt},
         ],
         temperature=0,
-        max_tokens=768,
+        max_tokens=1024,
     )
 
     safety_content = safety_response.choices[0].message.content
@@ -150,14 +155,20 @@ async def generate_story(request: StoryRequest):
     print(safety_content)
     print("-----------------------------------------")
 
-    if "```json" in safety_content:
-        json_part = safety_content.split("```json")[1].split("```")[0]
-        safety_result = json.loads(json_part)
-    else:
-        safety_result = json.loads(safety_content)
-    safe_value = safety_result.get("safe", False)
-    appropriate_value = safety_result.get("appropriate", False)
-    is_safe = appropriate_value and safe_value
+    try:
+        if "```json" in safety_content:
+            json_part = safety_content.split("```json")[1].split("```")[0]
+            safety_result = json.loads(json_part)
+        else:
+            safety_result = json.loads(safety_content)
+        safe_value = safety_result.get("safe", False)
+        appropriate_value = safety_result.get("appropriate", False)
+        is_safe = appropriate_value and safe_value
+    except json.JSONDecodeError:
+        return JSONResponse(
+            status_code=500,
+            content={"message": "Failed to parse safety check response"},
+        )
 
     if not is_safe:
         return {
