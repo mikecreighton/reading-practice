@@ -166,9 +166,9 @@ export default {
               "button-option-text": "#041604",
               "button-option-border": "#4CAF50",
 
-              "button-option-hover": colors.pink["50"],
-              "button-option-hover-text": colors.indigo["950"],
-              "button-option-hover-border": colors.pink["300"],
+              "button-option-hover": "#9BD49E",
+              "button-option-hover-text": "#041604",
+              "button-option-hover-border": "#429946",
 
               "button-option-selected": "#9BD49E",
               "button-option-selected-text": "#041604",
