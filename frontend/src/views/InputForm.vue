@@ -144,7 +144,12 @@ const wordList = ref([])
 
 const addWord = () => {
   if (newWord.value.trim()) {
-    wordList.value.push(newWord.value.trim().toLowerCase())
+    // Make sure the word doesn't have any punctuation in it.
+    const word = newWord.value
+      .trim()
+      .toLowerCase()
+      .replace(/[^\w\s]/gi, "")
+    wordList.value.push(word)
     newWord.value = ""
   }
 }

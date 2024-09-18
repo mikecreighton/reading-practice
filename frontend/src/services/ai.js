@@ -59,6 +59,7 @@ export const generateIllustration = async (story, grade, abortSignal) => {
   let payload = JSON.stringify({
     story: story,
     grade: grade,
+    aspect_ratio: window.innerWidth > 768 ? "landscape" : "square",
   })
 
   return fetch(baseURL + "/generate_illustration", {

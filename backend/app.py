@@ -110,6 +110,7 @@ class StoryRequest(BaseModel):
 class IllustrationRequest(BaseModel):
     story: str
     grade: str
+    aspect_ratio: str
 
 
 # -----------------------------------------
@@ -247,10 +248,17 @@ async def generate_illustration(request: IllustrationRequest):
 
     image_gen_client = AsyncOpenAI(api_key=os.getenv("OPENAI_API_KEY"))
 
+    if request.aspect_ratio == "square":
+        size = "1024x1024"
+    elif request.aspect_ratio == "landscape":
+        size = "1792x1024"
+    else:
+        size = "1024x1024"
+
     image_gen_response = await image_gen_client.images.generate(
         model="dall-e-3",
         prompt=image_gen_prompt,
-        size="1792x1024",
+        size=size,
         quality="standard",
         n=1,
         response_format="b64_json",
