@@ -136,8 +136,10 @@ import { ref, inject, watch, onMounted } from "vue"
 import FastButton from "@/components/FastButton.vue"
 import { generateStory, generateIllustration } from "@/services/ai"
 
-const DEBUG_INPUT_FORM = ref(true)
-const DEBUG_STORY_GENERATION = ref(true)
+console.log(import.meta.env)
+
+const DEBUG_INPUT_FORM = ref(import.meta.env.VITE_DEBUG_INPUT_FORM === "true")
+const DEBUG_STORY_GENERATION = ref(import.meta.env.VITE_DEBUG_STORY_GENERATION === "true")
 
 const newWord = ref("")
 const wordList = ref([])
