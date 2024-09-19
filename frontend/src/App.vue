@@ -31,14 +31,11 @@
       </div>
 
       <div ref="settingsModalRef" class="hidden fixed inset-0 h-full w-full">
-      <Transition
-        @enter="onSettingsModalEnter"
-        @leave="onSettingsModalLeave"
-      >
-        <SettingsModal
-          v-if="isSettingsModalOpen"
-          v-model:settings="settings"
-          @save="handleSettingsModalSave"
+        <Transition @enter="onSettingsModalEnter" @leave="onSettingsModalLeave">
+          <SettingsModal
+            v-if="isSettingsModalOpen"
+            v-model:settings="settings"
+            @save="handleSettingsModalSave"
           />
         </Transition>
       </div>
@@ -62,15 +59,15 @@ const isModalOpen = ref(false)
 const isLoading = ref(false)
 const isSettingsModalOpen = ref(false)
 const settings = ref({
-  gradeLevel: '2nd',
-  theme: 'default'
+  gradeLevel: "2nd",
+  theme: "default",
 })
 const savedInputs = ref({})
 const storyModalContainer = ref(null)
 const settingsModalRef = ref(null)
 
 const loadSavedInputs = () => {
-  const savedInputsData = localStorage.getItem('userInputs')
+  const savedInputsData = localStorage.getItem("userInputs")
   if (savedInputsData) {
     savedInputs.value = JSON.parse(savedInputsData)
   }
@@ -84,7 +81,7 @@ provide("isOpenAIAvailable", isOpenAIAvailable)
 
 onMounted(() => {
   // Load settings from local storage
-  const savedSettings = localStorage.getItem('userSettings')
+  const savedSettings = localStorage.getItem("userSettings")
   if (savedSettings) {
     settings.value = JSON.parse(savedSettings)
   }
@@ -100,24 +97,33 @@ onMounted(() => {
 // Add this watch effect
 watch(isSettingsModalOpen, (isOpen) => {
   if (isOpen) {
-    document.body.classList.add('modal-open')
+    document.body.classList.add("modal-open")
   } else {
-    document.body.classList.remove('modal-open')
+    document.body.classList.remove("modal-open")
   }
 })
 
 watch(isModalOpen, (isOpen) => {
   if (isOpen) {
-    document.body.classList.add('modal-open')
+    document.body.classList.add("modal-open")
   } else {
-    document.body.classList.remove('modal-open')
+    document.body.classList.remove("modal-open")
   }
 })
+
+const blurInputs = () => {
+  const inputs = document.querySelectorAll("input, textarea")
+  inputs.forEach((input) => {
+    input.blur()
+  })
+}
 
 const handleStoryGenerationStart = () => {
   story.value = ""
   isModalOpen.value = true
   isLoading.value = true
+  // We need to make sure that none of the inputs are currently focused or we wind up with a weird bug
+  blurInputs()
 }
 
 const handleStoryGenerationComplete = (generatedStory, generatedIllustration) => {
@@ -132,7 +138,7 @@ const handleStoryModalCloseRequest = () => {
 }
 
 const onStoryModalEnter = (el, done) => {
-  storyModalContainer.value.classList.remove('hidden')
+  storyModalContainer.value.classList.remove("hidden")
 
   gsap.from(el, {
     duration: 0.5,
@@ -149,7 +155,7 @@ const onStoryModalLeave = (el, done) => {
     y: "100%",
     ease: Power4.easeInOut,
     onComplete: () => {
-      storyModalContainer.value.classList.add('hidden')
+      storyModalContainer.value.classList.add("hidden")
       done()
     },
   })
@@ -173,18 +179,19 @@ const handleStoryGenerationError = (error) => {
 }
 
 const handleOpenSettings = () => {
+  blurInputs()
   isSettingsModalOpen.value = true
 }
 
 const handleSettingsModalSave = () => {
   isSettingsModalOpen.value = false
   // Save settings to local storage
-  localStorage.setItem('userSettings', JSON.stringify(settings.value))
+  localStorage.setItem("userSettings", JSON.stringify(settings.value))
   // You can add any additional logic here if needed
 }
 
 const onSettingsModalEnter = (el, done) => {
-  settingsModalRef.value.classList.remove('hidden')
+  settingsModalRef.value.classList.remove("hidden")
 
   gsap.to(el, {
     duration: 0.5,
@@ -200,7 +207,7 @@ const onSettingsModalLeave = (el, done) => {
     y: "100%",
     ease: Power4.easeInOut,
     onComplete: () => {
-      settingsModalRef.value.classList.add('hidden')
+      settingsModalRef.value.classList.add("hidden")
       done()
     },
   })
