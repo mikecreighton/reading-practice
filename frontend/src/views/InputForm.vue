@@ -136,8 +136,6 @@ import { ref, inject, watch, onMounted } from "vue"
 import FastButton from "@/components/FastButton.vue"
 import { generateStory, generateIllustration } from "@/services/ai"
 
-console.log(import.meta.env)
-
 const DEBUG_INPUT_FORM = ref(import.meta.env.VITE_DEBUG_INPUT_FORM === "true")
 const DEBUG_STORY_GENERATION = ref(import.meta.env.VITE_DEBUG_STORY_GENERATION === "true")
 
@@ -277,7 +275,7 @@ const submitForm = async () => {
       emit("storyGenerationComplete", story, illustration)
     })
     .catch((error) => {
-      console.log("Error generating story or illustration", error)
+      console.error("Error generating story or illustration", error)
       if (error.name !== "AbortError") {
         emit("storyGenerationError", error)
       }

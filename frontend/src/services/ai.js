@@ -38,7 +38,10 @@ export const generateStory = async (words, characterName, setting, humor, grade,
   })
     .then((response) => {
       if (!response.ok) {
-        throw new Error(`HTTP error status: ${response.status} ${response.statusText}`)
+        if (response.status === 429) {
+          throw new Error("You've made too many requests. Please try again later.")
+        }
+        throw new Error("There was an error generating your story. Please try again.")
       }
       return response.json()
     })
@@ -73,7 +76,7 @@ export const generateIllustration = async (story, grade, abortSignal) => {
   })
     .then((response) => {
       if (!response.ok) {
-        throw new Error(`HTTP error status: ${response.status} ${response.statusText}`)
+        throw new Error("There was an error generating your story. Please try again.")
       }
       return response.json()
     })
