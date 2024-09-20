@@ -50,7 +50,6 @@ app = FastAPI()
 
 # CORS configuration
 if os.getenv("SERVER_ENV") == "development":
-    print("CORS configuration for development")
     app.add_middleware(
         CORSMiddleware,
         allow_origins=["*"],
