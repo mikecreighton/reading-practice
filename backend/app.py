@@ -1,11 +1,14 @@
 import os
+import time
+import json
+from typing import List, Tuple
 from openai import AsyncOpenAI, RateLimitError
 from dotenv import load_dotenv
 from fastapi import FastAPI, HTTPException, Request
 from fastapi.responses import HTMLResponse, JSONResponse
+from starlette.middleware.base import BaseHTTPMiddleware
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
-import time
 from prompts import (
     USER_PROMPT,
     SYSTEM_PROMPT,
@@ -16,13 +19,49 @@ from safety_prompts import (
     SYSTEM_PROMPT as SAFETY_SYSTEM_PROMPT,
     USER_PROMPT_TEMPLATE as SAFETY_USER_PROMPT_TEMPLATE,
 )
-import json
 
 # -----------------------------------------
 #
 # Initialization
 #
 # -----------------------------------------
+
+class RateLimitMiddleware(BaseHTTPMiddleware):
+    def __init__(self, app, limit=8, window=60, exempt_routes: List[Tuple[str, str]] = []):
+        super().__init__(app)
+        self.limit = limit  # Number of requests allowed
+        self.window = window  # Time window in seconds
+        self.ip_cache = {}
+        self.exempt_routes = set(exempt_routes)
+
+    async def dispatch(self, request: Request, call_next):
+        # Check if the current route is exempt
+        current_route = (request.url.path, request.method)
+        if current_route in self.exempt_routes:
+            return await call_next(request)
+
+        ip = request.client.host
+        current_time = time.time()
+
+        if ip in self.ip_cache:
+            last_reset, count = self.ip_cache[ip]
+            if current_time - last_reset > self.window:
+                # Reset if the window has passed
+                self.ip_cache[ip] = (current_time, 1)
+            elif count >= self.limit:
+                # Return a JSONResponse for rate limit exceeded
+                return JSONResponse(
+                    status_code=429,
+                    content={"error": "Rate limit exceeded. Please try again later."}
+                )
+            else:
+                self.ip_cache[ip] = (last_reset, count + 1)
+        else:
+            self.ip_cache[ip] = (current_time, 1)
+
+        response = await call_next(request)
+        return response
+
 
 load_dotenv(override=True)
 
@@ -47,6 +86,9 @@ MAX_TOKENS = 256
 
 # Instantiate the FastAPI app
 app = FastAPI()
+
+# Add the rate limiting middleware
+app.add_middleware(RateLimitMiddleware, limit=5, window=60, exempt_routes=[("/", "GET"), ("/openai_available", "GET")])
 
 # CORS configuration
 if os.getenv("SERVER_ENV") == "development":
@@ -89,34 +131,6 @@ def construct_user_prompt(words, subject, setting, humor, grade):
 def construct_illustration_user_prompt(story, grade):
     return ILLUSTRATION_USER_PROMPT.replace("{{story}}", story).replace("{{grade}}", grade)
 
-# Initialize a dictionary to keep request counts for each IP address
-request_tracker = {}
-MAX_REQUESTS_PER_MINUTE = 2
-
-def check_rate_limit(ip):
-    now = time.time()
-    
-    # Clean up expired entries
-    for local_ip in list(request_tracker.keys()):
-        count, timestamp = request_tracker[local_ip]
-        if now - timestamp > 60:
-            del request_tracker[local_ip]
-    
-    if ip not in request_tracker:
-        request_tracker[ip] = [1, now]
-        return False
-    
-    count, timestamp = request_tracker[ip]
-    
-    if now - timestamp > 60:
-        request_tracker[ip] = [1, now]
-        return False
-    
-    if count < MAX_REQUESTS_PER_MINUTE:
-        request_tracker[ip][0] += 1
-        return False
-    
-    return True
 
 # -----------------------------------------
 #
@@ -149,21 +163,10 @@ async def openai_available(request: Request):
 
 
 @app.post("/generate_story")
-async def generate_story(request: Request):
+async def generate_story(request: StoryRequest):
     """
     Generate a story with integrated safety check.
     """
-    request_json = await request.json()
-
-    ip = request.client.host
-    
-    if check_rate_limit(ip):
-        return JSONResponse(
-            status_code=429,
-            content={"message": "Too many requests. Please try again later."},
-        )
-
-    request = StoryRequest(**request_json)
 
     # Perform safety check
     safety_user_prompt = (
@@ -256,21 +259,10 @@ async def generate_story(request: Request):
 
 
 @app.post("/generate_illustration")
-async def generate_illustration(request: Request):
+async def generate_illustration(request: IllustrationRequest):
     """
     Generate an illustration for a given story.
     """
-    request_json = await request.json()
-
-    ip = request.client.host
-    
-    if check_rate_limit(ip):
-        return JSONResponse(
-            status_code=429,
-            content={"message": "Too many requests. Please try again later."},
-        )
-
-    request = IllustrationRequest(**request_json)
 
     if not os.getenv("OPENAI_API_KEY"):
         raise HTTPException(
