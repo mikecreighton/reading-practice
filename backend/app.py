@@ -257,10 +257,22 @@ async def generate_story(request: Request):
 
 
 @app.post("/generate_illustration")
-async def generate_illustration(request: IllustrationRequest):
+async def generate_illustration(request: Request):
     """
     Generate an illustration for a given story.
     """
+    request_json = await request.json()
+
+    ip = request.client.host
+    
+    if check_rate_limit(ip):
+        return JSONResponse(
+            status_code=429,
+            content={"message": "Too many requests. Please try again later."},
+        )
+
+    request = IllustrationRequest(**request_json)
+
     if not os.getenv("OPENAI_API_KEY"):
         raise HTTPException(
             status_code=400, detail="No OPENAI_API_KEY environment variable set."
