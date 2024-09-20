@@ -90,7 +90,7 @@ onMounted(() => {
       isOpenAIAvailable.value = available
     })
     .catch((error) => {
-      // console.error("Error detecting OpenAI availability:", error)
+      console.error("Error detecting OpenAI availability:", error)
     })
 })
 
