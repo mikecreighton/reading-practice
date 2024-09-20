@@ -76,7 +76,6 @@ const loadSavedInputs = () => {
 // Call this immediately
 loadSavedInputs()
 
-// Create a global variable to store the isOpenAIAvailable value
 provide("isOpenAIAvailable", isOpenAIAvailable)
 
 onMounted(() => {
@@ -94,7 +93,7 @@ onMounted(() => {
       // console.error("Error detecting OpenAI availability:", error)
     })
 })
-// Add this watch effect
+
 watch(isSettingsModalOpen, (isOpen) => {
   if (isOpen) {
     document.body.classList.add("modal-open")
@@ -185,9 +184,7 @@ const handleOpenSettings = () => {
 
 const handleSettingsModalSave = () => {
   isSettingsModalOpen.value = false
-  // Save settings to local storage
   localStorage.setItem("userSettings", JSON.stringify(settings.value))
-  // You can add any additional logic here if needed
 }
 
 const onSettingsModalEnter = (el, done) => {

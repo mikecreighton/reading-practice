@@ -146,8 +146,6 @@ class IllustrationRequest(BaseModel):
 
 @app.get("/openai_available")
 async def openai_available(request: Request):
-    print("Incoming request IP: ", request.client.host)
-    print("Incoming request headers: ", request.headers)
     return {"message": bool(os.getenv("OPENAI_API_KEY"))}
 
 
@@ -158,18 +156,13 @@ async def generate_story(request: Request):
     """
     request_json = await request.json()
 
-    # ip = request.headers.get("x-forwarded-for", "unknown")
     ip = request.client.host
-    print("Incoming IP request: ", ip)
-    print(request.headers)
     
     if check_rate_limit(ip):
         return JSONResponse(
             status_code=429,
             content={"message": "Too many requests. Please try again later."},
         )
-
-    start = time.time()
 
     request = StoryRequest(**request_json)
 
@@ -207,16 +200,8 @@ async def generate_story(request: Request):
         )
 
     safety_content = safety_response.choices[0].message.content
-    print("-----------------------------------------")
-    print("Raw safety evaluation response:")
-    print(safety_content)
-    print("-----------------------------------------")
 
-    return JSONResponse(
-        status_code=200,
-        content={"message": safety_content},
-    )
-
+    # Need to make sure that we've got something that looks like JSON.
     try:
         if "```json" in safety_content:
             json_part = safety_content.split("```json")[1].split("```")[0]
@@ -245,37 +230,49 @@ async def generate_story(request: Request):
         request.words, request.subject, request.setting, request.humor, request.grade
     )
 
-    print("-----------------------------------------")
-    print("Story system prompt:")
-    print(SYSTEM_PROMPT)
-    print(" ")
-    print("Story user prompt:")
-    print(user_prompt)
-    print("-----------------------------------------")
-
-    response = await text_client.chat.completions.create(
-        model=AI_TEXT_MODEL,
-        messages=[
-            {"role": "system", "content": SYSTEM_PROMPT},
-            {"role": "user", "content": user_prompt},
-        ],
-        temperature=TEMPERATURE,
-        max_tokens=MAX_TOKENS,
-    )
+    try:
+        response = await text_client.chat.completions.create(
+            model=AI_TEXT_MODEL,
+            messages=[
+                {"role": "system", "content": SYSTEM_PROMPT},
+                {"role": "user", "content": user_prompt},
+            ],
+            temperature=TEMPERATURE,
+            max_tokens=MAX_TOKENS,
+        )
+    except RateLimitError:
+        return JSONResponse(
+            status_code=429,
+            content={"message": "Rate limit exceeded. Please try again later."},
+        )
+    except Exception as e:
+        return JSONResponse(
+            status_code=500,
+            content={"message": str(e)},
+        )
 
     story = response.choices[0].message.content
-
-    end = time.time()
-    print("/generate_story - Time elapsed: ", end - start)
 
     return {"safe": True, "story": story}
 
 
 @app.post("/generate_illustration")
-async def generate_illustration(request: IllustrationRequest):
+async def generate_illustration(request: Request):
     """
     Generate an illustration for a given story.
     """
+    request_json = await request.json()
+
+    ip = request.client.host
+    
+    if check_rate_limit(ip):
+        return JSONResponse(
+            status_code=429,
+            content={"message": "Too many requests. Please try again later."},
+        )
+
+    request = IllustrationRequest(**request_json)
+
     if not os.getenv("OPENAI_API_KEY"):
         raise HTTPException(
             status_code=400, detail="No OPENAI_API_KEY environment variable set."
@@ -288,15 +285,6 @@ async def generate_illustration(request: IllustrationRequest):
         "AI_ILLUSTRATION_TEXT_MODEL", "anthropic/claude-3.5-sonnet"
     )
 
-    print("-----------------------------------------")
-    print("Illustration model: ", AI_ILLUSTRATION_TEXT_MODEL)
-    print("Illustration system prompt:")
-    print(ILLUSTRATION_SYSTEM_PROMPT)
-    print(" ")
-    print("Illustration user prompt:")
-    print(user_prompt)
-    print("-----------------------------------------")
-
     response = await text_client.chat.completions.create(
         model=AI_ILLUSTRATION_TEXT_MODEL,
         messages=[
@@ -308,12 +296,6 @@ async def generate_illustration(request: IllustrationRequest):
     )
 
     image_gen_prompt = response.choices[0].message.content
-
-    print("-----------------------------------------")
-    print("Generated illustration response prompt for DALL-E 3:")
-    print(image_gen_prompt)
-    print("-----------------------------------------")
-
     image_gen_client = AsyncOpenAI(api_key=os.getenv("OPENAI_API_KEY"))
 
     if request.aspect_ratio == "square":
