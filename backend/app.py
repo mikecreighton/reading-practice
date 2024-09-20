@@ -1,7 +1,7 @@
 import os
-from openai import AsyncOpenAI
+from openai import AsyncOpenAI, RateLimitError
 from dotenv import load_dotenv
-from fastapi import FastAPI, HTTPException
+from fastapi import FastAPI, HTTPException, Request
 from fastapi.responses import HTMLResponse, JSONResponse
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
@@ -73,7 +73,6 @@ else:
 #
 # -----------------------------------------
 
-
 def construct_user_prompt(words, subject, setting, humor, grade):
     user_prompt = (
         USER_PROMPT.replace("{{words}}", words)
@@ -91,13 +90,40 @@ def construct_user_prompt(words, subject, setting, humor, grade):
 def construct_illustration_user_prompt(story, grade):
     return ILLUSTRATION_USER_PROMPT.replace("{{story}}", story).replace("{{grade}}", grade)
 
+# Initialize a dictionary to keep request counts for each IP address
+request_tracker = {}
+MAX_REQUESTS_PER_MINUTE = 2
+
+def check_rate_limit(ip):
+    now = time.time()
+    
+    # Clean up expired entries
+    for local_ip in list(request_tracker.keys()):
+        count, timestamp = request_tracker[local_ip]
+        if now - timestamp > 60:
+            del request_tracker[local_ip]
+    
+    if ip not in request_tracker:
+        request_tracker[ip] = [1, now]
+        return False
+    
+    count, timestamp = request_tracker[ip]
+    
+    if now - timestamp > 60:
+        request_tracker[ip] = [1, now]
+        return False
+    
+    if count < MAX_REQUESTS_PER_MINUTE:
+        request_tracker[ip][0] += 1
+        return False
+    
+    return True
 
 # -----------------------------------------
 #
 # Pydantic models
 #
 # -----------------------------------------
-
 
 class StoryRequest(BaseModel):
     words: str
@@ -112,20 +138,40 @@ class IllustrationRequest(BaseModel):
     grade: str
     aspect_ratio: str
 
-
 # -----------------------------------------
 #
 # Routes
 #
 # -----------------------------------------
 
+@app.get("/openai_available")
+async def openai_available(request: Request):
+    print("Incoming request IP: ", request.client.host)
+    print("Incoming request headers: ", request.headers)
+    return {"message": bool(os.getenv("OPENAI_API_KEY"))}
+
 
 @app.post("/generate_story")
-async def generate_story(request: StoryRequest):
+async def generate_story(request: Request):
     """
     Generate a story with integrated safety check.
     """
+    request_json = await request.json()
+
+    # ip = request.headers.get("x-forwarded-for", "unknown")
+    ip = request.client.host
+    print("Incoming IP request: ", ip)
+    print(request.headers)
+    
+    if check_rate_limit(ip):
+        return JSONResponse(
+            status_code=429,
+            content={"message": "Too many requests. Please try again later."},
+        )
+
     start = time.time()
+
+    request = StoryRequest(**request_json)
 
     # Perform safety check
     safety_user_prompt = (
@@ -139,21 +185,37 @@ async def generate_story(request: StoryRequest):
     if AI_TEXT_PROVIDER == "openrouter":
         safety_user_prompt += f"\n\n[IGNORE THIS: Timestamp: {time.time()}]"
 
-    safety_response = await text_client.chat.completions.create(
-        model=AI_SAFETY_MODEL,
-        messages=[
-            {"role": "system", "content": SAFETY_SYSTEM_PROMPT},
-            {"role": "user", "content": safety_user_prompt},
-        ],
-        temperature=0,
-        max_tokens=1024,
-    )
+    try:
+        safety_response = await text_client.chat.completions.create(
+            model=AI_SAFETY_MODEL,
+            messages=[
+                {"role": "system", "content": SAFETY_SYSTEM_PROMPT},
+                {"role": "user", "content": safety_user_prompt},
+            ],
+            temperature=0,
+            max_tokens=1024,
+        )
+    except RateLimitError:
+        return JSONResponse(
+            status_code=429,
+            content={"message": "Rate limit exceeded. Please try again later."},
+        )
+    except Exception as e:
+        return JSONResponse(
+            status_code=500,
+            content={"message": str(e)},
+        )
 
     safety_content = safety_response.choices[0].message.content
     print("-----------------------------------------")
     print("Raw safety evaluation response:")
     print(safety_content)
     print("-----------------------------------------")
+
+    return JSONResponse(
+        status_code=200,
+        content={"message": safety_content},
+    )
 
     try:
         if "```json" in safety_content:
@@ -207,11 +269,6 @@ async def generate_story(request: StoryRequest):
     print("/generate_story - Time elapsed: ", end - start)
 
     return {"safe": True, "story": story}
-
-
-@app.get("/openai_available")
-async def openai_available():
-    return {"message": bool(os.getenv("OPENAI_API_KEY"))}
 
 
 @app.post("/generate_illustration")
