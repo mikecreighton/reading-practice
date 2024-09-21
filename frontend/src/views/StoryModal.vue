@@ -48,7 +48,7 @@
 }
 
 :deep(.highlighted-word) {
-  @apply bg-[#C6CAD0] px-1 rounded;
+  @apply bg-highlighted-word px-1 rounded;
 }
 </style>
 

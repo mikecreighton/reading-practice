@@ -193,7 +193,7 @@ const loadSavedInputs = () => {
     humor.value = props.savedInputs.humor || 5
   } else {
     // Set debug values
-    wordList.value = ["collaborate", "decipher", "empathy", "hypothesis", "innovative"]
+    wordList.value = ["park", "puzzle", "penguin", "pasta", "pizza"]
     characterName.value = "A scientist"
     setting.value = "A school bus"
     humor.value = 10
@@ -239,7 +239,7 @@ const submitForm = async () => {
   emit("storyGenerationStart", wordList.value)
 
   if (DEBUG_STORY_GENERATION.value) {
-    const tempStory = `The Big Bad Wolf hopped on the school bus, carrying his favorite bicycle. His friend, a little pig, asked, "Why did you bring that?" The wolf replied, "Because the weather is nice for riding!" Suddenly, the bus driver hit a bump, and the wolf's bicycle bounced around. It knocked over lunch boxes and backpacks. The bicycle wheels spun wildly, spraying mud everywhere. All the kids on the bus got splattered, and their hair stood up like crazy mohawks. The wolf looked at the mess and said, "Oops! I guess bikes don't belong on buses!" The Big Bad Wolf hopped on the school bus, carrying his favorite bicycle. His friend, a little pig, asked, "Why did you bring that?" The wolf replied, "Because the weather is nice for riding!" Suddenly, the bus driver hit a bump, and the wolf's bicycle bounced around. It knocked over lunch boxes and backpacks. The bicycle wheels spun wildly, spraying mud everywhere. All the kids on the bus got splattered, and their hair stood up like crazy mohawks. The wolf looked at the mess and said, "Oops! I guess bikes don't belong on buses!"`
+    const tempStory = `The scientist boarded the school bus, carrying a giant puzzle of a penguin. As the bus bounced along, she tried to eat her pasta lunch, but the noodles kept flying everywhere! Suddenly, the bus hit a bump, and her puzzle pieces scattered all over. The scientist scrambled to pick them up, accidentally grabbing a slice of pizza from a student's lunchbox instead of a puzzle piece. She stuck the pizza slice onto her puzzle, creating a very strange penguin with a cheesy beak. The bus driver saw this in the mirror and couldn't stop giggling. He missed the turn for the school and ended up at a park. All the kids cheered, thinking they were getting a surprise field trip, while the confused scientist stood there holding her pizza-penguin puzzle.`
     emit("storyGenerationComplete", tempStory, "https://placehold.co/600x400")
     isLoading.value = false
     return

@@ -89,6 +89,12 @@ onMounted(() => {
     settings.value = JSON.parse(savedSettings)
   }
 
+  // Need to override this if we're just in debug mode.
+  if (import.meta.env.VITE_DEBUG_INPUT_FORM === "true") {
+    settings.value.gradeLevel = "2nd"
+    settings.value.theme = "default"
+  }
+
   detectOpenAI()
     .then((available) => {
       isOpenAIAvailable.value = available
@@ -192,6 +198,7 @@ const handleOpenSettings = () => {
 
 const handleSettingsModalSave = () => {
   isSettingsModalOpen.value = false
+  console.log("settings", settings.value)
   localStorage.setItem("userSettings", JSON.stringify(settings.value))
 }
 
