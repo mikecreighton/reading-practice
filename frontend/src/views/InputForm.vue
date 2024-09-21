@@ -236,7 +236,7 @@ const submitForm = async () => {
   // Make sure all the words are lowercase
   wordList.value = wordList.value.map((word) => word.toLowerCase())
 
-  emit("storyGenerationStart")
+  emit("storyGenerationStart", wordList.value)
 
   if (DEBUG_STORY_GENERATION.value) {
     const tempStory = `The Big Bad Wolf hopped on the school bus, carrying his favorite bicycle. His friend, a little pig, asked, "Why did you bring that?" The wolf replied, "Because the weather is nice for riding!" Suddenly, the bus driver hit a bump, and the wolf's bicycle bounced around. It knocked over lunch boxes and backpacks. The bicycle wheels spun wildly, spraying mud everywhere. All the kids on the bus got splattered, and their hair stood up like crazy mohawks. The wolf looked at the mess and said, "Oops! I guess bikes don't belong on buses!" The Big Bad Wolf hopped on the school bus, carrying his favorite bicycle. His friend, a little pig, asked, "Why did you bring that?" The wolf replied, "Because the weather is nice for riding!" Suddenly, the bus driver hit a bump, and the wolf's bicycle bounced around. It knocked over lunch boxes and backpacks. The bicycle wheels spun wildly, spraying mud everywhere. All the kids on the bus got splattered, and their hair stood up like crazy mohawks. The wolf looked at the mess and said, "Oops! I guess bikes don't belong on buses!"`

@@ -265,8 +265,9 @@ async def generate_illustration(request: IllustrationRequest):
     """
 
     if not os.getenv("OPENAI_API_KEY"):
-        raise HTTPException(
-            status_code=400, detail="No OPENAI_API_KEY environment variable set."
+        return JSONResponse(
+            status_code=400,
+            content={"message": "No OPENAI_API_KEY environment variable set."},
         )
 
     start = time.time()
@@ -275,16 +276,27 @@ async def generate_illustration(request: IllustrationRequest):
     AI_ILLUSTRATION_TEXT_MODEL = os.getenv(
         "AI_ILLUSTRATION_TEXT_MODEL", "anthropic/claude-3.5-sonnet"
     )
-
-    response = await text_client.chat.completions.create(
-        model=AI_ILLUSTRATION_TEXT_MODEL,
-        messages=[
-            {"role": "system", "content": ILLUSTRATION_SYSTEM_PROMPT},
-            {"role": "user", "content": user_prompt},
-        ],
-        temperature=TEMPERATURE,
-        max_tokens=MAX_TOKENS,
-    )
+    
+    try:
+        response = await text_client.chat.completions.create(
+            model=AI_ILLUSTRATION_TEXT_MODEL,
+            messages=[
+                {"role": "system", "content": ILLUSTRATION_SYSTEM_PROMPT},
+                {"role": "user", "content": user_prompt},
+            ],
+            temperature=TEMPERATURE,
+            max_tokens=MAX_TOKENS,
+        )
+    except RateLimitError:
+        return JSONResponse(
+            status_code=429,
+            content={"message": "Rate limit exceeded. Please try again later."},
+        )
+    except Exception as e:
+        return JSONResponse(
+            status_code=500,
+            content={"message": str(e)},
+        )
 
     image_gen_prompt = response.choices[0].message.content
     image_gen_client = AsyncOpenAI(api_key=os.getenv("OPENAI_API_KEY"))
@@ -296,14 +308,25 @@ async def generate_illustration(request: IllustrationRequest):
     else:
         size = "1024x1024"
 
-    image_gen_response = await image_gen_client.images.generate(
-        model="dall-e-3",
-        prompt=image_gen_prompt,
-        size=size,
-        quality="standard",
-        n=1,
-        response_format="b64_json",
-    )
+    try:
+        image_gen_response = await image_gen_client.images.generate(
+            model="dall-e-3",
+            prompt=image_gen_prompt,
+            size=size,
+            quality="standard",
+            n=1,
+            response_format="b64_json",
+        )
+    except RateLimitError:
+        return JSONResponse(
+            status_code=429,
+            content={"message": "Rate limit exceeded. Please try again later."},
+        )
+    except Exception as e:
+        return JSONResponse(
+            status_code=500,
+            content={"message": str(e)},
+        )
 
     image_gen_response_b64 = image_gen_response.data[0].b64_json
 

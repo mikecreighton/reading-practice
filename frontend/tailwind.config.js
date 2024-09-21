@@ -36,6 +36,8 @@ export default {
             chip: colors.gray["300"],
             "chip-text": colors.gray["800"],
 
+            "highlighted-word": "#C6CAD0",
+
             "button-primary": colors.gray["800"],
             "button-primary-text": colors.white,
             "button-primary-border": colors.gray["800"],
@@ -93,6 +95,8 @@ export default {
               chip: colors.pink["300"],
               "chip-text": colors.indigo["950"],
 
+              "highlighted-word": colors.pink["300"],
+
               "button-primary": colors.purple["950"],
               "button-primary-text": colors.pink["50"],
               "button-primary-border": colors.purple["950"],
@@ -148,6 +152,8 @@ export default {
 
               chip: "#9BD49E",
               "chip-text": "#041604",
+
+              "highlighted-word": "#78C47B",
 
               "button-primary": "#FFD700",
               "button-primary-text": "#0A1F0A",

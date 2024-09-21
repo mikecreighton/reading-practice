@@ -24,6 +24,8 @@
             :story="story"
             :illustration="illustration"
             :isLoading="isLoading"
+            :wordList="wordList"
+            :isError="isError"
             @regenerate="handleRegenerate"
             @closeRequest="handleStoryModalCloseRequest"
           />
@@ -65,6 +67,8 @@ const settings = ref({
 const savedInputs = ref({})
 const storyModalContainer = ref(null)
 const settingsModalRef = ref(null)
+const wordList = ref([])
+const isError = ref(false)
 
 const loadSavedInputs = () => {
   const savedInputsData = localStorage.getItem("userInputs")
@@ -117,10 +121,12 @@ const blurInputs = () => {
   })
 }
 
-const handleStoryGenerationStart = () => {
+const handleStoryGenerationStart = (formData) => {
+  wordList.value = formData
   story.value = ""
   isModalOpen.value = true
   isLoading.value = true
+  isError.value = false
   // We need to make sure that none of the inputs are currently focused or we wind up with a weird bug
   blurInputs()
 }
@@ -129,6 +135,7 @@ const handleStoryGenerationComplete = (generatedStory, generatedIllustration) =>
   story.value = generatedStory
   illustration.value = generatedIllustration
   isLoading.value = false
+  isError.value = false
 }
 
 const handleStoryModalCloseRequest = () => {
@@ -175,6 +182,7 @@ const handleStoryGenerationError = (error) => {
   illustration.value = null
   isLoading.value = false
   story.value = error.message
+  isError.value = true
 }
 
 const handleOpenSettings = () => {

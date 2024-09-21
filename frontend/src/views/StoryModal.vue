@@ -46,6 +46,10 @@
   opacity: 0;
   transform: translateY(10px);
 }
+
+:deep(.highlighted-word) {
+  @apply bg-[#C6CAD0] px-1 rounded;
+}
 </style>
 
 <template>
@@ -90,7 +94,13 @@
             alt="Illustration"
           />
           <p
+            v-if="!isError"
             class="text-xl leading-relaxed sm:text-2xl sm:leading-relaxed md:leading-relaxed text-story-text"
+            v-html="highlightedStory"
+          ></p>
+          <p
+            v-else
+            class="text-xl leading-relaxed sm:text-2xl sm:leading-relaxed md:leading-relaxed text-red-500"
           >
             {{ story }}
           </p>
@@ -119,7 +129,7 @@
 </template>
 
 <script setup>
-import { inject, ref, onMounted, onUnmounted, watch } from "vue"
+import { inject, ref, onMounted, onUnmounted, watch, computed } from "vue"
 import FastButton from "@/components/FastButton.vue"
 
 const isOpenAIAvailable = inject("isOpenAIAvailable")
@@ -156,6 +166,15 @@ const props = defineProps({
   isLoading: {
     type: Boolean,
     required: true,
+  },
+  wordList: {
+    type: Array,
+    required: true,
+  },
+  isError: {
+    type: Boolean,
+    required: false,
+    default: false,
   },
 })
 
@@ -211,4 +230,13 @@ watch(
     }
   },
 )
+
+const highlightedStory = computed(() => {
+  if (!props.story || !props.wordList.length || props.isError) return props.story
+
+  const escapedWords = props.wordList.map(word => word.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'))
+  const regex = new RegExp(`\\b(${escapedWords.join('|')})\\b`, 'gi')
+  
+  return props.story.replace(regex, (match) => `<span class="highlighted-word">${match}</span>`)
+})
 </script>
