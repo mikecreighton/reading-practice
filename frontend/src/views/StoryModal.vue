@@ -48,7 +48,8 @@
 }
 
 :deep(.highlighted-word) {
-  @apply bg-highlighted-word px-1 rounded;
+  /* @apply bg-highlighted-word px-1 rounded; */
+  @apply font-bold;
 }
 </style>
 
