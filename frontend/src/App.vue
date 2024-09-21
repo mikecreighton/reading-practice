@@ -198,7 +198,6 @@ const handleOpenSettings = () => {
 
 const handleSettingsModalSave = () => {
   isSettingsModalOpen.value = false
-  console.log("settings", settings.value)
   localStorage.setItem("userSettings", JSON.stringify(settings.value))
 }
 

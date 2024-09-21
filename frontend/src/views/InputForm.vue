@@ -305,7 +305,6 @@ const cancelRequest = () => {
     abortController.value.abort()
   }
   if (illustrationAbortController.value) {
-    console.log("Cancelling illustration request")
     isLoading.value = false
     illustrationAbortController.value.abort()
   }
