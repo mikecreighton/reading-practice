@@ -1,13 +1,13 @@
 # About this app
 
-This project is a small web app prototype that generates custom stories for young students to practice their reading and spelling skills. It consists of a Flask backend that generates text stories and illustrations using AI, and a Vue frontend that provides an interface for inputting story parameters and displaying the generated stories.
+This project is a small web app prototype that generates custom stories for young students to practice their reading and spelling skills. It consists of a FastAPI backend that generates text stories and illustrations using AI, and a Vue frontend that provides an interface for inputting story parameters and displaying the generated stories.
 
 # Rules
 
 When working with Vue.js frontend code, use the following rules:
 
 1. You're working with a Vue 3 frontend. Always use Vue Single-File Components (SFCs) for all Vue components.
-2. All `<style>` tags should be scoped to the component. `<style>` tags should be at the TOP of the component file.
+2. All `<style>` tags should be scoped to the component. `<style>` tags should be at the TOP of the component .vue file and have a `lang="postcss"` attribute.
 3. The CSS framework is Tailwind CSS as a PostCSS plugin.
 4. CSS should be structured in a mobile-first approach.
 5. `gsap` should be used for all animations, unless they're simple and can be done with CSS transitions.
@@ -16,6 +16,6 @@ When working with Vue.js frontend code, use the following rules:
 8. To change the color of an icon, add an additional class to the `<i> `tag and define the `color` within the component's `<style>` tag.
 9. To change the size of an icon, add an additional class to the `<i>` tag and define the `font-size` within the component's `<style>` tag.
 
-When working with the Python backend, use the following rules:
+When working with the Python backend code, use the following rules:
 
 1. All newly generated Python functions should include simple docstrings under the function declaration.
