@@ -19,5 +19,5 @@ build/
 .aidigestignore
 .aider*
 
-reading-practice.md
 codebase.md
+.python-version
