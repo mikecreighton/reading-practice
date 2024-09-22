@@ -78,7 +78,7 @@ To set up this project locally, follow these steps:
 4. Adjust the humor level.
 5. Click "Go" to create a custom story.
 
-Additionally, you can specify which grade level the story should be written for along with the color theme for the prototype.
+Additionally, you can specify which grade level the story should be written for along with the color theme for the prototype by clicking on the Settings gear button in the lower-left.
 
 ## Customizing CSS Themes
 
