@@ -42,11 +42,8 @@
         </Transition>
       </div>
     </div>
-    <Transition
-      @leave="onWelcomeScreenLeave"
-    >
-      <WelcomeScreen v-if="showWelcome" @getStarted="handleGetStarted" />
-    </Transition>
+    
+    <WelcomeScreen v-if="showWelcome" @getStarted="handleGetStarted" />
   </div>
 </template>
 
@@ -84,6 +81,12 @@ const loadSavedInputs = () => {
   }
 }
 
+const MODAL_IN_DURATION = 0.4
+const MODAL_IN_EASE = "expo.out"
+const MODAL_OUT_DURATION = 0.35
+const MODAL_OUT_EASE = "expo.inOut"
+
+
 // Call this immediately
 loadSavedInputs()
 
@@ -110,17 +113,6 @@ onMounted(() => {
       console.error("Error detecting OpenAI availability:", error)
     })
 })
-
-const onWelcomeScreenLeave = (el, done) => {
-  console.log("onWelcomeScreenLeave")
-  gsap.to(el, {
-    duration: 0.25,
-    opacity: 0,
-    delay: 0.25,
-    ease: "power2.out",
-    onComplete: () => done(),
-  })
-}
 
 watch(isSettingsModalOpen, (isOpen) => {
   if (isOpen) {
@@ -171,9 +163,9 @@ const onStoryModalEnter = (el, done) => {
   storyModalContainer.value.classList.remove("hidden")
 
   gsap.from(el, {
-    duration: 0.5,
+    duration: MODAL_IN_DURATION,
     y: "100%",
-    ease: Power4.easeOut,
+    ease: MODAL_IN_EASE,
     onComplete: () => done(),
   })
 }
@@ -181,9 +173,9 @@ const onStoryModalEnter = (el, done) => {
 const onStoryModalLeave = (el, done) => {
   inputFormRef.value.cancelRequest()
   gsap.to(el, {
-    duration: 0.5,
+    duration: MODAL_OUT_DURATION,
     y: "100%",
-    ease: Power4.easeInOut,
+    ease: MODAL_OUT_EASE,
     onComplete: () => {
       storyModalContainer.value.classList.add("hidden")
       done()
@@ -223,18 +215,18 @@ const onSettingsModalEnter = (el, done) => {
   settingsModalRef.value.classList.remove("hidden")
 
   gsap.to(el, {
-    duration: 0.5,
+    duration: MODAL_IN_DURATION,
     y: "0",
-    ease: Power4.easeOut,
+    ease: MODAL_IN_EASE,
     onComplete: () => done(),
   })
 }
 
 const onSettingsModalLeave = (el, done) => {
   gsap.to(el, {
-    duration: 0.5,
+    duration: MODAL_OUT_DURATION,
     y: "100%",
-    ease: Power4.easeInOut,
+    ease: MODAL_OUT_EASE,
     onComplete: () => {
       settingsModalRef.value.classList.add("hidden")
       done()

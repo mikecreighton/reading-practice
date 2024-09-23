@@ -11,7 +11,7 @@
 </style>
 
 <template>
-  <div class="welcome-screen fixed top-0 left-0 w-full h-full bg-background text-text">
+  <div ref="welcomeScreen" class="welcome-screen fixed top-0 left-0 w-full h-full bg-background text-text">
     <div ref="content" class="welcome-screen-content flex flex-col items-center justify-center px-10 max-w-[700px] mx-auto h-full">
       <h1 ref="title" class="force-3d text-4xl md:text-6xl font-bold mb-4">Reading Practice</h1>
       <p ref="intro" class="force-3d text-lg md:text-2xl mb-8 text-center">
@@ -35,6 +35,7 @@ import gsap from "gsap"
 
 const emit = defineEmits(['getStarted'])
 
+const welcomeScreen = ref(null)
 const content = ref(null)
 const title = ref(null)
 const intro = ref(null)
@@ -81,6 +82,8 @@ const handleCTAClick = () => {
   tl.to(links.value, opacityOptions, stagger)
   tl.to(cta.value, yOptions, 0)
   tl.to(cta.value, opacityOptions, 0)
+
+  tl.to(welcomeScreen.value, {opacity: 0, duration: 0.5, ease: "power2.inOut"})
 
 }
 </script>
