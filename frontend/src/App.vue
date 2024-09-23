@@ -1,10 +1,8 @@
 <style scoped style="postcss"></style>
 
 <template>
-  <div :class="['App', 'theme-' + settings.theme]">
-    <WelcomeScreen v-if="showWelcome" @getStarted="handleGetStarted" />
-    
-    <div v-else class="app-content bg-background">
+  <div :class="['App', 'theme-' + settings.theme]">    
+    <div class="app-content bg-background">
       <InputForm
         ref="inputFormRef"
         :settings="settings"
@@ -44,6 +42,11 @@
         </Transition>
       </div>
     </div>
+    <Transition
+      @leave="onWelcomeScreenLeave"
+    >
+      <WelcomeScreen v-if="showWelcome" @getStarted="handleGetStarted" />
+    </Transition>
   </div>
 </template>
 
@@ -107,6 +110,17 @@ onMounted(() => {
       console.error("Error detecting OpenAI availability:", error)
     })
 })
+
+const onWelcomeScreenLeave = (el, done) => {
+  console.log("onWelcomeScreenLeave")
+  gsap.to(el, {
+    duration: 0.25,
+    opacity: 0,
+    delay: 0.25,
+    ease: "power2.out",
+    onComplete: () => done(),
+  })
+}
 
 watch(isSettingsModalOpen, (isOpen) => {
   if (isOpen) {

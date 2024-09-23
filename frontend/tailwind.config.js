@@ -25,6 +25,8 @@ export default {
             background: colors.gray["200"],
             text: colors.gray["800"],
 
+            "link": colors.gray["400"],
+
             "loading-balls": colors.gray["800"],
             "loading-balls-text": colors.gray["800"],
 
@@ -84,6 +86,8 @@ export default {
               background: colors.pink["200"],
               text: colors.indigo["950"],
 
+              "link": colors.pink["400"],
+
               "loading-balls": colors.indigo["950"],
               "loading-balls-text": colors.indigo["950"],
 
@@ -141,6 +145,8 @@ export default {
               accent: "#4CAF50", // Vibrant green
               background: "#0F2E0F", // Very dark green
               text: "#E0F2E0", // Light mint green
+
+              "link": "#4CAF50",
 
               "loading-balls": "#0F2E0F",
               "loading-balls-text": "#0F2E0F",
