@@ -37,8 +37,8 @@ To set up this project locally, follow these steps:
 2. Set up the backend:
    ```
    cd backend
-   python -m venv venv # Create a virtual environment
-   source venv/bin/activate  # On Windows, use `venv\Scripts\activate`
+   python -m venv .venv # Create a virtual environment
+   source .venv/bin/activate  # On Windows, use `.venv\Scripts\activate`
    pip install -r requirements.txt
    ```
 
@@ -58,7 +58,7 @@ To set up this project locally, follow these steps:
 1. Start the backend server:
    ```
    cd backend
-   source ./venv/bin/activate
+   source .venv/bin/activate
    python app.py
    ```
 
