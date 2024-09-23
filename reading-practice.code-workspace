@@ -5,10 +5,12 @@
 			"path": "."
 		},
 		{
-			"path": "backend"
+			"name": "frontend",
+			"path": "frontend"
 		},
 		{
-			"path": "frontend"
+			"name": "backend",
+			"path": "backend"
 		}
 	],
 	"settings": {
