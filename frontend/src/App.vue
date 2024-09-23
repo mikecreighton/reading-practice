@@ -2,7 +2,9 @@
 
 <template>
   <div :class="['App', 'theme-' + settings.theme]">
-    <div class="app-content bg-background">
+    <WelcomeScreen v-if="showWelcome" @getStarted="handleGetStarted" />
+    
+    <div v-else class="app-content bg-background">
       <InputForm
         ref="inputFormRef"
         :settings="settings"
@@ -46,6 +48,7 @@
 </template>
 
 <script setup>
+import WelcomeScreen from "@/views/WelcomeScreen.vue"
 import { ref, provide, onMounted, watch } from "vue"
 import StoryModal from "@/views/StoryModal.vue"
 import SettingsModal from "@/views/SettingsModal.vue"
@@ -69,6 +72,7 @@ const storyModalContainer = ref(null)
 const settingsModalRef = ref(null)
 const wordList = ref([])
 const isError = ref(false)
+const showWelcome = ref(true)
 
 const loadSavedInputs = () => {
   const savedInputsData = localStorage.getItem("userInputs")
@@ -222,5 +226,9 @@ const onSettingsModalLeave = (el, done) => {
       done()
     },
   })
+}
+
+const handleGetStarted = () => {
+  showWelcome.value = false
 }
 </script>
