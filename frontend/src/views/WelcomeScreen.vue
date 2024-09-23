@@ -13,16 +13,16 @@
 <template>
   <div ref="welcomeScreen" class="welcome-screen fixed top-0 left-0 w-full h-full bg-background text-text">
     <div ref="content" class="welcome-screen-content flex flex-col items-center justify-center px-10 max-w-[700px] mx-auto h-full">
-      <h1 ref="title" class="force-3d text-4xl md:text-6xl font-bold mb-4">Reading Practice</h1>
-      <p ref="intro" class="force-3d text-lg md:text-2xl mb-8 text-center">
+      <h1 ref="title" class="force-3d text-4xl md:text-6xl font-bold mb-8 md:mb-16">Reading Practice</h1>
+      <p ref="intro" class="force-3d text-lg md:text-2xl mb-8 md:px-8 text-center">
         Welcome to our Reading Practice app! Enhance your reading and spelling skills with custom-generated stories tailored for young learners.
       </p>
-      <div ref="links" class="force-3d flex space-x-6 mb-8">
+      <div ref="cta" class="force-3d flex justify-center mb-16">
+        <FastButton type="primary" @click="handleCTAClick">Get Started</FastButton>
+      </div>
+      <div ref="links" class="force-3d flex space-x-6">
         <a href="https://github.com/mikecreighton/reading-practice" target="_blank" class="leading-[40px] text-link hover:underline"><i class="bi bi-github"></i> GitHub</a>
         <a href="https://x.com/mikecreighton" target="_blank" class="leading-[40px] text-link hover:underline"><i class="bi bi-twitter-x"></i> @mikecreighton</a>
-      </div>
-      <div ref="cta" class="force-3d flex justify-center">
-        <FastButton type="primary" @click="handleCTAClick">Get Started</FastButton>
       </div>
     </div>
   </div>
