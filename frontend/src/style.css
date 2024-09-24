@@ -19,19 +19,13 @@
 
 html,
 body {
-  margin: 0;
-  padding: 0;
-  height: 100vh;
-  height: 100dvh;
+  @apply m-0 p-0 h-full;
 }
 
-body.modal-open {
-  overflow: hidden;
-  /* Leaving the following line just in case we need it for debugging iOS Mobile Safari scrolling issues */
-  /* position: fixed; */
-}
-
-body.no-scroll {
-  overflow: hidden;
-  touch-action: none;
+/**
+ * This is to prevent the page from scrolling when the modal is open on Mobile Safari.
+ * It's dumb that we have to do this in two places, both here and on the parent container.
+ */
+.no-scroll {
+  @apply overflow-hidden h-full max-h-full touch-none;
 }

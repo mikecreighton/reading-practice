@@ -1,20 +1,4 @@
-<style scoped lang="postcss">
-.humor-button {
-  @apply flex items-center justify-center text-4xl;
-  width: calc((100% - 20px) / 3);
-  aspect-ratio: 1 / 1;
-}
-
-@screen sm {
-  .humor-button {
-    @apply w-full h-auto aspect-auto py-3 px-4 flex-row text-2xl justify-center;
-  }
-}
-
-.no-scroll {
-  @apply overflow-hidden h-full max-h-full touch-none;
-}
-</style>
+<style scoped lang="postcss"></style>
 
 <template>
   <form
@@ -90,10 +74,11 @@
           @click="humor = item.value"
           :class="[
             'humor-button',
+            'flex items-center justify-center text-4xl rounded-lg aspect-square w-[calc((100%-20px)/3)]',
+            'sm:w-full sm:h-auto sm:aspect-auto sm:py-3 sm:px-4 sm:flex-row sm:text-2xl sm:justify-center',
             humor === item.value
               ? 'bg-button-option-selected border-2 border border-button-option-selected-border'
               : 'bg-button-option border-2 border border-button-option-border hover:border-button-option-hover-border hover:bg-button-option-hover',
-            'rounded-lg',
           ]"
         >
           <span class="flex items-center justify-center">

@@ -1,4 +1,8 @@
-<style scoped lang="postcss"></style>
+<style scoped lang="postcss">
+.settings-content {
+  -webkit-overflow-scrolling: touch;
+}
+</style>
 
 <template>
   <div class="settings-modal fixed inset-0 translate-y-full bg-background w-full overflow-hidden h-[100dvh]">

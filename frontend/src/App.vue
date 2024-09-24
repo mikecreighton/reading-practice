@@ -1,12 +1,4 @@
-<style scoped lang="postcss">
-/*
-  This keeps the content that sits below all modals from scrolling on Mobile Safari because of its
-  "overscroll" behavior.
- */
-.no-scroll {
-  @apply overflow-hidden h-full max-h-full touch-none;
-}
-</style>
+<style scoped lang="postcss"></style>
 
 <template>
   <div class="App" :class="{ 'no-scroll': isModalOpen || isSettingsModalOpen }">
@@ -50,12 +42,12 @@
 
 <script setup>
 import WelcomeScreen from "@/views/WelcomeScreen.vue"
-import { ref, provide, onMounted, watch, nextTick } from "vue"
+import { ref, provide, onMounted, watch } from "vue"
 import StoryModal from "@/views/StoryModal.vue"
 import SettingsModal from "@/views/SettingsModal.vue"
 import InputForm from "@/views/InputForm.vue"
 import { detectOpenAI } from "@/services/ai"
-import gsap, { Power4 } from "gsap"
+import gsap from "gsap"
 
 const story = ref(null)
 const illustration = ref(null)
@@ -113,30 +105,6 @@ onMounted(() => {
       console.warn("Problem detecting OpenAI availability:", error)
     })
 })
-
-// const setBodyOverflow = (isHidden) => {
-//   // document.body.style.overflow = isHidden ? "hidden" : ""
-// }
-
-// watch(isSettingsModalOpen, (isOpen) => {
-//   if (isOpen) {
-//     document.body.classList.add("modal-open")
-//     nextTick(() => setBodyOverflow(true))
-//   } else {
-//     document.body.classList.remove("modal-open")
-//     nextTick(() => setBodyOverflow(false))
-//   }
-// })
-
-// watch(isModalOpen, (isOpen) => {
-//   if (isOpen) {
-//     document.body.classList.add("modal-open")
-//     nextTick(() => setBodyOverflow(true))
-//   } else {
-//     document.body.classList.remove("modal-open")
-//     nextTick(() => setBodyOverflow(false))
-//   }
-// })
 
 const blurInputs = () => {
   const inputs = document.querySelectorAll("input, textarea")
@@ -246,7 +214,10 @@ const handleGetStarted = () => {
   showWelcome.value = false
 }
 
-// Add this watch effect
+/**
+ * Set the theme on the body element so that it can be used to set the entire
+ * page's background color (for overscroll background behavior).
+ */
 watch(
   () => settings.value.theme,
   (newTheme) => {

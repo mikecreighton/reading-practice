@@ -44,18 +44,10 @@
 :deep(.highlighted-word) {
   @apply font-bold;
 }
-
-.no-scroll {
-  @apply overflow-hidden touch-none;
-}
-
-.allow-touch {
-  @apply touch-auto;
-}
 </style>
 
 <template>
-  <div class="story-modal fixed inset-0 w-full bg-story h-[100dvh] overflow-hidden" :class="{ 'no-scroll': isLoading }">
+  <div class="story-modal fixed inset-0 w-full bg-story h-[100dvh] overflow-hidden">
     <transition name="fade">
       <div
         v-if="isLoading"
@@ -134,7 +126,6 @@
 
     <!-- Bottom action buttons -->
     <div class="action-buttons-container fixed bottom-0 left-0 right-0 bg-bottom-bar drop-shadow-bar">
-      <!-- allow-touch -->
       <div class="flex justify-between items-center max-w-[700px] px-10 py-5 mx-auto my-0">
         <FastButton name="Close" type="secondary" @click="emit('closeRequest')">Close</FastButton>
         <FastButton
@@ -214,6 +205,11 @@ const clearTextInterval = () => {
     textInterval = null
   }
 }
+
+/**
+ * All of this disable and enable scroll garbage below is to prevent the page
+ * from scrolling when the modal is open on Mobile Safari.
+ */
 
 const preventScroll = (e) => {
   e.preventDefault()
