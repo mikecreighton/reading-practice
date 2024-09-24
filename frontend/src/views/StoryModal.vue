@@ -1,8 +1,4 @@
 <style scoped lang="postcss">
-.story-modal {
-  @apply overflow-hidden;
-}
-
 .story-content {
   -webkit-overflow-scrolling: touch;
 }
@@ -50,7 +46,7 @@
 }
 
 .no-scroll {
-  @apply overflow-hidden;
+  @apply overflow-hidden touch-none;
 }
 
 .allow-touch {
@@ -59,7 +55,7 @@
 </style>
 
 <template>
-  <div class="story-modal fixed inset-0 w-full bg-story h-[100dvh]" :class="{ 'no-scroll': isLoading }">
+  <div class="story-modal fixed inset-0 w-full bg-story h-[100dvh] overflow-hidden" :class="{ 'no-scroll': isLoading }">
     <transition name="fade">
       <div
         v-if="isLoading"
@@ -137,7 +133,8 @@
     </transition>
 
     <!-- Bottom action buttons -->
-    <div class="action-buttons-container fixed bottom-0 left-0 right-0 bg-bottom-bar drop-shadow-bar allow-touch">
+    <div class="action-buttons-container fixed bottom-0 left-0 right-0 bg-bottom-bar drop-shadow-bar">
+      <!-- allow-touch -->
       <div class="flex justify-between items-center max-w-[700px] px-10 py-5 mx-auto my-0">
         <FastButton name="Close" type="secondary" @click="emit('closeRequest')">Close</FastButton>
         <FastButton
@@ -218,14 +215,16 @@ const clearTextInterval = () => {
   }
 }
 
+const preventScroll = (e) => {
+  e.preventDefault()
+}
+
 const disableScroll = () => {
-  document.body.style.overflow = "hidden"
-  document.body.style.touchAction = "none"
+  document.addEventListener("touchmove", preventScroll, { passive: false })
 }
 
 const enableScroll = () => {
-  document.body.style.overflow = ""
-  document.body.style.touchAction = ""
+  document.removeEventListener("touchmove", preventScroll)
 }
 
 onMounted(() => {
@@ -253,7 +252,6 @@ const startGeneratingText = () => {
 onUnmounted(() => {
   enableScroll()
   clearTextInterval()
-  document.body.classList.remove("no-scroll")
 })
 
 watch(
@@ -262,6 +260,7 @@ watch(
     if (!newValue) {
       clearTextInterval()
       showGeneratingText.value = false
+      enableScroll()
     } else {
       disableScroll()
       randomizedGeneratingTexts.value = generatingTexts.sort(() => 0.5 - Math.random())
@@ -279,16 +278,4 @@ const highlightedStory = computed(() => {
 
   return props.story.replace(regex, (match) => `<span class="highlighted-word">${match}</span>`)
 })
-
-watch(
-  () => props.isLoading,
-  (newValue) => {
-    if (newValue) {
-      document.body.classList.add("no-scroll")
-    } else {
-      document.body.classList.remove("no-scroll")
-    }
-  },
-  { immediate: true },
-)
 </script>

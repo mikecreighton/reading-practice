@@ -1,12 +1,4 @@
-<style scoped lang="postcss">
-.settings-modal {
-  touch-action: none;
-}
-
-.settings-content {
-  -webkit-overflow-scrolling: touch;
-}
-</style>
+<style scoped lang="postcss"></style>
 
 <template>
   <div class="settings-modal fixed inset-0 translate-y-full bg-background w-full overflow-hidden h-[100dvh]">
@@ -104,17 +96,27 @@ const handleSave = () => {
   emit("save")
 }
 
+/**
+ * All of this garbage below is to prevent the page from scrolling when the modal is open on Mobile Safari.
+ */
+
 const preventScroll = (e) => {
   e.preventDefault()
 }
 
-onMounted(() => {
-  document.body.style.overflow = "hidden"
+const disableScroll = () => {
   document.addEventListener("touchmove", preventScroll, { passive: false })
+}
+
+const enableScroll = () => {
+  document.removeEventListener("touchmove", preventScroll)
+}
+
+onMounted(() => {
+  disableScroll()
 })
 
 onUnmounted(() => {
-  document.body.style.overflow = ""
-  document.removeEventListener("touchmove", preventScroll)
+  enableScroll()
 })
 </script>

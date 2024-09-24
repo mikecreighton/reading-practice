@@ -10,12 +10,17 @@
     @apply w-full h-auto aspect-auto py-3 px-4 flex-row text-2xl justify-center;
   }
 }
+
+.no-scroll {
+  @apply overflow-hidden h-full max-h-full touch-none;
+}
 </style>
 
 <template>
   <form
     @submit.prevent
     class="relative flex flex-col justify-start w-full my-0 mx-auto bg-background min-h-[calc(100dvh-104px+40px)] p-10 pb-24 max-w-[700px]"
+    :class="{ 'no-scroll': preventScroll }"
   >
     <label class="flex flex-col w-full mb-8 md:mb-10 text-lg md:text-2xl text-text">
       <span>Enter the words to appear in your story:</span>
@@ -176,6 +181,11 @@ const props = defineProps({
     required: false,
     default: () => ({}),
   },
+  preventScroll: {
+    type: Boolean,
+    required: false,
+    default: false,
+  },
 })
 
 const emit = defineEmits(["storyGenerationStart", "storyGenerationComplete", "storyGenerationError", "openSettings"])
@@ -188,7 +198,18 @@ const loadSavedInputs = () => {
     humor.value = props.savedInputs.humor || 5
   } else {
     // Set debug values
-    wordList.value = ["park", "puzzle", "penguin", "pasta", "pizza"]
+    wordList.value = [
+      "park",
+      "puzzle",
+      "penguin",
+      "pasta",
+      "pizza",
+      "pepperoni",
+      "plaza",
+      "poppy",
+      "popsicle",
+      "poodle",
+    ]
     characterName.value = "A scientist"
     setting.value = "A school bus"
     humor.value = 10

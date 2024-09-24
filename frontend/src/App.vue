@@ -1,12 +1,21 @@
-<style scoped style="postcss"></style>
+<style scoped lang="postcss">
+/*
+  This keeps the content that sits below all modals from scrolling on Mobile Safari because of its
+  "overscroll" behavior.
+ */
+.no-scroll {
+  @apply overflow-hidden h-full max-h-full touch-none;
+}
+</style>
 
 <template>
-  <div class="App">
+  <div class="App" :class="{ 'no-scroll': isModalOpen || isSettingsModalOpen }">
     <div class="app-content bg-background">
       <InputForm
         ref="inputFormRef"
         :settings="settings"
         :savedInputs="savedInputs"
+        :preventScroll="isModalOpen || isSettingsModalOpen"
         @storyGenerationStart="handleStoryGenerationStart"
         @storyGenerationComplete="handleStoryGenerationComplete"
         @storyGenerationError="handleStoryGenerationError"
@@ -105,29 +114,29 @@ onMounted(() => {
     })
 })
 
-const setBodyOverflow = (isHidden) => {
-  document.body.style.overflow = isHidden ? "hidden" : ""
-}
+// const setBodyOverflow = (isHidden) => {
+//   // document.body.style.overflow = isHidden ? "hidden" : ""
+// }
 
-watch(isSettingsModalOpen, (isOpen) => {
-  if (isOpen) {
-    document.body.classList.add("modal-open")
-    nextTick(() => setBodyOverflow(true))
-  } else {
-    document.body.classList.remove("modal-open")
-    nextTick(() => setBodyOverflow(false))
-  }
-})
+// watch(isSettingsModalOpen, (isOpen) => {
+//   if (isOpen) {
+//     document.body.classList.add("modal-open")
+//     nextTick(() => setBodyOverflow(true))
+//   } else {
+//     document.body.classList.remove("modal-open")
+//     nextTick(() => setBodyOverflow(false))
+//   }
+// })
 
-watch(isModalOpen, (isOpen) => {
-  if (isOpen) {
-    document.body.classList.add("modal-open")
-    nextTick(() => setBodyOverflow(true))
-  } else {
-    document.body.classList.remove("modal-open")
-    nextTick(() => setBodyOverflow(false))
-  }
-})
+// watch(isModalOpen, (isOpen) => {
+//   if (isOpen) {
+//     document.body.classList.add("modal-open")
+//     nextTick(() => setBodyOverflow(true))
+//   } else {
+//     document.body.classList.remove("modal-open")
+//     nextTick(() => setBodyOverflow(false))
+//   }
+// })
 
 const blurInputs = () => {
   const inputs = document.querySelectorAll("input, textarea")
@@ -142,7 +151,7 @@ const handleStoryGenerationStart = (formData) => {
   isModalOpen.value = true
   isLoading.value = true
   isError.value = false
-  // We need to make sure that none of the inputs are currently focused or we wind up with a weird bug
+  // We need to make sure that none of the inputs are currently focused or we wind up with a weird cursor bug
   blurInputs()
 }
 

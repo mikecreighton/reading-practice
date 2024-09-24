@@ -30,3 +30,8 @@ body.modal-open {
   /* Leaving the following line just in case we need it for debugging iOS Mobile Safari scrolling issues */
   /* position: fixed; */
 }
+
+body.no-scroll {
+  overflow: hidden;
+  touch-action: none;
+}
