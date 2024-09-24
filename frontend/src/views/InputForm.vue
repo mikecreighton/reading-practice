@@ -18,7 +18,7 @@
     class="relative flex flex-col justify-start w-full my-0 mx-auto bg-background min-h-[calc(100dvh-104px+40px)] p-10 pb-24 max-w-[700px]"
   >
     <label class="flex flex-col w-full mb-8 md:mb-10 text-lg md:text-2xl text-text">
-      <span>Enter 5-7 words to appear in your story:</span>
+      <span>Enter the words to appear in your story:</span>
       <div class="word-input mt-3 flex w-full">
         <input
           type="text"
@@ -27,10 +27,19 @@
           @keydown.enter.prevent
           @keyup.space.prevent="addWord"
           @keyup.comma.prevent="addWord"
-          placeholder="Enter a word"
+          :disabled="wordList.length >= MAX_WORDS"
+          :placeholder="wordList.length >= MAX_WORDS ? 'Sorry, 10 words maximum.' : 'Enter a word'"
           class="flex-1 mr-4 min-w-0 py-3 px-4 border border-input-border text-input-text bg-input-background focus:outline-none focus:border-input-border-focus focus:bg-input-background-focus placeholder:text-input-placeholder rounded-lg"
+          :class="{ 'opacity-75 cursor-not-allowed': wordList.length >= MAX_WORDS }"
         />
-        <FastButton customClass="flex-shrink-0" @click="addWord">Add</FastButton>
+        <FastButton
+          customClass="flex-shrink-0"
+          @click="addWord"
+          :disabled="wordList.length >= MAX_WORDS"
+          :isDisabled="wordList.length >= MAX_WORDS"
+        >
+          Add
+        </FastButton>
       </div>
 
       <div v-if="wordList.length" class="word-chips flex md:text-lg mt-3 md:mt-5 flex-wrap gap-2">
@@ -134,8 +143,7 @@ const newWord = ref("")
 const wordList = ref([])
 
 const addWord = () => {
-  if (newWord.value.trim()) {
-    // Make sure the word doesn't have any punctuation in it.
+  if (newWord.value.trim() && wordList.value.length < MAX_WORDS.value) {
     const word = newWord.value
       .trim()
       .toLowerCase()
@@ -156,6 +164,7 @@ const isLoading = ref(false)
 const abortController = ref(null)
 const illustrationAbortController = ref(null)
 const isOpenAIAvailable = inject("isOpenAIAvailable")
+const MAX_WORDS = ref(10)
 
 const props = defineProps({
   settings: {
