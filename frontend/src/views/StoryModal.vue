@@ -1,6 +1,6 @@
 <style scoped lang="postcss">
 .story-modal {
-  height: -webkit-fill-available;
+  touch-action: none;
 }
 
 .story-content {
@@ -211,7 +211,14 @@ const clearTextInterval = () => {
   }
 }
 
+const preventScroll = (e) => {
+  e.preventDefault()
+}
+
 onMounted(() => {
+  document.body.style.overflow = "hidden"
+  document.addEventListener("touchmove", preventScroll, { passive: false })
+
   if (props.isLoading) {
     randomizedGeneratingTexts.value = generatingTexts.sort(() => 0.5 - Math.random())
     waitToStartGeneratingText()
@@ -233,6 +240,8 @@ const startGeneratingText = () => {
 }
 
 onUnmounted(() => {
+  document.body.style.overflow = ""
+  document.removeEventListener("touchmove", preventScroll)
   clearTextInterval()
 })
 

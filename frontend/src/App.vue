@@ -41,7 +41,7 @@
 
 <script setup>
 import WelcomeScreen from "@/views/WelcomeScreen.vue"
-import { ref, provide, onMounted, watch } from "vue"
+import { ref, provide, onMounted, watch, nextTick } from "vue"
 import StoryModal from "@/views/StoryModal.vue"
 import SettingsModal from "@/views/SettingsModal.vue"
 import InputForm from "@/views/InputForm.vue"
@@ -105,19 +105,27 @@ onMounted(() => {
     })
 })
 
+const setBodyOverflow = (isHidden) => {
+  document.body.style.overflow = isHidden ? "hidden" : ""
+}
+
 watch(isSettingsModalOpen, (isOpen) => {
   if (isOpen) {
     document.body.classList.add("modal-open")
+    nextTick(() => setBodyOverflow(true))
   } else {
     document.body.classList.remove("modal-open")
+    nextTick(() => setBodyOverflow(false))
   }
 })
 
 watch(isModalOpen, (isOpen) => {
   if (isOpen) {
     document.body.classList.add("modal-open")
+    nextTick(() => setBodyOverflow(true))
   } else {
     document.body.classList.remove("modal-open")
+    nextTick(() => setBodyOverflow(false))
   }
 })
 

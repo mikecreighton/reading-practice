@@ -1,18 +1,16 @@
 <style scoped lang="postcss">
 .settings-modal {
-  @apply fixed inset-0 translate-y-full bg-background w-full overflow-hidden h-[100dvh];
-  height: -webkit-fill-available;
+  touch-action: none;
 }
 
 .settings-content {
-  @apply h-full overflow-y-auto pb-[104px];
   -webkit-overflow-scrolling: touch;
 }
 </style>
 
 <template>
-  <div class="settings-modal">
-    <div class="settings-content">
+  <div class="settings-modal fixed inset-0 translate-y-full bg-background w-full overflow-hidden h-[100dvh]">
+    <div class="settings-content h-full overflow-y-auto pb-[104px]">
       <div class="max-w-[700px] w-full mx-auto p-10 md:p-[60px_40px_100px_40px]">
         <h2 class="text-2xl md:text-4xl font-bold mb-10 text-text tracking-tight">Settings</h2>
 
@@ -26,8 +24,8 @@
             >
               <option v-for="grade in gradeOptions" :key="grade" :value="grade">{{ grade }}</option>
             </select>
-            <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700">
-              <i class="bi-chevron-down" style="position: absolute; right: 10px"></i>
+            <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-input-text">
+              <i class="bi-chevron-down absolute right-4 top-4 md:top-5"></i>
             </div>
           </div>
         </div>
@@ -51,7 +49,7 @@
                 },
               ]"
             >
-              <i v-if="localSettings.theme === key" class="bi-check"></i>
+              <i v-if="localSettings.theme === key" class="bi-check relative top-[1px] md:top-[2px]"></i>
               {{ value }}
             </button>
           </div>
@@ -70,6 +68,7 @@
 <script setup>
 import { ref, watch } from "vue"
 import FastButton from "@/components/FastButton.vue"
+import { onMounted, onUnmounted } from "vue"
 
 const props = defineProps({
   settings: {
@@ -104,4 +103,18 @@ const handleSave = () => {
   localStorage.setItem("userSettings", JSON.stringify(localSettings.value))
   emit("save")
 }
+
+const preventScroll = (e) => {
+  e.preventDefault()
+}
+
+onMounted(() => {
+  document.body.style.overflow = "hidden"
+  document.addEventListener("touchmove", preventScroll, { passive: false })
+})
+
+onUnmounted(() => {
+  document.body.style.overflow = ""
+  document.removeEventListener("touchmove", preventScroll)
+})
 </script>
