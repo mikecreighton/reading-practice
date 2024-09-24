@@ -84,9 +84,7 @@
         >
           <span class="flex items-center justify-center">
             <span>{{ item.emoji }}</span>
-            <span
-              class="humor-label hidden sm:inline-block ml-2 mr-1 text-xl text-button-secondary-text"
-            >
+            <span class="humor-label hidden sm:inline-block ml-2 mr-1 text-xl text-button-secondary-text">
               {{ item.label }}
             </span>
           </span>
@@ -94,17 +92,10 @@
       </div>
     </div>
 
-    <div
-      class="action-buttons-container bg-bottom-bar fixed bottom-0 left-0 right-0 drop-shadow-bar"
-    >
+    <div class="action-buttons-container bg-bottom-bar fixed bottom-0 left-0 right-0 drop-shadow-bar">
       <div class="flex justify-between items-center max-w-[700px] px-10 py-5 mx-auto my-0">
         <div class="flex items-center">
-          <FastButton
-            type="secondary"
-            customClass="mr-4"
-            @click="$emit('openSettings')"
-            name="Settings"
-          >
+          <FastButton type="secondary" customClass="mr-4" @click="$emit('openSettings')" name="Settings">
             <i class="bi-gear"></i>
           </FastButton>
           <FastButton
@@ -178,12 +169,7 @@ const props = defineProps({
   },
 })
 
-const emit = defineEmits([
-  "storyGenerationStart",
-  "storyGenerationComplete",
-  "storyGenerationError",
-  "openSettings",
-])
+const emit = defineEmits(["storyGenerationStart", "storyGenerationComplete", "storyGenerationError", "openSettings"])
 
 const loadSavedInputs = () => {
   if (!DEBUG_INPUT_FORM.value) {
@@ -240,7 +226,11 @@ const submitForm = async () => {
 
   if (DEBUG_STORY_GENERATION.value) {
     const tempStory = `The scientist boarded the school bus, carrying a giant puzzle of a penguin. As the bus bounced along, she tried to eat her pasta lunch, but the noodles kept flying everywhere! Suddenly, the bus hit a bump, and her puzzle pieces scattered all over. The scientist scrambled to pick them up, accidentally grabbing a slice of pizza from a student's lunchbox instead of a puzzle piece. She stuck the pizza slice onto her puzzle, creating a very strange penguin with a cheesy beak. The bus driver saw this in the mirror and couldn't stop giggling. He missed the turn for the school and ended up at a park. All the kids cheered, thinking they were getting a surprise field trip, while the confused scientist stood there holding her pizza-penguin puzzle.`
-    emit("storyGenerationComplete", tempStory, "https://placehold.co/600x400")
+    emit(
+      "storyGenerationComplete",
+      tempStory,
+      window.innerWidth > 768 ? "https://placehold.co/600x400" : "https://placehold.co/600x600",
+    )
     isLoading.value = false
     return
   }
@@ -260,13 +250,11 @@ const submitForm = async () => {
     .then((story) => {
       if (isOpenAIAvailable.value) {
         illustrationAbortController.value = new AbortController()
-        return generateIllustration(
-          story,
-          props.settings.gradeLevel,
-          illustrationAbortController.value.signal,
-        ).then((illustration) => {
-          return { story, illustration }
-        })
+        return generateIllustration(story, props.settings.gradeLevel, illustrationAbortController.value.signal).then(
+          (illustration) => {
+            return { story, illustration }
+          },
+        )
       } else {
         return { story, illustration: null }
       }
