@@ -77,8 +77,8 @@
             'flex items-center justify-center text-4xl rounded-lg aspect-square w-[calc((100%-20px)/3)]',
             'sm:w-full sm:h-auto sm:aspect-auto sm:py-3 sm:px-4 sm:flex-row sm:text-2xl sm:justify-center',
             humor === item.value
-              ? 'bg-button-option-selected border-2 border border-button-option-selected-border'
-              : 'bg-button-option border-2 border border-button-option-border hover:border-button-option-hover-border hover:bg-button-option-hover',
+              ? 'bg-button-option-selected border-2 border-button-option-selected-border'
+              : 'bg-button-option border-2 border-button-option-border hover:border-button-option-hover-border hover:bg-button-option-hover',
           ]"
         >
           <span class="flex items-center justify-center">

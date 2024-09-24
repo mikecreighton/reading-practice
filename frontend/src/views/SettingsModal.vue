@@ -16,7 +16,7 @@
             <select
               id="gradeLevel"
               v-model="localSettings.gradeLevel"
-              class="w-full py-3 px-4 md:text-2xl border border-2 border-input-border text-input-text bg-input-background focus:outline-none focus:border-input-border-focus rounded-lg appearance-none"
+              class="w-full py-3 px-4 md:text-2xl border-2 border-input-border text-input-text bg-input-background focus:outline-none focus:border-input-border-focus rounded-lg appearance-none"
             >
               <option v-for="grade in gradeOptions" :key="grade" :value="grade">{{ grade }}</option>
             </select>
@@ -34,7 +34,7 @@
               :key="key"
               @click="localSettings.theme = key"
               :class="[
-                'border border-2 py-3 px-4 rounded-lg md:text-2xl',
+                'border-2 py-3 px-4 rounded-lg md:text-2xl',
                 {
                   'bg-button-option text-button-option-text border-button-option-border hover:text-button-option-hover-text hover:bg-button-option-hover hover:border-button-option-hover-border':
                     localSettings.theme !== key,
