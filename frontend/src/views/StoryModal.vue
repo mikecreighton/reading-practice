@@ -1,8 +1,4 @@
 <style scoped lang="postcss">
-.story-modal {
-  touch-action: none;
-}
-
 .story-content {
   -webkit-overflow-scrolling: touch;
 }
@@ -46,7 +42,6 @@
 }
 
 :deep(.highlighted-word) {
-  /* @apply bg-highlighted-word px-1 rounded; */
   @apply font-bold;
 }
 </style>
@@ -211,13 +206,8 @@ const clearTextInterval = () => {
   }
 }
 
-const preventScroll = (e) => {
-  e.preventDefault()
-}
-
 onMounted(() => {
   document.body.style.overflow = "hidden"
-  document.addEventListener("touchmove", preventScroll, { passive: false })
 
   if (props.isLoading) {
     randomizedGeneratingTexts.value = generatingTexts.sort(() => 0.5 - Math.random())
@@ -241,7 +231,6 @@ const startGeneratingText = () => {
 
 onUnmounted(() => {
   document.body.style.overflow = ""
-  document.removeEventListener("touchmove", preventScroll)
   clearTextInterval()
 })
 
