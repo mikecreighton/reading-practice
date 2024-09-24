@@ -17,7 +17,7 @@
     @submit.prevent
     class="relative flex flex-col justify-start w-full my-0 mx-auto bg-background min-h-[calc(100dvh-104px+40px)] p-10 pb-24 max-w-[700px]"
   >
-    <label class="flex flex-col w-full mb-6 md:mb-10 text-lg md:text-2xl text-text">
+    <label class="flex flex-col w-full mb-8 md:mb-10 text-lg md:text-2xl text-text">
       <span>Enter 5-7 words to appear in your story:</span>
       <div class="word-input mt-3 flex w-full">
         <input
@@ -39,8 +39,8 @@
           :key="index"
           class="inline-flex items-center bg-chip rounded-full pt-[6px] pb-1 pl-[14px] pr-3 text-chip-text text-md"
         >
-          {{ word }}
-          <button @click="removeWord(index)" class="ml-2">
+          <span class="relative top-[-1px]">{{ word }}</span>
+          <button @click="removeWord(index)" class="ml-2 relative top-[1px]">
             <i class="bi-x-circle"></i>
           </button>
         </span>
@@ -48,7 +48,7 @@
     </label>
 
     <div class="w-full form-character-location-wrap">
-      <label class="flex flex-col w-full mb-6 md:mb-10 text-lg md:text-2xl text-text">
+      <label class="flex flex-col w-full mb-8 md:mb-10 text-lg md:text-2xl text-text">
         Who's the main character?
         <input
           type="text"
@@ -56,8 +56,8 @@
           class="mt-3 py-3 px-4 border border-input-border text-input-text bg-input-background focus:outline-none focus:border-input-border-focus focus:bg-input-background-focus rounded-lg"
         />
       </label>
-      <label class="flex flex-col w-full mb-6 md:mb-10 text-lg md:text-2xl text-text">
-        Where should the story take place?
+      <label class="flex flex-col w-full mb-8 md:mb-10 text-lg md:text-2xl text-text">
+        Where should your story take place?
         <input
           type="text"
           v-model="setting"
@@ -67,7 +67,7 @@
     </div>
 
     <div class="w-full mb-5 form-humor-wrap">
-      <label class="text-lg md:text-2xl text-text mb-3 block">How funny should the story be?</label>
+      <label class="text-lg md:text-2xl text-text mb-3 block">How funny should your story be?</label>
       <div class="humor-buttons flex gap-[10px]">
         <button
           v-for="(item, index) in humorOptions"
