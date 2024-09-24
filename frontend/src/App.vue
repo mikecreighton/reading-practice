@@ -1,7 +1,7 @@
 <style scoped style="postcss"></style>
 
 <template>
-  <div :class="['App', 'theme-' + settings.theme]">    
+  <div :class="['App', 'theme-' + settings.theme]">
     <div class="app-content bg-background">
       <InputForm
         ref="inputFormRef"
@@ -14,11 +14,7 @@
       />
 
       <div ref="storyModalContainer" class="hidden fixed inset-0 h-full w-full">
-        <Transition
-          @enter="onStoryModalEnter"
-          @leave="onStoryModalLeave"
-          @after-leave="onStoryModalAfterLeave"
-        >
+        <Transition @enter="onStoryModalEnter" @leave="onStoryModalLeave" @after-leave="onStoryModalAfterLeave">
           <StoryModal
             v-if="isModalOpen"
             :story="story"
@@ -34,15 +30,11 @@
 
       <div ref="settingsModalRef" class="hidden fixed inset-0 h-full w-full">
         <Transition @enter="onSettingsModalEnter" @leave="onSettingsModalLeave">
-          <SettingsModal
-            v-if="isSettingsModalOpen"
-            v-model:settings="settings"
-            @save="handleSettingsModalSave"
-          />
+          <SettingsModal v-if="isSettingsModalOpen" v-model:settings="settings" @save="handleSettingsModalSave" />
         </Transition>
       </div>
     </div>
-    
+
     <WelcomeScreen v-if="showWelcome" @getStarted="handleGetStarted" />
   </div>
 </template>
@@ -86,7 +78,6 @@ const MODAL_IN_EASE = "expo.out"
 const MODAL_OUT_DURATION = 0.35
 const MODAL_OUT_EASE = "expo.inOut"
 
-
 // Call this immediately
 loadSavedInputs()
 
@@ -110,7 +101,7 @@ onMounted(() => {
       isOpenAIAvailable.value = available
     })
     .catch((error) => {
-      console.error("Error detecting OpenAI availability:", error)
+      console.warn("Problem detecting OpenAI availability:", error)
     })
 })
 
