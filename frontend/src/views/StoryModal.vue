@@ -51,6 +51,36 @@
   /* @apply bg-highlighted-word px-1 rounded; */
   @apply font-bold;
 }
+
+.fixed-image-container {
+  @apply fixed top-0 left-0 right-0 z-10 bg-story;
+  overflow: hidden;
+}
+
+.fixed-image-wrapper {
+  @apply relative;
+  width: 100%;
+  padding-top: 100%; /* This creates a 1:1 aspect ratio container */
+}
+
+.fixed-image {
+  @apply absolute top-0 left-0 w-full h-full border border-story-illustration-border rounded-lg;
+  object-fit: cover;
+}
+
+@screen md {
+  .fixed-image-container {
+    @apply static bg-transparent h-auto;
+  }
+
+  .fixed-image-wrapper {
+    @apply relative w-full p-0;
+  }
+
+  .fixed-image {
+    @apply relative h-auto w-full;
+  }
+}
 </style>
 
 <template>
@@ -72,11 +102,7 @@
           <div class="h-[40px] relative w-full flex justify-center">
             <!-- Reserve space for text -->
             <transition name="generating-text" mode="out-in">
-              <div
-                v-if="showGeneratingText"
-                :key="currentTextIndex"
-                class="text-loading-balls-text text-2xl"
-              >
+              <div v-if="showGeneratingText" :key="currentTextIndex" class="text-loading-balls-text text-2xl">
                 {{ generatingTexts[currentTextIndex] }}
               </div>
             </transition>
@@ -87,22 +113,20 @@
 
     <transition name="fade">
       <div v-if="!isLoading" class="story-content">
-        <div class="p-10 md:p-[60px_40px_100px_40px] max-w-[700px] mx-auto">
-          <img
-            class="w-full mb-6 md:mb-10 border border-story-illustration-border rounded-lg"
-            v-if="isOpenAIAvailable && illustration"
-            :src="illustration"
-            alt="Illustration"
-          />
+        <div v-if="isOpenAIAvailable && illustration" class="fixed-image-container">
+          <div class="p-10 md:p-[60px_40px_60px_40px] max-w-[700px] mx-auto">
+            <div class="fixed-image-wrapper">
+              <img class="fixed-image" :src="illustration" alt="Illustration" />
+            </div>
+          </div>
+        </div>
+        <div class="scrollable-content px-10 pt-[calc(100vw)] pb-10 md:p-[0px_40px_100px_40px] max-w-[700px] mx-auto">
           <p
             v-if="!isError"
             class="text-xl leading-relaxed sm:text-2xl sm:leading-relaxed md:leading-relaxed text-story-text"
             v-html="highlightedStory"
           ></p>
-          <p
-            v-else
-            class="text-xl leading-relaxed sm:text-2xl sm:leading-relaxed md:leading-relaxed text-red-500"
-          >
+          <p v-else class="text-xl leading-relaxed sm:text-2xl sm:leading-relaxed md:leading-relaxed text-red-500">
             {{ story }}
           </p>
         </div>
@@ -110,9 +134,7 @@
     </transition>
 
     <!-- Bottom action buttons -->
-    <div
-      class="action-buttons-container fixed bottom-0 left-0 right-0 bg-bottom-bar drop-shadow-bar"
-    >
+    <div class="action-buttons-container fixed bottom-0 left-0 right-0 bg-bottom-bar drop-shadow-bar">
       <div class="flex justify-between items-center max-w-[700px] px-10 py-5 mx-auto my-0">
         <FastButton name="Close" type="secondary" @click="emit('closeRequest')">Close</FastButton>
         <FastButton
@@ -235,9 +257,9 @@ watch(
 const highlightedStory = computed(() => {
   if (!props.story || !props.wordList.length || props.isError) return props.story
 
-  const escapedWords = props.wordList.map(word => word.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'))
-  const regex = new RegExp(`\\b(${escapedWords.join('|')})\\b`, 'gi')
-  
+  const escapedWords = props.wordList.map((word) => word.replace(/[.*+?^${}()|[\]\\]/g, "\\$&"))
+  const regex = new RegExp(`\\b(${escapedWords.join("|")})\\b`, "gi")
+
   return props.story.replace(regex, (match) => `<span class="highlighted-word">${match}</span>`)
 })
 </script>
