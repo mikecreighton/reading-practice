@@ -18,7 +18,7 @@
     class="relative flex flex-col justify-start w-full my-0 mx-auto bg-background min-h-[calc(100dvh-104px+40px)] p-10 pb-24 max-w-[700px]"
   >
     <label class="flex flex-col w-full mb-6 md:mb-10 text-lg md:text-2xl text-text">
-      <span>What words should be included in the story?</span>
+      <span>Enter 5-7 words to appear in your story:</span>
       <div class="word-input mt-3 flex w-full">
         <input
           type="text"
@@ -57,7 +57,7 @@
         />
       </label>
       <label class="flex flex-col w-full mb-6 md:mb-10 text-lg md:text-2xl text-text">
-        Where does the story take place?
+        Where should the story take place?
         <input
           type="text"
           v-model="setting"
@@ -300,8 +300,8 @@ const cancelRequest = () => {
 
 const humorOptions = [
   { value: 1, emoji: "😐", label: "Not funny" },
-  { value: 5, emoji: "😊", label: "Funny" },
-  { value: 10, emoji: "😂", label: "OMGLOL" },
+  { value: 5, emoji: "😊", label: "A little funny" },
+  { value: 10, emoji: "😂", label: "LOL" },
 ]
 
 defineExpose({

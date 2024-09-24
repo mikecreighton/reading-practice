@@ -14,12 +14,10 @@
   <div class="settings-modal">
     <div class="settings-content">
       <div class="max-w-[700px] w-full mx-auto p-10 md:p-[60px_40px_100px_40px]">
-        <h2 class="text-2xl md:text-4xl font-bold mb-10 text-text">Settings</h2>
+        <h2 class="text-2xl md:text-4xl font-bold mb-10 text-text tracking-tight">Settings</h2>
 
         <div class="mb-6 md:mb-10">
-          <label class="block text-xl md:text-3xl text-text mb-3 md:mb-4" for="gradeLevel">
-            Grade Level
-          </label>
+          <label class="block text-xl md:text-3xl text-text mb-3 md:mb-4" for="gradeLevel">Grade Level</label>
           <div class="relative">
             <select
               id="gradeLevel"
@@ -28,9 +26,7 @@
             >
               <option v-for="grade in gradeOptions" :key="grade" :value="grade">{{ grade }}</option>
             </select>
-            <div
-              class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700"
-            >
+            <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700">
               <i class="bi-chevron-down" style="position: absolute; right: 10px"></i>
             </div>
           </div>
@@ -63,9 +59,7 @@
       </div>
     </div>
     <!-- Bottom action buttons -->
-    <div
-      class="action-buttons-container fixed bottom-0 left-0 right-0 bg-bottom-bar drop-shadow-bar"
-    >
+    <div class="action-buttons-container fixed bottom-0 left-0 right-0 bg-bottom-bar drop-shadow-bar">
       <div class="flex justify-end items-center max-w-[700px] px-10 py-5 mx-auto my-0">
         <FastButton name="Save" @click="handleSave">Save</FastButton>
       </div>

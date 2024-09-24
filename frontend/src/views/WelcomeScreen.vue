@@ -15,13 +15,13 @@
       ref="content"
       class="welcome-screen-content flex flex-col items-center justify-center px-10 max-w-[700px] mx-auto h-full"
     >
-      <h1 ref="title" class="force-3d text-4xl md:text-6xl font-bold mb-8 md:mb-16">Reading Practice</h1>
+      <h1 ref="title" class="force-3d text-4xl md:text-6xl font-bold mb-8 md:mb-16 tracking-tight">Reading Practice</h1>
       <p ref="intro" class="force-3d text-lg md:text-2xl mb-8 md:px-8 text-center">
         Create personalized stories for young readers. This prototype generates unique tales and illustrations to make
         reading more engaging.
       </p>
       <div ref="cta" class="force-3d flex justify-center mb-16">
-        <FastButton type="primary" @click="handleCTAClick">Get Started</FastButton>
+        <FastButton type="primary" @click="handleCTAClick">Get started</FastButton>
       </div>
       <div ref="links" class="force-3d flex space-x-6">
         <a
