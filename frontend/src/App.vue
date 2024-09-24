@@ -1,7 +1,7 @@
 <style scoped style="postcss"></style>
 
 <template>
-  <div :class="['App', 'theme-' + settings.theme]">
+  <div class="App">
     <div class="app-content bg-background">
       <InputForm
         ref="inputFormRef"
@@ -228,4 +228,13 @@ const onSettingsModalLeave = (el, done) => {
 const handleGetStarted = () => {
   showWelcome.value = false
 }
+
+// Add this watch effect
+watch(
+  () => settings.value.theme,
+  (newTheme) => {
+    document.body.className = `bg-background theme-${newTheme}`
+  },
+  { immediate: true },
+)
 </script>
