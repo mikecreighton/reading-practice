@@ -17,8 +17,8 @@
     >
       <h1 ref="title" class="force-3d text-4xl md:text-6xl font-bold mb-8 md:mb-16">Reading Practice</h1>
       <p ref="intro" class="force-3d text-lg md:text-2xl mb-8 md:px-8 text-center">
-        Welcome to our Reading Practice app! Enhance your reading and spelling skills with custom-generated stories
-        tailored for young learners.
+        Create personalized stories for young readers. This prototype generates unique tales and illustrations to make
+        reading more engaging.
       </p>
       <div ref="cta" class="force-3d flex justify-center mb-16">
         <FastButton type="primary" @click="handleCTAClick">Get Started</FastButton>
@@ -37,6 +37,11 @@
           @mikecreighton
         </a>
       </div>
+      <p ref="disclaimer" class="force-3d text-sm md:text-base mt-4 text-center">
+        <strong>Note:</strong>
+        Generative AI is used for content creation. Adult supervision is recommended due to the potential for unexpected
+        outputs. But I've done my absolute best to prevent that.
+      </p>
     </div>
   </div>
 </template>
@@ -54,7 +59,7 @@ const title = ref(null)
 const intro = ref(null)
 const links = ref(null)
 const cta = ref(null)
-
+const disclaimer = ref(null)
 onMounted(() => {
   const yOffset = 24
   const yDur = 0.8
@@ -72,6 +77,8 @@ onMounted(() => {
   tl.from(links.value, opacityOptions, stagger * 2)
   tl.from(cta.value, yOptions, stagger * 3)
   tl.from(cta.value, opacityOptions, stagger * 3)
+  tl.from(disclaimer.value, yOptions, stagger * 4)
+  tl.from(disclaimer.value, opacityOptions, stagger * 4)
 })
 
 const handleCTAClick = () => {
@@ -87,6 +94,8 @@ const handleCTAClick = () => {
   const yOptions = { force3D: true, y: yOffset, duration: yDur, ease: "expo.inOut" }
   const opacityOptions = { opacity: 0, duration: opacityDur, ease: "power2.out" }
 
+  tl.to(disclaimer.value, yOptions, stagger * 3)
+  tl.to(disclaimer.value, opacityOptions, stagger * 3)
   tl.to(title.value, yOptions, stagger * 3)
   tl.to(title.value, opacityOptions, stagger * 3)
   tl.to(intro.value, yOptions, stagger * 2)
