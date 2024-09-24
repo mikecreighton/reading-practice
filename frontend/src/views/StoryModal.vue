@@ -65,7 +65,7 @@
           <div class="h-[40px] relative w-full flex justify-center">
             <!-- Reserve space for text -->
             <transition name="generating-text" mode="out-in">
-              <div v-if="showGeneratingText" :key="currentTextIndex" class="text-loading-balls-text text-2xl">
+              <div v-if="showGeneratingText" :key="currentTextIndex" class="text-loading-balls-text text-xl">
                 {{ generatingTexts[currentTextIndex] }}
               </div>
             </transition>
@@ -89,7 +89,7 @@
             'md:static md:bg-transparent md:h-auto',
           ]"
         >
-          <div class="p-10 md:px-10 md:py-16 max-w-[700px] mx-auto">
+          <div class="pt-10 px-10 pb-4 md:px-10 md:py-16 max-w-[700px] mx-auto">
             <!-- This will give us a square ratio for the image on mobile.-->
             <div class="fixed-image-wrapper relative w-full pt-[100%] md:p-0">
               <img
