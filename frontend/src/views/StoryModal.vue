@@ -81,16 +81,22 @@
 
     <transition name="fade">
       <div v-if="!isLoading" class="story-content h-full overflow-y-auto pb-[104px]">
+        <!-- 
+          Here's some logic for handling the fixed image when we have an illustration.
+          We're only going to use the fixed image container if we're on mobile. Otherwise,
+          we'll just let the image flow as part of the DOM.
+        -->
         <div
           v-if="isOpenAIAvailable && illustration"
           :class="[
             'fixed-image-container',
-            'fixed top-0 left-0 right-0 z-10 bg-story overflow-hidden',
+            'fixed top-0 left-0 right-0 z-10 overflow-hidden bg-story',
             'md:static md:bg-transparent md:h-auto',
           ]"
         >
-          <div class="p-10 md:p-[60px_40px_60px_40px] max-w-[700px] mx-auto">
-            <div :class="['fixed-image-wrapper', 'relative w-full pt-[100%]', 'md:p-0']">
+          <div class="p-10 md:px-10 md:py-16 max-w-[700px] mx-auto">
+            <!-- This will give us a square ratio for the image on mobile.-->
+            <div class="fixed-image-wrapper relative w-full pt-[100%] md:p-0">
               <img
                 :class="[
                   'fixed-image',
@@ -103,20 +109,20 @@
             </div>
           </div>
         </div>
+        <!-- Need to check to see if we've got an illustration, and if we do, we need to make sure the top padding is correct. -->
         <div
           :class="[
             'scrollable-content px-10 pb-10 max-w-[700px] mx-auto',
+            'text-[1.375rem] sm:text-2xl leading-relaxed sm:leading-relaxed md:leading-relaxed text-story-text',
             isOpenAIAvailable && illustration
-              ? 'pt-[calc(100vw)] md:p-[0px_40px_100px_40px]'
+              ? 'pt-[calc(Min(100vw,700px))] md:p-[0px_40px_100px_40px]'
               : 'pt-[40px] md:p[40px_40px_100px_40px]',
           ]"
         >
-          <p
-            v-if="!isError"
-            class="text-[1.375rem] sm:text-2xl leading-relaxed sm:leading-relaxed md:leading-relaxed text-story-text"
-            v-html="highlightedStory"
-          ></p>
-          <p v-else class="text-[1.375rem] leading-relaxed sm:leading-relaxed md:leading-relaxed text-story-text">
+          <!-- If we get a story back, we're going to highlight the words that are in the word list. -->
+          <p v-if="!isError" v-html="highlightedStory"></p>
+          <!-- Sometimes we'll get an error message, and we're just displaying it in place of the story. -->
+          <p v-else>
             {{ story }}
           </p>
         </div>
