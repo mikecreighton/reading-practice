@@ -1,11 +1,9 @@
 <style scoped lang="postcss">
 .story-modal {
-  @apply fixed inset-0 w-full bg-story h-[100dvh];
   height: -webkit-fill-available;
 }
 
 .story-content {
-  @apply h-full overflow-y-auto pb-[104px];
   -webkit-overflow-scrolling: touch;
 }
 
@@ -51,40 +49,10 @@
   /* @apply bg-highlighted-word px-1 rounded; */
   @apply font-bold;
 }
-
-.fixed-image-container {
-  @apply fixed top-0 left-0 right-0 z-10 bg-story;
-  overflow: hidden;
-}
-
-.fixed-image-wrapper {
-  @apply relative;
-  width: 100%;
-  padding-top: 100%; /* This creates a 1:1 aspect ratio container */
-}
-
-.fixed-image {
-  @apply absolute top-0 left-0 w-full h-full border border-story-illustration-border rounded-lg;
-  object-fit: cover;
-}
-
-@screen md {
-  .fixed-image-container {
-    @apply static bg-transparent h-auto;
-  }
-
-  .fixed-image-wrapper {
-    @apply relative w-full p-0;
-  }
-
-  .fixed-image {
-    @apply relative h-auto w-full;
-  }
-}
 </style>
 
 <template>
-  <div class="story-modal">
+  <div class="story-modal fixed inset-0 w-full bg-story h-[100dvh]">
     <transition name="fade">
       <div
         v-if="isLoading"
@@ -112,21 +80,43 @@
     </transition>
 
     <transition name="fade">
-      <div v-if="!isLoading" class="story-content">
-        <div v-if="isOpenAIAvailable && illustration" class="fixed-image-container">
+      <div v-if="!isLoading" class="story-content h-full overflow-y-auto pb-[104px]">
+        <div
+          v-if="isOpenAIAvailable && illustration"
+          :class="[
+            'fixed-image-container',
+            'fixed top-0 left-0 right-0 z-10 bg-story overflow-hidden',
+            'md:static md:bg-transparent md:h-auto',
+          ]"
+        >
           <div class="p-10 md:p-[60px_40px_60px_40px] max-w-[700px] mx-auto">
-            <div class="fixed-image-wrapper">
-              <img class="fixed-image" :src="illustration" alt="Illustration" />
+            <div :class="['fixed-image-wrapper', 'relative w-full pt-[100%]', 'md:p-0']">
+              <img
+                :class="[
+                  'fixed-image',
+                  'absolute top-0 left-0 w-full h-full object-cover border border-story-illustration-border rounded-lg',
+                  'md:relative md:h-auto',
+                ]"
+                :src="illustration"
+                alt="Illustration"
+              />
             </div>
           </div>
         </div>
-        <div class="scrollable-content px-10 pt-[calc(100vw)] pb-10 md:p-[0px_40px_100px_40px] max-w-[700px] mx-auto">
+        <div
+          :class="[
+            'scrollable-content px-10 pb-10 max-w-[700px] mx-auto',
+            isOpenAIAvailable && illustration
+              ? 'pt-[calc(100vw)] md:p-[0px_40px_100px_40px]'
+              : 'pt-[40px] md:p[40px_40px_100px_40px]',
+          ]"
+        >
           <p
             v-if="!isError"
-            class="text-xl leading-relaxed sm:text-2xl sm:leading-relaxed md:leading-relaxed text-story-text"
+            class="text-[1.375rem] sm:text-2xl leading-relaxed sm:leading-relaxed md:leading-relaxed text-story-text"
             v-html="highlightedStory"
           ></p>
-          <p v-else class="text-xl leading-relaxed sm:text-2xl sm:leading-relaxed md:leading-relaxed text-red-500">
+          <p v-else class="text-[1.375rem] leading-relaxed sm:leading-relaxed md:leading-relaxed text-story-text">
             {{ story }}
           </p>
         </div>
