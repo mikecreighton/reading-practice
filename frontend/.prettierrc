@@ -1,8 +1,8 @@
 {
   "tabWidth": 2,
   "useTabs": false,
-  "lineWidth": 140,
-  "printWidth": 100,
+  "lineWidth": 120,
+  "printWidth": 120,
   "singleAttributePerLine": false,
   "semi": false,
   "vueIndentScriptAndStyle": false,

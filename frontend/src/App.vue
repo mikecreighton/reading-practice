@@ -1,7 +1,7 @@
 <style scoped style="postcss"></style>
 
 <template>
-  <div :class="['App', 'theme-' + settings.theme]">
+  <div :class="['App', 'theme-' + settings.theme]">    
     <div class="app-content bg-background">
       <InputForm
         ref="inputFormRef"
@@ -42,10 +42,13 @@
         </Transition>
       </div>
     </div>
+    
+    <WelcomeScreen v-if="showWelcome" @getStarted="handleGetStarted" />
   </div>
 </template>
 
 <script setup>
+import WelcomeScreen from "@/views/WelcomeScreen.vue"
 import { ref, provide, onMounted, watch } from "vue"
 import StoryModal from "@/views/StoryModal.vue"
 import SettingsModal from "@/views/SettingsModal.vue"
@@ -69,6 +72,7 @@ const storyModalContainer = ref(null)
 const settingsModalRef = ref(null)
 const wordList = ref([])
 const isError = ref(false)
+const showWelcome = ref(true)
 
 const loadSavedInputs = () => {
   const savedInputsData = localStorage.getItem("userInputs")
@@ -76,6 +80,12 @@ const loadSavedInputs = () => {
     savedInputs.value = JSON.parse(savedInputsData)
   }
 }
+
+const MODAL_IN_DURATION = 0.4
+const MODAL_IN_EASE = "expo.out"
+const MODAL_OUT_DURATION = 0.35
+const MODAL_OUT_EASE = "expo.inOut"
+
 
 // Call this immediately
 loadSavedInputs()
@@ -153,9 +163,9 @@ const onStoryModalEnter = (el, done) => {
   storyModalContainer.value.classList.remove("hidden")
 
   gsap.from(el, {
-    duration: 0.5,
+    duration: MODAL_IN_DURATION,
     y: "100%",
-    ease: Power4.easeOut,
+    ease: MODAL_IN_EASE,
     onComplete: () => done(),
   })
 }
@@ -163,9 +173,9 @@ const onStoryModalEnter = (el, done) => {
 const onStoryModalLeave = (el, done) => {
   inputFormRef.value.cancelRequest()
   gsap.to(el, {
-    duration: 0.5,
+    duration: MODAL_OUT_DURATION,
     y: "100%",
-    ease: Power4.easeInOut,
+    ease: MODAL_OUT_EASE,
     onComplete: () => {
       storyModalContainer.value.classList.add("hidden")
       done()
@@ -205,22 +215,26 @@ const onSettingsModalEnter = (el, done) => {
   settingsModalRef.value.classList.remove("hidden")
 
   gsap.to(el, {
-    duration: 0.5,
+    duration: MODAL_IN_DURATION,
     y: "0",
-    ease: Power4.easeOut,
+    ease: MODAL_IN_EASE,
     onComplete: () => done(),
   })
 }
 
 const onSettingsModalLeave = (el, done) => {
   gsap.to(el, {
-    duration: 0.5,
+    duration: MODAL_OUT_DURATION,
     y: "100%",
-    ease: Power4.easeInOut,
+    ease: MODAL_OUT_EASE,
     onComplete: () => {
       settingsModalRef.value.classList.add("hidden")
       done()
     },
   })
+}
+
+const handleGetStarted = () => {
+  showWelcome.value = false
 }
 </script>
