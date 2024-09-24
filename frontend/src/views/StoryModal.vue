@@ -65,7 +65,11 @@
           <div class="h-[40px] relative w-full flex justify-center">
             <!-- Reserve space for text -->
             <transition name="generating-text" mode="out-in">
-              <div v-if="showGeneratingText" :key="currentTextIndex" class="text-loading-balls-text text-xl">
+              <div
+                v-if="showGeneratingText"
+                :key="currentTextIndex"
+                class="text-loading-balls-text text-xl md:text-2xl"
+              >
                 {{ generatingTexts[currentTextIndex] }}
               </div>
             </transition>
@@ -270,7 +274,7 @@ const highlightedStory = computed(() => {
   if (!props.story || !props.wordList.length || props.isError) return props.story
 
   const escapedWords = props.wordList.map((word) => word.replace(/[.*+?^${}()|[\]\\]/g, "\\$&"))
-  const regex = new RegExp(`\\b(${escapedWords.join("|")})\\b`, "gi")
+  const regex = new RegExp(`\\b(${escapedWords.join("|")})\\w*\\b`, "gi")
 
   return props.story.replace(regex, (match) => `<span class="highlighted-word">${match}</span>`)
 })

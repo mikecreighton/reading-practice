@@ -201,17 +201,6 @@ const loadSavedInputs = () => {
   }
 }
 
-// Watch for changes in savedInputs prop
-watch(
-  () => props.savedInputs,
-  (newSavedInputs) => {
-    if (Object.keys(newSavedInputs).length > 0) {
-      loadSavedInputs()
-    }
-  },
-  { immediate: true, deep: true },
-)
-
 onMounted(() => {
   loadSavedInputs()
 })
