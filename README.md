@@ -1,6 +1,6 @@
 # Reading Practice
 
-This project is a small web app prototype that generates custom stories for young students to practice their reading skills. It consists of a FastAPI backend that generates text stories and illustrations using generative AI LLMs and image models, and a Vue frontend that provides an interface for inputting story parameters and displaying the generated stories.
+This project is a small web app prototype that creates personalized stories for young students to practice their reading skills. It uses generative AI to create stories and illustrations on demand.
 
 ## Project Structure
 
