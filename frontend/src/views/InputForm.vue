@@ -263,7 +263,7 @@ const submitForm = async () => {
       emit("storyGenerationComplete", story, illustration)
     })
     .catch((error) => {
-      console.error("Error generating story or illustration", error)
+      // console.error("Error generating story or illustration", error)
       if (error.name !== "AbortError") {
         emit("storyGenerationError", error)
       }
