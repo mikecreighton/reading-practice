@@ -5,7 +5,7 @@
     <div class="app-content bg-background">
       <InputForm
         ref="inputFormRef"
-        :settings="settings"
+        v-model:settings="settings"
         :savedInputs="savedInputs"
         :preventScroll="isModalOpen || isSettingsModalOpen"
         @storyGenerationStart="handleStoryGenerationStart"
@@ -184,9 +184,8 @@ const handleOpenSettings = () => {
   isSettingsModalOpen.value = true
 }
 
-const handleSettingsModalSave = (newSettings) => {
+const handleSettingsModalSave = () => {
   isSettingsModalOpen.value = false
-  saveSettings(newSettings)
 }
 
 const saveSettings = (newSettings) => {
@@ -220,6 +219,14 @@ const onSettingsModalLeave = (el, done) => {
 const handleGetStarted = () => {
   showWelcome.value = false
 }
+
+watch(
+  () => settings.value,
+  (newSettings) => {
+    saveSettings(newSettings)
+  },
+  { deep: true },
+)
 
 /**
  * Set the theme on the body element so that it can be used to set the entire

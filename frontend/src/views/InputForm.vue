@@ -11,7 +11,7 @@
       <div class="relative">
         <select
           id="grade-level"
-          v-model="localSettings.gradeLevel"
+          v-model="settings.gradeLevel"
           class="w-full py-3 px-4 md:text-2xl border-2 border-input-border text-input-text bg-input-background focus:outline-none focus:border-input-border-focus rounded-lg appearance-none"
         >
           <option v-for="grade in gradeOptions" :key="grade" :value="grade">{{ grade }}</option>
@@ -137,58 +137,12 @@
 </template>
 
 <script setup>
-import { ref, inject, watch, onMounted } from "vue"
+import { ref, inject, watch, onMounted, defineModel } from "vue"
 import FastButton from "@/components/FastButton.vue"
 import { generateStory, generateIllustration } from "@/services/ai"
 import { LOCAL_STORAGE_INPUTS_KEY } from "@/settings-constants"
 
-const DEBUG_INPUT_FORM = ref(import.meta.env.VITE_DEBUG_INPUT_FORM === "true")
-const DEBUG_STORY_GENERATION = ref(import.meta.env.VITE_DEBUG_STORY_GENERATION === "true")
-
-const newWord = ref("")
-const wordList = ref([])
-
-const handleKeyDown = (event) => {
-  // We have to do this because @keydown.comma.prevent isn't firing for some reason.
-  // :v-on:keydown., and :v-on:keydown.,.prevent don't work either.
-  // Reference this to see what _should_ work: https://v3-migration.vuejs.org/breaking-changes/keycode-modifiers#migration-strategy
-  // I don't see `comma` in the list of key aliases here: https://vuejs.org/guide/essentials/event-handling.html#key-modifiers
-  // So, I'm going to assume that this is the only way to do it.
-  if (event.key === "," || event.keyCode === 188) {
-    event.preventDefault()
-    addWord()
-  }
-}
-
-const addWord = () => {
-  if (newWord.value.trim() && wordList.value.length < MAX_WORDS.value) {
-    const word = newWord.value
-      .trim()
-      .toLowerCase()
-      .replace(/[^\w\s]/gi, "")
-    wordList.value.push(word)
-    newWord.value = ""
-  }
-}
-
-const removeWord = (index) => {
-  wordList.value.splice(index, 1)
-}
-
-const characterName = ref("")
-const setting = ref("")
-const humor = ref(null)
-const isLoading = ref(false)
-const abortController = ref(null)
-const illustrationAbortController = ref(null)
-const isOpenAIAvailable = inject("isOpenAIAvailable")
-const MAX_WORDS = ref(10)
-
 const props = defineProps({
-  settings: {
-    type: Object,
-    required: true,
-  },
   savedInputs: {
     type: Object,
     required: false,
@@ -201,16 +155,23 @@ const props = defineProps({
   },
 })
 
-const emit = defineEmits([
-  "storyGenerationStart",
-  "storyGenerationComplete",
-  "storyGenerationError",
-  "openSettings",
-  "update:settings",
-])
+const emit = defineEmits(["storyGenerationStart", "storyGenerationComplete", "storyGenerationError", "openSettings"])
 
+const DEBUG_INPUT_FORM = ref(import.meta.env.VITE_DEBUG_INPUT_FORM === "true")
+const DEBUG_STORY_GENERATION = ref(import.meta.env.VITE_DEBUG_STORY_GENERATION === "true")
+
+const newWord = ref("")
+const wordList = ref([])
+const characterName = ref("")
+const setting = ref("")
+const humor = ref(null)
+const isLoading = ref(false)
+const abortController = ref(null)
+const illustrationAbortController = ref(null)
+const isOpenAIAvailable = inject("isOpenAIAvailable")
+const MAX_WORDS = ref(10)
 const gradeOptions = ["1st", "2nd", "3rd", "4th", "5th", "6th", "7th", "8th"]
-const localSettings = ref({ ...props.settings })
+const settings = defineModel("settings")
 
 onMounted(() => {
   if (!DEBUG_INPUT_FORM.value) {
@@ -253,15 +214,32 @@ watch(
   { deep: true },
 )
 
-// Watch for changes in localSettings and emit updates
-// This is used to update the grade level changes in this form
-watch(
-  localSettings,
-  (newSettings) => {
-    emit("update:settings", newSettings)
-  },
-  { deep: true },
-)
+const handleKeyDown = (event) => {
+  // We have to do this because @keydown.comma.prevent isn't firing for some reason.
+  // :v-on:keydown., and :v-on:keydown.,.prevent don't work either.
+  // Reference this to see what _should_ work: https://v3-migration.vuejs.org/breaking-changes/keycode-modifiers#migration-strategy
+  // I don't see `comma` in the list of key aliases here: https://vuejs.org/guide/essentials/event-handling.html#key-modifiers
+  // So, I'm going to assume that this is the only way to do it.
+  if (event.key === "," || event.keyCode === 188) {
+    event.preventDefault()
+    addWord()
+  }
+}
+
+const addWord = () => {
+  if (newWord.value.trim() && wordList.value.length < MAX_WORDS.value) {
+    const word = newWord.value
+      .trim()
+      .toLowerCase()
+      .replace(/[^\w\s]/gi, "")
+    wordList.value.push(word)
+    newWord.value = ""
+  }
+}
+
+const removeWord = (index) => {
+  wordList.value.splice(index, 1)
+}
 
 const submitForm = async () => {
   isLoading.value = true
@@ -350,6 +328,7 @@ const humorOptions = [
   { value: 5, emoji: "😊", label: "A little funny" },
   { value: 10, emoji: "😂", label: "LOL" },
 ]
+
 defineExpose({
   submitForm,
   cancelRequest,

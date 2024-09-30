@@ -16,20 +16,20 @@
             <button
               v-for="(value, key) in themeOptions"
               :key="key"
-              @click="localSettings.theme = key"
+              @click="settings.theme = key"
               :class="[
                 'border-2 py-3 px-4 rounded-lg md:text-2xl',
                 {
                   'bg-button-option text-button-option-text border-button-option-border hover:text-button-option-hover-text hover:bg-button-option-hover hover:border-button-option-hover-border':
-                    localSettings.theme !== key,
+                    settings.theme !== key,
                 },
                 {
                   'bg-button-option-selected text-button-option-selected-text border-button-option-selected-border':
-                    localSettings.theme === key,
+                    settings.theme === key,
                 },
               ]"
             >
-              <i v-if="localSettings.theme === key" class="bi-check relative top-[1px] md:top-[2px]"></i>
+              <i v-if="settings.theme === key" class="bi-check relative top-[1px] md:top-[2px]"></i>
               {{ value }}
             </button>
           </div>
@@ -39,47 +39,24 @@
     <!-- Bottom action buttons -->
     <div class="action-buttons-container fixed bottom-0 left-0 right-0 bg-bottom-bar drop-shadow-bar">
       <div class="flex justify-end items-center max-w-[700px] px-10 py-5 mx-auto my-0">
-        <FastButton name="Save" @click="handleSave">Save</FastButton>
+        <FastButton name="Save" @click="emit('save')">Save</FastButton>
       </div>
     </div>
   </div>
 </template>
 
 <script setup>
-import { ref, watch } from "vue"
+import { defineModel } from "vue"
 import FastButton from "@/components/FastButton.vue"
 import { onMounted, onUnmounted } from "vue"
-import { LOCAL_STORAGE_SETTINGS_KEY } from "@/settings-constants"
 
-const props = defineProps({
-  settings: {
-    type: Object,
-    required: true,
-  },
-})
-
-const emit = defineEmits(["update:settings", "save"])
-
-const localSettings = ref({ ...props.settings })
-
-// Watch for changes in localSettings and emit updates
-watch(
-  localSettings,
-  (newSettings) => {
-    emit("update:settings", newSettings)
-  },
-  { deep: true },
-)
+const settings = defineModel("settings")
+const emit = defineEmits(["save"])
 
 const themeOptions = {
   default: "Default",
   bubblegum: "Bubblegum",
   adventure: "Adventure",
-}
-
-const handleSave = () => {
-  // Save settings to local storage
-  emit("save", localSettings.value)
 }
 
 /**
