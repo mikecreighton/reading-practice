@@ -29,8 +29,8 @@
           v-model="newWord"
           @keyup.enter.prevent="addWord"
           @keydown.enter.prevent
-          @keyup.space.prevent="addWord"
-          @keyup.comma.prevent="addWord"
+          @keydown.space.prevent="addWord"
+          @keydown="handleKeyDown"
           :disabled="wordList.length >= MAX_WORDS"
           :placeholder="wordList.length >= MAX_WORDS ? 'Sorry, 10 words maximum.' : 'Enter a word'"
           class="flex-1 mr-4 min-w-0 py-3 px-4 border border-input-border text-input-text bg-input-background focus:outline-none focus:border-input-border-focus focus:bg-input-background-focus placeholder:text-input-placeholder rounded-lg"
@@ -147,6 +147,18 @@ const DEBUG_STORY_GENERATION = ref(import.meta.env.VITE_DEBUG_STORY_GENERATION =
 
 const newWord = ref("")
 const wordList = ref([])
+
+const handleKeyDown = (event) => {
+  // We have to do this because @keydown.comma.prevent isn't firing for some reason.
+  // :v-on:keydown., and :v-on:keydown.,.prevent don't work either.
+  // Reference this to see what _should_ work: https://v3-migration.vuejs.org/breaking-changes/keycode-modifiers#migration-strategy
+  // I don't see `comma` in the list of key aliases here: https://vuejs.org/guide/essentials/event-handling.html#key-modifiers
+  // So, I'm going to assume that this is the only way to do it.
+  if (event.key === "," || event.keyCode === 188) {
+    event.preventDefault()
+    addWord()
+  }
+}
 
 const addWord = () => {
   if (newWord.value.trim() && wordList.value.length < MAX_WORDS.value) {
@@ -338,7 +350,6 @@ const humorOptions = [
   { value: 5, emoji: "😊", label: "A little funny" },
   { value: 10, emoji: "😂", label: "LOL" },
 ]
-
 defineExpose({
   submitForm,
   cancelRequest,
