@@ -70,6 +70,13 @@ const loadSavedInputs = () => {
   const savedInputsData = localStorage.getItem(LOCAL_STORAGE_INPUTS_KEY)
   if (savedInputsData) {
     savedInputs.value = JSON.parse(savedInputsData)
+  } else {
+    savedInputs.value = {
+      wordList: [],
+      characterName: "",
+      setting: "",
+      humor: null,
+    }
   }
 }
 
@@ -77,6 +84,8 @@ const loadSavedSettings = () => {
   const savedSettings = localStorage.getItem(LOCAL_STORAGE_SETTINGS_KEY)
   if (savedSettings) {
     settings.value = JSON.parse(savedSettings)
+  } else {
+    settings.value = { ...DEFAULT_SETTINGS }
   }
 }
 
@@ -95,8 +104,8 @@ provide("isOpenAIAvailable", isOpenAIAvailable)
 onMounted(() => {
   // Need to override this if we're just in debug mode.
   if (import.meta.env.VITE_DEBUG_INPUT_FORM === "true") {
-    settings.value.gradeLevel = "2nd"
-    settings.value.theme = "default"
+    settings.value.gradeLevel = DEFAULT_SETTINGS.gradeLevel
+    settings.value.theme = DEFAULT_SETTINGS.theme
   }
 
   detectOpenAI()

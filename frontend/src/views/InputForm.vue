@@ -176,10 +176,12 @@ const settings = defineModel("settings")
 
 onMounted(() => {
   if (!DEBUG_INPUT_FORM.value) {
-    wordList.value = props.savedInputs.wordList || []
-    characterName.value = props.savedInputs.characterName || ""
-    setting.value = props.savedInputs.setting || ""
-    humor.value = props.savedInputs.humor || null
+    // We'll pull in the saved inputs from our App.
+    // And if none existed, we're using defaults that have been set in App.vue.
+    wordList.value = props.savedInputs.wordList
+    characterName.value = props.savedInputs.characterName
+    setting.value = props.savedInputs.setting
+    humor.value = props.savedInputs.humor
   } else {
     // Set debug values
     wordList.value = [...debugWordList]
