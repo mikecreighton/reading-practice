@@ -6,6 +6,21 @@
     class="relative flex flex-col justify-start w-full my-0 mx-auto bg-background min-h-[calc(100dvh-104px+40px)] p-10 pb-24 max-w-[700px]"
     :class="{ 'no-scroll': preventScroll }"
   >
+    <div class="mb-6 md:mb-10">
+      <label class="block text-lg md:text-2xl text-text mb-3 md:mb-4" for="grade-level">Grade Level</label>
+      <div class="relative">
+        <select
+          id="grade-level"
+          v-model="localSettings.gradeLevel"
+          class="w-full py-3 px-4 md:text-2xl border-2 border-input-border text-input-text bg-input-background focus:outline-none focus:border-input-border-focus rounded-lg appearance-none"
+        >
+          <option v-for="grade in gradeOptions" :key="grade" :value="grade">{{ grade }}</option>
+        </select>
+        <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-input-text">
+          <i class="bi-chevron-down absolute right-4 top-4 md:top-5"></i>
+        </div>
+      </div>
+    </div>
     <label class="flex flex-col w-full mb-8 md:mb-10 text-lg md:text-2xl text-text">
       <span>Enter the words to appear in your story:</span>
       <div class="word-input mt-3 flex w-full">
@@ -98,8 +113,8 @@
             <i class="bi-gear"></i>
           </FastButton>
           <FastButton
-            :disabled="isLoading || (!wordList.length && !characterName && !setting)"
-            :isDisabled="isLoading || (!wordList.length && !characterName && !setting)"
+            :disabled="isLoading || (!wordList.length && !characterName && !setting && !humor)"
+            :isDisabled="isLoading || (!wordList.length && !characterName && !setting && !humor)"
             type="secondary"
             @click="handleReset"
             name="Reset"
@@ -108,8 +123,8 @@
           </FastButton>
         </div>
         <FastButton
-          :disabled="isLoading || !wordList.length || !characterName || !setting"
-          :isDisabled="isLoading || !wordList.length || !characterName || !setting"
+          :disabled="isLoading || !wordList.length || !characterName || !setting || !humor"
+          :isDisabled="isLoading || !wordList.length || !characterName || !setting || !humor"
           customClass=""
           @click="handleSubmit"
           name="Go"
@@ -125,6 +140,7 @@
 import { ref, inject, watch, onMounted } from "vue"
 import FastButton from "@/components/FastButton.vue"
 import { generateStory, generateIllustration } from "@/services/ai"
+import { LOCAL_STORAGE_INPUTS_KEY } from "@/settings-constants"
 
 const DEBUG_INPUT_FORM = ref(import.meta.env.VITE_DEBUG_INPUT_FORM === "true")
 const DEBUG_STORY_GENERATION = ref(import.meta.env.VITE_DEBUG_STORY_GENERATION === "true")
@@ -149,7 +165,7 @@ const removeWord = (index) => {
 
 const characterName = ref("")
 const setting = ref("")
-const humor = ref(5)
+const humor = ref(null)
 const isLoading = ref(false)
 const abortController = ref(null)
 const illustrationAbortController = ref(null)
@@ -173,14 +189,23 @@ const props = defineProps({
   },
 })
 
-const emit = defineEmits(["storyGenerationStart", "storyGenerationComplete", "storyGenerationError", "openSettings"])
+const emit = defineEmits([
+  "storyGenerationStart",
+  "storyGenerationComplete",
+  "storyGenerationError",
+  "openSettings",
+  "update:settings",
+])
 
-const loadSavedInputs = () => {
+const gradeOptions = ["1st", "2nd", "3rd", "4th", "5th", "6th", "7th", "8th"]
+const localSettings = ref({ ...props.settings })
+
+onMounted(() => {
   if (!DEBUG_INPUT_FORM.value) {
     wordList.value = props.savedInputs.wordList || []
     characterName.value = props.savedInputs.characterName || ""
     setting.value = props.savedInputs.setting || ""
-    humor.value = props.savedInputs.humor || 5
+    humor.value = props.savedInputs.humor || null
   } else {
     // Set debug values
     wordList.value = [
@@ -199,10 +224,6 @@ const loadSavedInputs = () => {
     setting.value = "A school bus"
     humor.value = 10
   }
-}
-
-onMounted(() => {
-  loadSavedInputs()
 })
 
 // Watch for changes in input values and save to local storage
@@ -215,7 +236,17 @@ watch(
       setting: setting.value,
       humor: humor.value,
     }
-    localStorage.setItem("userInputs", JSON.stringify(inputValues))
+    localStorage.setItem(LOCAL_STORAGE_INPUTS_KEY, JSON.stringify(inputValues))
+  },
+  { deep: true },
+)
+
+// Watch for changes in localSettings and emit updates
+// This is used to update the grade level changes in this form
+watch(
+  localSettings,
+  (newSettings) => {
+    emit("update:settings", newSettings)
   },
   { deep: true },
 )
@@ -288,7 +319,7 @@ const handleReset = () => {
   newWord.value = ""
   characterName.value = ""
   setting.value = ""
-  humor.value = 5
+  humor.value = null
 }
 
 const cancelRequest = () => {
