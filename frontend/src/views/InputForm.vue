@@ -141,6 +141,7 @@ import { ref, inject, watch, onMounted, defineModel } from "vue"
 import FastButton from "@/components/FastButton.vue"
 import { generateStory, generateIllustration } from "@/services/ai"
 import { LOCAL_STORAGE_INPUTS_KEY } from "@/settings-constants"
+import { debugWordList, debugCharacterName, debugSetting, debugHumor, debugStoryContent } from "@/debug-values"
 
 const props = defineProps({
   savedInputs: {
@@ -181,21 +182,10 @@ onMounted(() => {
     humor.value = props.savedInputs.humor || null
   } else {
     // Set debug values
-    wordList.value = [
-      "park",
-      "puzzle",
-      "penguin",
-      "pasta",
-      "pizza",
-      "pepperoni",
-      "plaza",
-      "poppy",
-      "popsicle",
-      "poodle",
-    ]
-    characterName.value = "A scientist"
-    setting.value = "A school bus"
-    humor.value = 10
+    wordList.value = [...debugWordList]
+    characterName.value = debugCharacterName
+    setting.value = debugSetting
+    humor.value = debugHumor
   }
 })
 
@@ -250,7 +240,7 @@ const submitForm = async () => {
   emit("storyGenerationStart", wordList.value)
 
   if (DEBUG_STORY_GENERATION.value) {
-    const tempStory = `The scientist boarded the school bus, carrying a giant puzzle of a penguin. As the bus bounced along, she tried to eat her pasta lunch, but the noodles kept flying everywhere! Suddenly, the bus hit a bump, and her puzzle pieces scattered all over. The scientist scrambled to pick them up, accidentally grabbing a slice of pizza from a student's lunchbox instead of a puzzle piece. She stuck the pizza slice onto her puzzle, creating a very strange penguin with a cheesy beak. The bus driver saw this in the mirror and couldn't stop giggling. He missed the turn for the school and ended up at a park. All the kids cheered, thinking they were getting a surprise field trip, while the confused scientist stood there holding her pizza-penguin puzzle.`
+    const tempStory = debugStoryContent
     emit(
       "storyGenerationComplete",
       tempStory,
@@ -262,7 +252,7 @@ const submitForm = async () => {
 
   abortController.value = new AbortController()
 
-  const words = wordList.value.join(",")
+  const words = wordList.value.join(", ")
 
   generateStory(
     words,

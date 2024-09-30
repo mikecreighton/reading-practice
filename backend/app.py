@@ -26,6 +26,7 @@ from safety_prompts import (
 #
 # -----------------------------------------
 
+
 class RateLimitMiddleware(BaseHTTPMiddleware):
     def __init__(self, app, limit=8, window=60, exempt_routes: List[Tuple[str, str]] = []):
         super().__init__(app)
@@ -52,7 +53,7 @@ class RateLimitMiddleware(BaseHTTPMiddleware):
                 # Return a JSONResponse for rate limit exceeded
                 return JSONResponse(
                     status_code=429,
-                    content={"error": "Rate limit exceeded. Please try again later."}
+                    content={"error": "Rate limit exceeded. Please try again later."},
                 )
             else:
                 self.ip_cache[ip] = (last_reset, count + 1)
@@ -88,7 +89,12 @@ MAX_TOKENS = 256
 app = FastAPI()
 
 # Add the rate limiting middleware
-app.add_middleware(RateLimitMiddleware, limit=5, window=60, exempt_routes=[("/", "GET"), ("/openai_available", "GET")])
+app.add_middleware(
+    RateLimitMiddleware,
+    limit=5,
+    window=60,
+    exempt_routes=[("/", "GET"), ("/openai_available", "GET")],
+)
 
 # CORS configuration
 if os.getenv("SERVER_ENV") == "development":
@@ -114,6 +120,7 @@ else:
 #
 # -----------------------------------------
 
+
 def construct_user_prompt(words, subject, setting, humor, grade):
     user_prompt = (
         USER_PROMPT.replace("{{words}}", words)
@@ -138,6 +145,7 @@ def construct_illustration_user_prompt(story, grade):
 #
 # -----------------------------------------
 
+
 class StoryRequest(BaseModel):
     words: str
     subject: str
@@ -151,11 +159,13 @@ class IllustrationRequest(BaseModel):
     grade: str
     aspect_ratio: str
 
+
 # -----------------------------------------
 #
 # Routes
 #
 # -----------------------------------------
+
 
 @app.get("/openai_available")
 async def openai_available(request: Request):
@@ -167,6 +177,8 @@ async def generate_story(request: StoryRequest):
     """
     Generate a story with integrated safety check.
     """
+
+    print("\n------------\nNew story request: ", request)
 
     # Perform safety check
     safety_user_prompt = (
@@ -276,7 +288,7 @@ async def generate_illustration(request: IllustrationRequest):
     AI_ILLUSTRATION_TEXT_MODEL = os.getenv(
         "AI_ILLUSTRATION_TEXT_MODEL", "anthropic/claude-3.5-sonnet"
     )
-    
+
     try:
         response = await text_client.chat.completions.create(
             model=AI_ILLUSTRATION_TEXT_MODEL,
