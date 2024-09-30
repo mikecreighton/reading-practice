@@ -5,13 +5,14 @@
     <div class="app-content bg-background">
       <InputForm
         ref="inputFormRef"
-        :settings="settings"
+        v-model:settings="settings"
         :savedInputs="savedInputs"
         :preventScroll="isModalOpen || isSettingsModalOpen"
         @storyGenerationStart="handleStoryGenerationStart"
         @storyGenerationComplete="handleStoryGenerationComplete"
         @storyGenerationError="handleStoryGenerationError"
         @openSettings="handleOpenSettings"
+        @update:settings="saveSettings"
       />
 
       <div ref="storyModalContainer" class="hidden fixed inset-0 h-full w-full">
@@ -48,6 +49,7 @@ import SettingsModal from "@/views/SettingsModal.vue"
 import InputForm from "@/views/InputForm.vue"
 import { detectOpenAI } from "@/services/ai"
 import gsap from "gsap"
+import { LOCAL_STORAGE_INPUTS_KEY, LOCAL_STORAGE_SETTINGS_KEY, DEFAULT_SETTINGS } from "./settings-constants"
 
 const story = ref(null)
 const illustration = ref(null)
@@ -56,10 +58,7 @@ const isOpenAIAvailable = ref(false)
 const isModalOpen = ref(false)
 const isLoading = ref(false)
 const isSettingsModalOpen = ref(false)
-const settings = ref({
-  gradeLevel: "2nd",
-  theme: "default",
-})
+const settings = ref({ ...DEFAULT_SETTINGS })
 const savedInputs = ref({})
 const storyModalContainer = ref(null)
 const settingsModalRef = ref(null)
@@ -68,9 +67,25 @@ const isError = ref(false)
 const showWelcome = ref(true)
 
 const loadSavedInputs = () => {
-  const savedInputsData = localStorage.getItem("userInputs")
+  const savedInputsData = localStorage.getItem(LOCAL_STORAGE_INPUTS_KEY)
   if (savedInputsData) {
     savedInputs.value = JSON.parse(savedInputsData)
+  } else {
+    savedInputs.value = {
+      wordList: [],
+      characterName: "",
+      setting: "",
+      humor: null,
+    }
+  }
+}
+
+const loadSavedSettings = () => {
+  const savedSettings = localStorage.getItem(LOCAL_STORAGE_SETTINGS_KEY)
+  if (savedSettings) {
+    settings.value = JSON.parse(savedSettings)
+  } else {
+    settings.value = { ...DEFAULT_SETTINGS }
   }
 }
 
@@ -81,20 +96,16 @@ const MODAL_OUT_EASE = "expo.inOut"
 
 // Call this immediately
 loadSavedInputs()
+// Load settings from local storage
+loadSavedSettings()
 
 provide("isOpenAIAvailable", isOpenAIAvailable)
 
 onMounted(() => {
-  // Load settings from local storage
-  const savedSettings = localStorage.getItem("userSettings")
-  if (savedSettings) {
-    settings.value = JSON.parse(savedSettings)
-  }
-
   // Need to override this if we're just in debug mode.
   if (import.meta.env.VITE_DEBUG_INPUT_FORM === "true") {
-    settings.value.gradeLevel = "2nd"
-    settings.value.theme = "default"
+    settings.value.gradeLevel = DEFAULT_SETTINGS.gradeLevel
+    settings.value.theme = DEFAULT_SETTINGS.theme
   }
 
   detectOpenAI()
@@ -184,7 +195,11 @@ const handleOpenSettings = () => {
 
 const handleSettingsModalSave = () => {
   isSettingsModalOpen.value = false
-  localStorage.setItem("userSettings", JSON.stringify(settings.value))
+}
+
+const saveSettings = (newSettings) => {
+  settings.value = newSettings
+  localStorage.setItem(LOCAL_STORAGE_SETTINGS_KEY, JSON.stringify(settings.value))
 }
 
 const onSettingsModalEnter = (el, done) => {
@@ -213,6 +228,14 @@ const onSettingsModalLeave = (el, done) => {
 const handleGetStarted = () => {
   showWelcome.value = false
 }
+
+watch(
+  () => settings.value,
+  (newSettings) => {
+    saveSettings(newSettings)
+  },
+  { deep: true },
+)
 
 /**
  * Set the theme on the body element so that it can be used to set the entire

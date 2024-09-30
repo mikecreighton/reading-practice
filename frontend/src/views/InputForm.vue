@@ -6,6 +6,21 @@
     class="relative flex flex-col justify-start w-full my-0 mx-auto bg-background min-h-[calc(100dvh-104px+40px)] p-10 pb-24 max-w-[700px]"
     :class="{ 'no-scroll': preventScroll }"
   >
+    <div class="mb-6 md:mb-10">
+      <label class="block text-lg md:text-2xl text-text mb-3 md:mb-4" for="grade-level">Grade Level</label>
+      <div class="relative">
+        <select
+          id="grade-level"
+          v-model="settings.gradeLevel"
+          class="w-full py-3 px-4 md:text-2xl border-2 border-input-border text-input-text bg-input-background focus:outline-none focus:border-input-border-focus rounded-lg appearance-none"
+        >
+          <option v-for="grade in gradeOptions" :key="grade" :value="grade">{{ grade }}</option>
+        </select>
+        <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-input-text">
+          <i class="bi-chevron-down absolute right-4 top-4 md:top-5"></i>
+        </div>
+      </div>
+    </div>
     <label class="flex flex-col w-full mb-8 md:mb-10 text-lg md:text-2xl text-text">
       <span>Enter the words to appear in your story:</span>
       <div class="word-input mt-3 flex w-full">
@@ -14,8 +29,8 @@
           v-model="newWord"
           @keyup.enter.prevent="addWord"
           @keydown.enter.prevent
-          @keyup.space.prevent="addWord"
-          @keyup.comma.prevent="addWord"
+          @keydown.space.prevent="addWord"
+          @keydown="handleKeyDown"
           :disabled="wordList.length >= MAX_WORDS"
           :placeholder="wordList.length >= MAX_WORDS ? 'Sorry, 10 words maximum.' : 'Enter a word'"
           class="flex-1 mr-4 min-w-0 py-3 px-4 border border-input-border text-input-text bg-input-background focus:outline-none focus:border-input-border-focus focus:bg-input-background-focus placeholder:text-input-placeholder rounded-lg"
@@ -98,8 +113,8 @@
             <i class="bi-gear"></i>
           </FastButton>
           <FastButton
-            :disabled="isLoading || (!wordList.length && !characterName && !setting)"
-            :isDisabled="isLoading || (!wordList.length && !characterName && !setting)"
+            :disabled="isLoading || (!wordList.length && !characterName && !setting && !humor)"
+            :isDisabled="isLoading || (!wordList.length && !characterName && !setting && !humor)"
             type="secondary"
             @click="handleReset"
             name="Reset"
@@ -108,8 +123,8 @@
           </FastButton>
         </div>
         <FastButton
-          :disabled="isLoading || !wordList.length || !characterName || !setting"
-          :isDisabled="isLoading || !wordList.length || !characterName || !setting"
+          :disabled="isLoading || !wordList.length || !characterName || !setting || !humor"
+          :isDisabled="isLoading || !wordList.length || !characterName || !setting || !humor"
           customClass=""
           @click="handleSubmit"
           name="Go"
@@ -122,15 +137,86 @@
 </template>
 
 <script setup>
-import { ref, inject, watch, onMounted } from "vue"
+import { ref, inject, watch, onMounted, defineModel } from "vue"
 import FastButton from "@/components/FastButton.vue"
 import { generateStory, generateIllustration } from "@/services/ai"
+import { LOCAL_STORAGE_INPUTS_KEY } from "@/settings-constants"
+import { debugWordList, debugCharacterName, debugSetting, debugHumor, debugStoryContent } from "@/debug-values"
+
+const props = defineProps({
+  savedInputs: {
+    type: Object,
+    required: false,
+    default: () => ({}),
+  },
+  preventScroll: {
+    type: Boolean,
+    required: false,
+    default: false,
+  },
+})
+
+const emit = defineEmits(["storyGenerationStart", "storyGenerationComplete", "storyGenerationError", "openSettings"])
 
 const DEBUG_INPUT_FORM = ref(import.meta.env.VITE_DEBUG_INPUT_FORM === "true")
 const DEBUG_STORY_GENERATION = ref(import.meta.env.VITE_DEBUG_STORY_GENERATION === "true")
 
 const newWord = ref("")
 const wordList = ref([])
+const characterName = ref("")
+const setting = ref("")
+const humor = ref(null)
+const isLoading = ref(false)
+const abortController = ref(null)
+const illustrationAbortController = ref(null)
+const isOpenAIAvailable = inject("isOpenAIAvailable")
+const MAX_WORDS = ref(10)
+const gradeOptions = ["1st", "2nd", "3rd", "4th", "5th", "6th", "7th", "8th"]
+const settings = defineModel("settings")
+
+onMounted(() => {
+  if (!DEBUG_INPUT_FORM.value) {
+    // We'll pull in the saved inputs from our App.
+    // And if none existed, we're using defaults that have been set in App.vue.
+    wordList.value = props.savedInputs.wordList
+    characterName.value = props.savedInputs.characterName
+    setting.value = props.savedInputs.setting
+    humor.value = props.savedInputs.humor
+  } else {
+    // Set debug values
+    wordList.value = [...debugWordList]
+    characterName.value = debugCharacterName
+    setting.value = debugSetting
+    humor.value = debugHumor
+  }
+})
+
+// Watch for changes in input values and save to local storage
+watch(
+  [wordList, characterName, setting, humor],
+  () => {
+    const inputValues = {
+      wordList: wordList.value,
+      characterName: characterName.value,
+      setting: setting.value,
+      humor: humor.value,
+    }
+    localStorage.setItem(LOCAL_STORAGE_INPUTS_KEY, JSON.stringify(inputValues))
+  },
+  { deep: true },
+)
+
+const handleKeyDown = (event) => {
+  // We have to do this because @keydown.comma.prevent isn't firing for some reason.
+  // :v-on:keydown., and :v-on:keydown.,.prevent don't work either.
+  // Reference this to see what _should_ work: https://v3-migration.vuejs.org/breaking-changes/keycode-modifiers#migration-strategy
+  // I don't see `comma` in the list of key aliases here: https://vuejs.org/guide/essentials/event-handling.html#key-modifiers
+  // So, I'm going to assume that this is the only way to do it.
+  if (event.key === "," || event.keyCode === 188) {
+    event.preventDefault()
+    addWord()
+  }
+}
 
 const addWord = () => {
   if (newWord.value.trim() && wordList.value.length < MAX_WORDS.value) {
@@ -147,79 +233,6 @@ const removeWord = (index) => {
   wordList.value.splice(index, 1)
 }
 
-const characterName = ref("")
-const setting = ref("")
-const humor = ref(5)
-const isLoading = ref(false)
-const abortController = ref(null)
-const illustrationAbortController = ref(null)
-const isOpenAIAvailable = inject("isOpenAIAvailable")
-const MAX_WORDS = ref(10)
-
-const props = defineProps({
-  settings: {
-    type: Object,
-    required: true,
-  },
-  savedInputs: {
-    type: Object,
-    required: false,
-    default: () => ({}),
-  },
-  preventScroll: {
-    type: Boolean,
-    required: false,
-    default: false,
-  },
-})
-
-const emit = defineEmits(["storyGenerationStart", "storyGenerationComplete", "storyGenerationError", "openSettings"])
-
-const loadSavedInputs = () => {
-  if (!DEBUG_INPUT_FORM.value) {
-    wordList.value = props.savedInputs.wordList || []
-    characterName.value = props.savedInputs.characterName || ""
-    setting.value = props.savedInputs.setting || ""
-    humor.value = props.savedInputs.humor || 5
-  } else {
-    // Set debug values
-    wordList.value = [
-      "park",
-      "puzzle",
-      "penguin",
-      "pasta",
-      "pizza",
-      "pepperoni",
-      "plaza",
-      "poppy",
-      "popsicle",
-      "poodle",
-    ]
-    characterName.value = "A scientist"
-    setting.value = "A school bus"
-    humor.value = 10
-  }
-}
-
-onMounted(() => {
-  loadSavedInputs()
-})
-
-// Watch for changes in input values and save to local storage
-watch(
-  [wordList, characterName, setting, humor],
-  () => {
-    const inputValues = {
-      wordList: wordList.value,
-      characterName: characterName.value,
-      setting: setting.value,
-      humor: humor.value,
-    }
-    localStorage.setItem("userInputs", JSON.stringify(inputValues))
-  },
-  { deep: true },
-)
-
 const submitForm = async () => {
   isLoading.value = true
 
@@ -229,7 +242,7 @@ const submitForm = async () => {
   emit("storyGenerationStart", wordList.value)
 
   if (DEBUG_STORY_GENERATION.value) {
-    const tempStory = `The scientist boarded the school bus, carrying a giant puzzle of a penguin. As the bus bounced along, she tried to eat her pasta lunch, but the noodles kept flying everywhere! Suddenly, the bus hit a bump, and her puzzle pieces scattered all over. The scientist scrambled to pick them up, accidentally grabbing a slice of pizza from a student's lunchbox instead of a puzzle piece. She stuck the pizza slice onto her puzzle, creating a very strange penguin with a cheesy beak. The bus driver saw this in the mirror and couldn't stop giggling. He missed the turn for the school and ended up at a park. All the kids cheered, thinking they were getting a surprise field trip, while the confused scientist stood there holding her pizza-penguin puzzle.`
+    const tempStory = debugStoryContent
     emit(
       "storyGenerationComplete",
       tempStory,
@@ -241,7 +254,7 @@ const submitForm = async () => {
 
   abortController.value = new AbortController()
 
-  const words = wordList.value.join(",")
+  const words = wordList.value.join(", ")
 
   generateStory(
     words,
@@ -288,7 +301,7 @@ const handleReset = () => {
   newWord.value = ""
   characterName.value = ""
   setting.value = ""
-  humor.value = 5
+  humor.value = null
 }
 
 const cancelRequest = () => {
