@@ -68,6 +68,10 @@ class RateLimitMiddleware(BaseHTTPMiddleware):
 
 load_dotenv(override=True)
 
+# Set up logging
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
+
 if "gunicorn" in os.environ.get("SERVER_SOFTWARE", ""):
     """
     When running with gunicorn the log handlers get suppressed instead of
@@ -76,7 +80,6 @@ if "gunicorn" in os.environ.get("SERVER_SOFTWARE", ""):
     """
 
     gunicorn_logger = logging.getLogger("gunicorn")
-    log_level = gunicorn_logger.level
 
     root_logger = logging.getLogger()
     gunicorn_error_logger = logging.getLogger("gunicorn.error")
@@ -88,9 +91,9 @@ if "gunicorn" in os.environ.get("SERVER_SOFTWARE", ""):
     fastapi_logger.handlers = gunicorn_error_logger.handlers
 
     # Pass on logging levels for root, uvicorn, and fastapi loggers
-    root_logger.setLevel(log_level)
-    uvicorn_access_logger.setLevel(log_level)
-    fastapi_logger.setLevel(log_level)
+    root_logger.setLevel(logging.INFO)
+    uvicorn_access_logger.setLevel(logging.INFO)
+    fastapi_logger.setLevel(logging.INFO)
 
 
 # AI configuration
