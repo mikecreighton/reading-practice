@@ -47,7 +47,7 @@
 </template>
 
 <script setup>
-import { defineEmits, onMounted, ref } from "vue"
+import { onMounted, ref } from "vue"
 import FastButton from "@/components/FastButton.vue"
 import gsap from "gsap"
 
