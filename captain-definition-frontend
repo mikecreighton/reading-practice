@@ -2,6 +2,7 @@
   "schemaVersion": 2,
   "dockerfileLines": [
     "FROM node:22-alpine",
+    "RUN ls -la",
     "RUN cd frontend",
     "RUN npm install",
     "RUN npm run build",
