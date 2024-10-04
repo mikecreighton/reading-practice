@@ -2,13 +2,9 @@
   "schemaVersion": 2,
   "dockerfileLines": [
     "FROM node:22-alpine",
-    "RUN cd /home",
-    "RUN ls -la",
-    "RUN cd frontend",
-    "RUN npm install",
-    "RUN npm run build",
     "RUN mkdir -p /usr/src/app",
-    "COPY ./dist /usr/src/app",
-    "RUN chmod -R 755 /usr/src/app"
+    "COPY ./frontend /usr/src/app",
+    "RUN npm install && npm run build",
+    "COPY ./dist /usr/src/app"
   ]
 }
