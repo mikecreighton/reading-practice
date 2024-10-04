@@ -8,6 +8,8 @@ from fastapi import FastAPI, HTTPException, Request
 from fastapi.responses import HTMLResponse, JSONResponse
 from starlette.middleware.base import BaseHTTPMiddleware
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.logger import logger as fastapi_logger
+import logging
 from pydantic import BaseModel
 from prompts import (
     USER_PROMPT,
@@ -65,6 +67,31 @@ class RateLimitMiddleware(BaseHTTPMiddleware):
 
 
 load_dotenv(override=True)
+
+if "gunicorn" in os.environ.get("SERVER_SOFTWARE", ""):
+    """
+    When running with gunicorn the log handlers get suppressed instead of
+    passed along to the container manager. This forces the gunicorn handlers
+    to be used throughout the project.
+    """
+
+    gunicorn_logger = logging.getLogger("gunicorn")
+    log_level = gunicorn_logger.level
+
+    root_logger = logging.getLogger()
+    gunicorn_error_logger = logging.getLogger("gunicorn.error")
+    uvicorn_access_logger = logging.getLogger("uvicorn.access")
+
+    # Use gunicorn error handlers for root, uvicorn, and fastapi loggers
+    root_logger.handlers = gunicorn_error_logger.handlers
+    uvicorn_access_logger.handlers = gunicorn_error_logger.handlers
+    fastapi_logger.handlers = gunicorn_error_logger.handlers
+
+    # Pass on logging levels for root, uvicorn, and fastapi loggers
+    root_logger.setLevel(log_level)
+    uvicorn_access_logger.setLevel(log_level)
+    fastapi_logger.setLevel(log_level)
+
 
 # AI configuration
 AI_TEXT_PROVIDER = os.getenv("AI_TEXT_PROVIDER", "openai")
@@ -178,7 +205,7 @@ async def generate_story(request: StoryRequest):
     Generate a story with integrated safety check.
     """
 
-    print("\n------------\nNew story request: ", request)
+    logging.info(f"\n------------\nNew story request: {request}")
 
     # Perform safety check
     safety_user_prompt = (
@@ -343,7 +370,7 @@ async def generate_illustration(request: IllustrationRequest):
     image_gen_response_b64 = image_gen_response.data[0].b64_json
 
     end = time.time()
-    print("/generate_illustration - Time elapsed: ", end - start)
+    logging.info(f"/generate_illustration - Time elapsed: {end - start}")
 
     return {"image": image_gen_response_b64}
 
