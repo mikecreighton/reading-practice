@@ -1,0 +1,12 @@
+{
+  "schemaVersion": 2,
+  "dockerfileLines": [
+    "FROM tiangolo/uvicorn-gunicorn:python3.11",
+    "RUN mkdir -p /usr/src/app",
+    "WORKDIR /usr/src/app",
+    "COPY ./backend /usr/src/app",
+    "RUN pip install -r ./requirements.txt",
+    "EXPOSE 80",
+    "CMD ["gunicorn", "app:app", "--workers", "4", "--worker-class", "uvicorn.workers.UvicornWorker", "--bind", "0.0.0.0:80"]
+  ]
+}
