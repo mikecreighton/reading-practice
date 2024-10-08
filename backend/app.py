@@ -100,7 +100,7 @@ if "gunicorn" in os.environ.get("SERVER_SOFTWARE", ""):
 
 # AI configuration
 AI_TEXT_PROVIDER = os.getenv("AI_TEXT_PROVIDER", "openai")
-AI_SAFETY_MODEL = os.getenv("AI_SAFETY_MODEL", "meta-llama/llama-3.1-8b-instruct:free")
+AI_SAFETY_MODEL = os.getenv("AI_SAFETY_MODEL", "gpt-4o-mini")
 AI_IMAGE_PROVIDER = os.getenv("AI_IMAGE_PROVIDER", "none")
 
 if AI_TEXT_PROVIDER == "openai":
