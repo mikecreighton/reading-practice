@@ -83,7 +83,7 @@ Additionally, you can choose the color theme for the prototype by clicking on th
 
 ## Customizing CSS Themes
 
-All themes are managed by Tailwind using the [tailwindcss-themer](https://github.com/RyanClementsHax/tailwindcss-themer?tab=readme-ov-file) package.
+All themes are managed by Tailwind using the [tailwindcss-themer](https://github.com/RyanClementsHax/tailwindcss-themer) package.
 
 ## License
 
