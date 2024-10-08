@@ -169,7 +169,7 @@ const humor = ref(null)
 const isLoading = ref(false)
 const abortController = ref(null)
 const illustrationAbortController = ref(null)
-const isOpenAIAvailable = inject("isOpenAIAvailable")
+const isImageProviderAvailable = inject("isImageProviderAvailable")
 const MAX_WORDS = ref(10)
 const gradeOptions = ["1st", "2nd", "3rd", "4th", "5th", "6th", "7th", "8th"]
 const settings = defineModel("settings")
@@ -265,7 +265,7 @@ const submitForm = async () => {
     abortController.value.signal,
   )
     .then((story) => {
-      if (isOpenAIAvailable.value) {
+      if (isImageProviderAvailable.value) {
         illustrationAbortController.value = new AbortController()
         return generateIllustration(story, props.settings.gradeLevel, illustrationAbortController.value.signal).then(
           (illustration) => {

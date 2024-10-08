@@ -7,9 +7,9 @@ const getBaseURL = () => {
   return baseURL
 }
 
-export const detectOpenAI = async () => {
+export const checkIfImageProviderAvailable = async () => {
   let baseURL = getBaseURL()
-  return fetch(baseURL + "/openai_available", {
+  return fetch(baseURL + "/image_provider_available", {
     method: "GET",
   })
     .then((response) => response.json())
@@ -84,8 +84,12 @@ export const generateIllustration = async (story, grade, abortSignal) => {
       if (data.error) {
         throw new Error(data.error)
       }
-      // data.image is a base64 encoded string but it doesn't have a data:image/jpeg;base64, prefix
-      return "data:image/jpeg;base64," + data.image
+      if (data.type === "b64") {
+        // data.image is a base64 encoded string but it doesn't have a data:image/jpeg;base64, prefix
+        return "data:image/jpeg;base64," + data.image
+      } else {
+        return data.image
+      }
     })
     .catch((error) => {
       throw error

@@ -47,14 +47,14 @@ import { ref, provide, onMounted, watch } from "vue"
 import StoryModal from "@/views/StoryModal.vue"
 import SettingsModal from "@/views/SettingsModal.vue"
 import InputForm from "@/views/InputForm.vue"
-import { detectOpenAI } from "@/services/ai"
+import { checkIfImageProviderAvailable } from "@/services/ai"
 import gsap from "gsap"
 import { LOCAL_STORAGE_INPUTS_KEY, LOCAL_STORAGE_SETTINGS_KEY, DEFAULT_SETTINGS } from "./settings-constants"
 
 const story = ref(null)
 const illustration = ref(null)
 const inputFormRef = ref(null)
-const isOpenAIAvailable = ref(false)
+const isImageProviderAvailable = ref(false)
 const isModalOpen = ref(false)
 const isLoading = ref(false)
 const isSettingsModalOpen = ref(false)
@@ -99,7 +99,7 @@ loadSavedInputs()
 // Load settings from local storage
 loadSavedSettings()
 
-provide("isOpenAIAvailable", isOpenAIAvailable)
+provide("isImageProviderAvailable", isImageProviderAvailable)
 
 onMounted(() => {
   // Need to override this if we're just in debug mode.
@@ -108,9 +108,9 @@ onMounted(() => {
     settings.value.theme = DEFAULT_SETTINGS.theme
   }
 
-  detectOpenAI()
+  checkIfImageProviderAvailable()
     .then((available) => {
-      isOpenAIAvailable.value = available
+      isImageProviderAvailable.value = available
     })
     .catch((error) => {
       console.warn("Problem detecting OpenAI availability:", error)
