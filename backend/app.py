@@ -4,7 +4,7 @@ import json
 from typing import List, Tuple
 from openai import AsyncOpenAI, RateLimitError
 from dotenv import load_dotenv
-from fastapi import FastAPI, HTTPException, Request
+from fastapi import FastAPI, Request
 from fastapi.responses import HTMLResponse, JSONResponse
 from starlette.middleware.base import BaseHTTPMiddleware
 from fastapi.middleware.cors import CORSMiddleware
@@ -155,6 +155,10 @@ else:
 
 
 def construct_user_prompt(words, subject, setting, humor, grade):
+    """
+    Construct the user prompt for the story generator using the prompt
+    template in prompts.py.
+    """
     user_prompt = (
         USER_PROMPT.replace("{{words}}", words)
         .replace("{{subject}}", subject)
@@ -169,6 +173,10 @@ def construct_user_prompt(words, subject, setting, humor, grade):
 
 
 def construct_illustration_user_prompt(story, grade):
+    """
+    Construct the user prompt for the illustration generator using the prompt
+    template in prompts.py.
+    """
     return ILLUSTRATION_USER_PROMPT.replace("{{story}}", story).replace("{{grade}}", grade)
 
 
@@ -202,13 +210,17 @@ class IllustrationRequest(BaseModel):
 
 @app.get("/image_provider_available")
 async def image_provider_available(request: Request):
+    """
+    Lets the client know if the image provider is available
+    so that it knows whether or not to attempt to generate an image.
+    """
     return {"message": AI_IMAGE_PROVIDER != "none"}
 
 
 @app.post("/generate_story")
 async def generate_story(request: StoryRequest):
     """
-    Generate a story with integrated safety check.
+    Generate a story with integrated content safety check.
     """
 
     logging.info(f"\n------------\nNew story request: {request}")
@@ -456,13 +468,6 @@ async def generate_illustration(request: IllustrationRequest):
                     status_code=500,
                     content={"message": str(e)},
                 )
-
-
-# You would need to implement this function
-async def process_image(image_data: bytes) -> bytes:
-    # Process the image here
-    # This is just a placeholder - replace with actual image processing
-    return image_data
 
 
 # Add this new route handler near the other route definitions
