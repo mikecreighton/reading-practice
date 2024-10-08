@@ -11,7 +11,7 @@ The project is divided into two main components:
 
 ### Backend
 
-The backend is a FastAPI application that uses OpenAI's API and/or [OpenRouter's API](https://openrouter.ai) to generate stories based on user input. It's located in the `backend` directory and consists of the following key files:
+The backend is a FastAPI application that uses OpenAI's API and/or [OpenRouter's API](https://openrouter.ai) to generate stories based on user input. It can also generate images using OpenAI's DALL-E 3 or [Black Forest Labs's FLUX1.1 \[pro\]](https://blackforestlabs.ai/announcing-flux-1-1-pro-and-the-bfl-api/) via their official API. The backend is located in the `backend` directory and consists of the following key files:
 
 - `app.py`: The main FastAPI application
 - `prompts.py`: Contains the system and user prompts for the AI
@@ -72,13 +72,14 @@ To set up this project locally, follow these steps:
 
 ## Usage
 
-1. Enter the vocabulary words to include in the story.
-2. Specify a main character for the story.
-3. Enter a setting for where the story takes place.
-4. Adjust the humor level.
-5. Click "Go" to create a custom story.
+1. Select the appropriate grade level for the story.
+2. Enter the vocabulary words to include in the story.
+3. Specify a main character for the story.
+4. Enter a setting for where the story takes place.
+5. Adjust the humor level.
+6. Click "Go" to create a custom story.
 
-Additionally, you can specify which grade level the story should be written for along with the color theme for the prototype by clicking on the Settings gear button in the lower-left.
+Additionally, you can choose the color theme for the prototype by clicking on the Settings gear button in the lower-left.
 
 ## Customizing CSS Themes
 
