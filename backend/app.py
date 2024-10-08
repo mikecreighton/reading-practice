@@ -21,6 +21,8 @@ from safety_prompts import (
     SYSTEM_PROMPT as SAFETY_SYSTEM_PROMPT,
     USER_PROMPT_TEMPLATE as SAFETY_USER_PROMPT_TEMPLATE,
 )
+import httpx
+import asyncio
 
 # -----------------------------------------
 #
@@ -99,6 +101,7 @@ if "gunicorn" in os.environ.get("SERVER_SOFTWARE", ""):
 # AI configuration
 AI_TEXT_PROVIDER = os.getenv("AI_TEXT_PROVIDER", "openai")
 AI_SAFETY_MODEL = os.getenv("AI_SAFETY_MODEL", "meta-llama/llama-3.1-8b-instruct:free")
+AI_IMAGE_PROVIDER = os.getenv("AI_IMAGE_PROVIDER", "none")
 
 if AI_TEXT_PROVIDER == "openai":
     AI_TEXT_API_KEY = os.getenv("OPENAI_API_KEY")
@@ -123,7 +126,7 @@ app.add_middleware(
     RateLimitMiddleware,
     limit=5,
     window=60,
-    exempt_routes=[("/", "GET"), ("/openai_available", "GET")],
+    exempt_routes=[("/", "GET"), ("/image_provider_available", "GET")],
 )
 
 # CORS configuration
@@ -197,9 +200,9 @@ class IllustrationRequest(BaseModel):
 # -----------------------------------------
 
 
-@app.get("/openai_available")
-async def openai_available(request: Request):
-    return {"message": bool(os.getenv("OPENAI_API_KEY"))}
+@app.get("/image_provider_available")
+async def image_provider_available(request: Request):
+    return {"message": AI_IMAGE_PROVIDER != "none"}
 
 
 @app.post("/generate_story")
@@ -306,11 +309,25 @@ async def generate_illustration(request: IllustrationRequest):
     Generate an illustration for a given story.
     """
 
-    if not os.getenv("OPENAI_API_KEY"):
+    if AI_IMAGE_PROVIDER == "none":
         return JSONResponse(
             status_code=400,
-            content={"message": "No OPENAI_API_KEY environment variable set."},
+            content={"message": "Image provider is not available."},
         )
+
+    if AI_IMAGE_PROVIDER == "openai":
+        if not os.getenv("OPENAI_API_KEY"):
+            return JSONResponse(
+                status_code=400,
+                content={"message": "No OPENAI_API_KEY environment variable set."},
+            )
+
+    elif AI_IMAGE_PROVIDER == "bfl":
+        if not os.getenv("BFL_API_KEY"):
+            return JSONResponse(
+                status_code=400,
+                content={"message": "No BFL_API_KEY environment variable set."},
+            )
 
     start = time.time()
 
@@ -341,41 +358,111 @@ async def generate_illustration(request: IllustrationRequest):
         )
 
     image_gen_prompt = response.choices[0].message.content
-    image_gen_client = AsyncOpenAI(api_key=os.getenv("OPENAI_API_KEY"))
 
-    if request.aspect_ratio == "square":
-        size = "1024x1024"
-    elif request.aspect_ratio == "landscape":
-        size = "1792x1024"
-    else:
-        size = "1024x1024"
+    if AI_IMAGE_PROVIDER == "openai":
 
-    try:
-        image_gen_response = await image_gen_client.images.generate(
-            model="dall-e-3",
-            prompt=image_gen_prompt,
-            size=size,
-            quality="standard",
-            n=1,
-            response_format="b64_json",
-        )
-    except RateLimitError:
-        return JSONResponse(
-            status_code=429,
-            content={"message": "Rate limit exceeded. Please try again later."},
-        )
-    except Exception as e:
-        return JSONResponse(
-            status_code=500,
-            content={"message": str(e)},
-        )
+        image_gen_client = AsyncOpenAI(api_key=os.getenv("OPENAI_API_KEY"))
 
-    image_gen_response_b64 = image_gen_response.data[0].b64_json
+        if request.aspect_ratio == "square":
+            size = "1024x1024"
+        elif request.aspect_ratio == "landscape":
+            size = "1792x1024"
+        else:
+            size = "1024x1024"
 
-    end = time.time()
-    logging.info(f"/generate_illustration - Time elapsed: {end - start}")
+        try:
+            image_gen_response = await image_gen_client.images.generate(
+                model="dall-e-3",
+                prompt=image_gen_prompt,
+                size=size,
+                quality="standard",
+                n=1,
+                response_format="b64_json",
+            )
+        except RateLimitError:
+            return JSONResponse(
+                status_code=429,
+                content={"message": "Rate limit exceeded. Please try again later."},
+            )
+        except Exception as e:
+            return JSONResponse(
+                status_code=500,
+                content={"message": str(e)},
+            )
 
-    return {"image": image_gen_response_b64}
+        image_gen_response_b64 = image_gen_response.data[0].b64_json
+
+        end = time.time()
+        logging.info(f"/generate_illustration - Time elapsed: {end - start}")
+
+        return {"image": image_gen_response_b64, "type": "b64"}
+
+    elif AI_IMAGE_PROVIDER == "bfl":
+        logging.info(f"Generating image with BFL")
+        request_url = "https://api.bfl.ml/v1/flux-pro-1.1"
+
+        w = 1024
+        h = 1024
+        if request.aspect_ratio == "landscape":
+            w = 1312
+            h = 736
+
+        headers = {"Content-Type": "application/json", "X-Key": os.getenv("BFL_API_KEY")}
+
+        data = {
+            "prompt": image_gen_prompt,
+            "width": w,
+            "height": h,
+            "prompt_upsampling": False,
+            "safety_tolerance": 1,
+        }
+
+        async with httpx.AsyncClient() as client:
+            try:
+                # Initial request to start the job
+                response = await client.post(request_url, json=data, headers=headers)
+                response.raise_for_status()
+                job_id = response.json()["id"]
+                logging.info(f"Job ID: {job_id}")
+                # Polling for the result
+                result_url = f"https://api.bfl.ml/v1/get_result?id={job_id}"
+                max_attempts = 30  # Adjust as needed
+                for _ in range(max_attempts):
+                    logging.info(f"Polling for result: {result_url}")
+
+                    result_response = await client.get(result_url, headers=headers)
+                    result_response.raise_for_status()
+                    result_data = result_response.json()
+
+                    if result_data["status"] == "Ready":
+                        image_url = result_data["result"]["sample"]
+                        end = time.time()
+                        logging.info(f"/generate_illustration - Time elapsed: {end - start}")
+                        return {"image": image_url, "type": "url"}
+                    elif result_data["status"] == "failed":
+                        raise Exception("Image generation failed")
+
+                    await asyncio.sleep(1)  # Wait for 1 second before polling again
+
+                raise Exception("Timeout waiting for image generation")
+
+            except httpx.HTTPStatusError as e:
+                return JSONResponse(
+                    status_code=e.response.status_code,
+                    content={"message": f"HTTP error occurred: {str(e)}"},
+                )
+            except Exception as e:
+                return JSONResponse(
+                    status_code=500,
+                    content={"message": str(e)},
+                )
+
+
+# You would need to implement this function
+async def process_image(image_data: bytes) -> bytes:
+    # Process the image here
+    # This is just a placeholder - replace with actual image processing
+    return image_data
 
 
 # Add this new route handler near the other route definitions
