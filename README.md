@@ -25,7 +25,7 @@ The frontend is a Vue.js application that provides the user interface for the st
 - `src/App.vue`: The main Vue component
 - `src/components/InputForm.vue`: View for user input
 - `src/components/StoryModal.vue`: View for displaying the generated story
-- `src/components/SettingsModal.vue`: View for displaying the generated story
+- `src/components/SettingsModal.vue`: View for selecting the color theme
 - `src/services/ai.js`: Utility functions for interacting with the backend
 
 ## Setup and Installation
