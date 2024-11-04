@@ -1,6 +1,6 @@
 # Reading Practice
 
-This project is a small web app prototype that creates personalized stories for young students to practice their reading skills. It uses generative AI to create stories and illustrations on demand.
+Reading Practice is an AI-powered prototype that creates personalized stories for young learners to help with their reading skills.It uses generative AI to create stories and illustrations on demand.
 
 ## Project Structure
 
