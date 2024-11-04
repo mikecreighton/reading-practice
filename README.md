@@ -1,6 +1,6 @@
 # Reading Practice
 
-Reading Practice is an AI-powered prototype that creates personalized stories for young learners to help with their reading skills.It uses generative AI to create stories and illustrations on demand.
+Create personalized stories for young readers. This AI-powered prototype generates unique tales and illustrations to make reading more engaging.
 
 ## Project Structure
 
