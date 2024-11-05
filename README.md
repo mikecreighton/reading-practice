@@ -2,6 +2,8 @@
 
 Create personalized stories for young readers. This AI-powered prototype generates unique tales and illustrations to make reading more engaging.
 
+- [Live Demo](https://readingpractice.mikecreighton.com/)
+
 ## Project Structure
 
 The project is divided into two main components:
